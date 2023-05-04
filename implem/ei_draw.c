@@ -6,6 +6,7 @@
  */
 
 #include "ei_draw.h"
+#include "ei_implementation.h"
 
 
 
@@ -27,7 +28,34 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 				     ei_point_t*		point_array,
 				     size_t			point_array_size,
 				     ei_color_t		color,
-				     const ei_rect_t*	clipper);
+				     const ei_rect_t*	clipper)
+{
+		uint8_t* premier = hw_surface_get_buffer(surface);
+		int largeur = hw_surface_get_size(surface).width;
+		uint32_t couleur = ei_impl_map_rgba(surface, color);
+		for (size_t i = 0; i < point_array_size - 1; i++) {
+			int x1 = point_array[i].x;
+			int y1 = point_array[i].y;
+			int x2 = point_array[i+1].x;
+			int y2 = point_array[i+1].y;
+			int delta_x = x2 - x1;
+			int delta_y = y2 - y1;
+			if (delta_x > 0 && delta_y > 0 && delta_x > delta_y) {
+				int x = x1;
+				int y = y1;
+				int E;
+				while (x!=x2) {
+					x++;
+					E += delta_y;
+					if (2*E > delta_x) {
+						y++;
+						E -= delta_x;
+					};
+				};
+				premier[y*largeur+x]=couleur;
+			};
+		}
+}
 
 /**
  * \brief	Draws a filled polygon.
@@ -78,8 +106,14 @@ void	ei_draw_text		(ei_surface_t		surface,
  */
 void	ei_fill			(ei_surface_t		surface,
 					    const ei_color_t*	color,
-					    const ei_rect_t*	clipper);
-
+					    const ei_rect_t*	clipper)
+{
+	uint32_t *pix_ptr = (uint32_t*) hw_surface_get_buffer(surface);
+	ei_size_t size = hw_surface_get_size(surface);
+	for (int i = 0; i < size.width * size.height; i++, pix_ptr++) {
+		*pix_ptr = ei_impl_map_rgba(surface, *color);
+	}
+}
 
 /**
  * \brief	Copies pixels from a source surface to a destination surface.
