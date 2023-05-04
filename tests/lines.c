@@ -37,16 +37,16 @@ void test_octogone(ei_surface_t surface, ei_rect_t* clipper)
 	ei_point_t		pts[9];
 	int			i, xdiff, ydiff;
 
-	/* Initialisation */
+	*//* Initialisation *//*
 	pts[0].x		= 400;
 	pts[0].y		= 90;
 
-	/* Draw the octogone */
+	*//* Draw the octogone *//*
 	for(i = 1; i <= 8; i++) {
-		 /*	Add or remove 70/140 pixels for next point
+		 *//*	Add or remove 70/140 pixels for next point
 			The first term of this formula gives the sign + or - of the operation
 			The second term is 2 or 1, according to which coordinate grows faster
-			The third term is simply the amount of pixels to skip */
+			The third term is simply the amount of pixels to skip *//*
 		xdiff = (int)(pow(-1, (i + 1) / 4) * pow(2, (i / 2) % 2 == 0) * 70);
 		ydiff = (int)(pow(-1, (i - 1) / 4) * pow(2, (i / 2) % 2) * 70);
 
@@ -84,7 +84,7 @@ void test_square(ei_surface_t surface, ei_rect_t* clipper)
 		/*	Add or remove 200 pixels or 0 for next point
 			The first term of this formula gives the sign + or - of the operation
 			The second term is 0 or 1, according to which coordinate grows
-			The third term is simply the side of the square */
+			The third term is simply the side of the square *//*
 		xdiff = (int)(pow(-1, i / 2) * (i % 2) * 200);
 		ydiff = (int)(pow(-1, i / 2) * (i % 2 == 0) * 200);
 
@@ -142,7 +142,7 @@ int main(int argc, char** argv)
 	test_octogone	(main_window, clipper_ptr);
 	test_square	(main_window, clipper_ptr);
 	test_dot	(main_window, clipper_ptr);
-	
+
 	/* Unlock and update the surface. */
 	hw_surface_unlock(main_window);
 	hw_surface_update_rects(main_window, NULL);

@@ -30,11 +30,11 @@ uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color)
 	int ir, ig, ib, ia;
 	uint32_t color_32 = 0;
 	hw_surface_get_channel_indices(surface, &ir, &ig, &ib, &ia);
-	for (int i = 0, i < 4, i++) {
-		if (ir == i) color_32 += color.red * 2**(32 - 8*(i+1));
-		if (ig == i) color_32 += color.green * 2**(32 - 8*(i+1));
-		if (ib == i) color_32 += color.blue * 2**(32 - 8*(i+1));
-		if (ia == i) color_32 += color.alpha * 2**(32 - 8*(i+1));
+	for (int i = 0; i < 4; i++) {
+		if (ir == i) color_32 += color.red << 8*i;
+		if (ig == i) color_32 += color.green << 8*i;
+		if (ib == i) color_32 += color.blue << 8*i;
+		if (ia == i) color_32 += color.alpha << 8*i;
 	}
 	return color_32;
 }
@@ -47,7 +47,7 @@ uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color)
  *
  * @param	widget		The widget which geometry must be re-computed.
  */
-void ei_impl_placer_run(ei_widget_t widget)
+void ei_impl_placer_run(ei_widget_t widget);
 
 /**
  * @brief	Draws the children of a widget.
@@ -63,4 +63,4 @@ void ei_impl_placer_run(ei_widget_t widget)
 void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		surface,
 					ei_surface_t		pick_surface,
-					ei_rect_t*		clipper)
+					ei_rect_t*		clipper);
