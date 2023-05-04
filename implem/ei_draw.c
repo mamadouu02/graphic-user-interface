@@ -33,6 +33,7 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 		uint32_t * premier = (uint32_t *) hw_surface_get_buffer(surface);
 		int largeur = hw_surface_get_size(surface).width;
 		uint32_t couleur = ei_impl_map_rgba(surface, color);
+
 		for (size_t i = 0; i < point_array_size - 1; i++) {
 			int x1 = point_array[i].x;
 			int y1 = point_array[i].y;
@@ -40,68 +41,85 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 			int y2 = point_array[i+1].y;
 			int delta_x = x2 - x1;
 			int delta_y = y2 - y1;
-			int sign_delta_x= delta_x >0?1:-1;
-			int sign_delta_y= delta_y >0?1:-1;
-			if(sign_delta_y==-1){
-				int x_temp=x2;
-				x2=x1;
-				x1=x_temp;
-				int y_temp=y2;
-				y2=y1;
-				y1=y_temp;
-			};
-			if (sign_delta_x==1 && sign_delta_x*delta_x > sign_delta_y*delta_y) {
+			int sign_delta_x = delta_x > 0 ? 1 : -1;
+			int sign_delta_y = delta_y > 0 ? 1 : -1;
+
+			if (sign_delta_y == -1) {
+				int x_temp = x2;
+				x2 = x1;
+				x1 = x_temp;
+				int y_temp = y2;
+				y2 = y1;
+				y1 = y_temp;
+			}
+
+			if (sign_delta_x == 1 && sign_delta_x * delta_x > sign_delta_y * delta_y) {
 				int x = x1;
 				int y = y1;
-				int E=0;
-				while (x!=x2) {
+				int E = 0;
+
+				while (x != x2) {
 					x++;
-					E += sign_delta_y*delta_y;
-					if (2*E > sign_delta_x*delta_x) {
+					E += sign_delta_y * delta_y;
+
+					if (2*E > sign_delta_x * delta_x) {
 						y++;
-						E -= sign_delta_x*delta_x;
-					};
-					*(premier+y*largeur/4+x/4)=couleur;
-				};
-			} else if (sign_delta_x==1 && sign_delta_x*delta_x <= sign_delta_y*delta_y) {
+						E -= sign_delta_x * delta_x;
+					}
+
+					*(premier + y * largeur/4 + x/4) = couleur;
+				}
+
+			} else if (sign_delta_x == 1 && sign_delta_x * delta_x <= sign_delta_y * delta_y) {
 				int x = x1;
 				int y = y1;
-				int E=0;
-				while (y!=y2) {
-					y++;
-					E += sign_delta_x*delta_x;
-					if (2*E > delta_y) {
-						x++;
-						E -= sign_delta_y*delta_y;
-					};
-					*(premier+y*largeur/4+x/4)=couleur;
-				};
-			} else if (sign_delta_x==-1 && sign_delta_x*delta_x > sign_delta_y*delta_y) {
-				int x = x1;
-				int y = y1;
-				int E=0;
-				while (x!=x2) {
-					x--;
-					E += sign_delta_y*delta_y;
-					if (2*E > sign_delta_x*delta_x) {
-						y++;
-						E -= sign_delta_x*delta_x;
-					};
-					*(premier+y*largeur/4+x/4)=couleur;
-				};
-			} else if (sign_delta_x==-1 && sign_delta_x*delta_x <= sign_delta_y*delta_y) {
-				int x = x1;
-				int y = y1;
-				int E=0;
+				int E = 0;
+
 				while (y != y2) {
 					y++;
 					E += sign_delta_x * delta_x;
-					if (2 * E > delta_y) {
+
+					if (2*E > delta_y) {
+						x++;
+						E -= sign_delta_y * delta_y;
+					}
+
+					*(premier + y * largeur/4 + x/4) = couleur;
+				}
+
+			} else if (sign_delta_x == -1 && sign_delta_x * delta_x > sign_delta_y * delta_y) {
+				int x = x1;
+				int y = y1;
+				int E = 0;
+
+				while (x != x2) {
+					x--;
+					E += sign_delta_y * delta_y;
+
+					if (2*E > sign_delta_x * delta_x) {
+						y++;
+						E -= sign_delta_x*delta_x;
+					}
+
+					*(premier + y * largeur/4 + x/4) = couleur;
+				}
+
+			} else if (sign_delta_x == -1 && sign_delta_x * delta_x <= sign_delta_y * delta_y) {
+				int x = x1;
+				int y = y1;
+				int E = 0;
+
+				while (y != y2) {
+					y++;
+					E += sign_delta_x * delta_x;
+
+					if (2*E > delta_y) {
 						x--;
 						E -= sign_delta_y * delta_y;
-					};
-					*(premier+y*largeur/4+x/4)=couleur;
-				};
+					}
+
+					*(premier + y * largeur/4 + x/4) = couleur;
+				}
 			}
 		}
 }
