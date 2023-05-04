@@ -77,12 +77,11 @@ include_directories(${HEADER_DIRS})
 
 # target ei (libei)
 
-#set(LIB_EI_SOURCES
-#     ${SRC_DIR}/un_fichier_source.c
-#     ${SRC_DIR}/un_autre_fichier_source.c
-#)
-#
-#add_library(ei STATIC			${LIB_EI_SOURCES})
+set(LIB_EI_SOURCES
+     ${SRC_DIR}/ei_draw.c
+)
+
+add_library(ei STATIC			${LIB_EI_SOURCES})
 
 # target minimal
 
