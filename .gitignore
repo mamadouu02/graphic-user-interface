@@ -1,7 +1,7 @@
-.idea/
-_macos/
-_win/
-_x11/
-clion/.idea/*
-clion/cmake-build-debug/*
-cmake/*
+.idea
+_macos
+_win
+_x11
+clion/.idea
+clion/cmake-build-debug
+cmake
