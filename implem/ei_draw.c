@@ -94,7 +94,7 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 
 					if (2*E > sign_delta_x * delta_x) {
 						y++;
-						E -= sign_delta_x*delta_x;
+						E -= sign_delta_x * delta_x;
 					}
 
 					*(premier + y * largeur + x) = couleur;
