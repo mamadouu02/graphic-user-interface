@@ -51,74 +51,65 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 				int y_temp = y2;
 				y2 = y1;
 				y1 = y_temp;
+				sign_delta_x = -sign_delta_x;
+				sign_delta_y = 1;
+				delta_x = -delta_x;
+				delta_y = -delta_y;
 			}
 
-			if (sign_delta_x == 1 && sign_delta_x * delta_x > sign_delta_y * delta_y) {
-				int x = x1;
-				int y = y1;
-				int E = 0;
+			int x = x1;
+			int y = y1;
+			int E = 0;
 
+			*(premier + y * largeur + x) = couleur;
+
+			if (sign_delta_x == 1 && delta_x > delta_y) {
 				while (x != x2) {
 					x++;
-					E += sign_delta_y * delta_y;
+					E += delta_y;
 
-					if (2*E > sign_delta_x * delta_x) {
+					if (2*E > delta_x) {
 						y++;
-						E -= sign_delta_x * delta_x;
+						E -= delta_x;
 					}
 
-					*(premier + y * largeur/4 + x/4) = couleur;
+					*(premier + y * largeur + x) = couleur;
 				}
-
-			} else if (sign_delta_x == 1 && sign_delta_x * delta_x <= sign_delta_y * delta_y) {
-				int x = x1;
-				int y = y1;
-				int E = 0;
-
+			} else if (sign_delta_x == 1 && delta_x <= delta_y) {
 				while (y != y2) {
 					y++;
-					E += sign_delta_x * delta_x;
+					E += delta_x;
 
 					if (2*E > delta_y) {
 						x++;
-						E -= sign_delta_y * delta_y;
+						E -=  delta_y;
 					}
 
-					*(premier + y * largeur/4 + x/4) = couleur;
+					*(premier + y * largeur + x) = couleur;
 				}
-
-			} else if (sign_delta_x == -1 && sign_delta_x * delta_x > sign_delta_y * delta_y) {
-				int x = x1;
-				int y = y1;
-				int E = 0;
-
+			} else if (sign_delta_x == -1 && sign_delta_x * delta_x > delta_y) {
 				while (x != x2) {
 					x--;
-					E += sign_delta_y * delta_y;
+					E += delta_y;
 
 					if (2*E > sign_delta_x * delta_x) {
 						y++;
 						E -= sign_delta_x*delta_x;
 					}
 
-					*(premier + y * largeur/4 + x/4) = couleur;
+					*(premier + y * largeur + x) = couleur;
 				}
-
-			} else if (sign_delta_x == -1 && sign_delta_x * delta_x <= sign_delta_y * delta_y) {
-				int x = x1;
-				int y = y1;
-				int E = 0;
-
+			} else if (sign_delta_x == -1 && sign_delta_x * delta_x <= delta_y) {
 				while (y != y2) {
 					y++;
 					E += sign_delta_x * delta_x;
 
 					if (2*E > delta_y) {
 						x--;
-						E -= sign_delta_y * delta_y;
+						E -= delta_y;
 					}
 
-					*(premier + y * largeur/4 + x/4) = couleur;
+					*(premier + y * largeur + x) = couleur;
 				}
 			}
 		}
