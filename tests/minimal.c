@@ -48,6 +48,7 @@ int main(int argc, char* argv[])
 		hw_event_wait_next(&event);
 
 	// Free hardware resources.
+	hw_surface_free(main_window);
 	hw_quit();
 
 	// Terminate program with no error code.

@@ -5,10 +5,21 @@
  *
  */
 
+#include <stdbool.h>
+
 #include "ei_draw.h"
 #include "ei_implementation.h"
 
 
+
+bool test_clipper(int x, int y, int x_clip_min, int x_clip_max, int y_clip_min, int y_clip_max, const ei_rect_t* clipper)
+{
+	if (clipper == NULL) {
+		return true;
+	} else {
+		return (x >= x_clip_min && x <= x_clip_max && y >= y_clip_min && y <= y_clip_max);
+	}
+}
 
 /**
  * \brief	Draws a line that can be made of many line segments.
@@ -168,8 +179,24 @@ void	ei_fill			(ei_surface_t		surface,
 {
 	uint32_t *pix_ptr = (uint32_t*) hw_surface_get_buffer(surface);
 	ei_size_t size = hw_surface_get_size(surface);
-	for (int i = 0; i < size.width * size.height; i++, pix_ptr++) {
-		*pix_ptr = ei_impl_map_rgba(surface, *color);
+
+	if (clipper) {
+		int x_clip_min = clipper->top_left.x;
+		int x_clip_max = x_clip_min + clipper->size.width;
+		int y_clip_min = clipper->top_left.y;
+		int y_clip_max = y_clip_min + clipper->size.height;
+
+		for (int i = 0, x, y; i < size.width * size.height; i++, pix_ptr++) {
+			x = i % size.width;
+			y = i / size.width;
+			if (test_clipper(x, y, x_clip_min, x_clip_max, y_clip_min, y_clip_max, clipper)) {
+				*pix_ptr = ei_impl_map_rgba(surface, *color);
+			}
+		}
+	} else {
+		for (int i = 0; i < size.width * size.height; i++, pix_ptr++) {
+			*pix_ptr = ei_impl_map_rgba(surface, *color);
+		}
 	}
 }
 
