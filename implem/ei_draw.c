@@ -41,9 +41,16 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 				     ei_color_t		color,
 				     const ei_rect_t*	clipper)
 {
+
 		uint32_t * premier = (uint32_t *) hw_surface_get_buffer(surface);
 		int largeur = hw_surface_get_size(surface).width;
 		uint32_t couleur = ei_impl_map_rgba(surface, color);
+
+		int abs_clip_min = (clipper != NULL) ? clipper->top_left.x : 0;
+		int abs_clip_max = (clipper != NULL) ? abs_clip_min+clipper->size.width : 0;
+		int ord_clip_min = (clipper != NULL) ? clipper->top_left.y : 0;
+		int ord_clip_max = (clipper != NULL) ? ord_clip_min+clipper->size.height : 0;
+
 
 		for (size_t i = 0; i < point_array_size - 1; i++) {
 			int x1 = point_array[i].x;
@@ -71,8 +78,9 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 			int x = x1;
 			int y = y1;
 			int E = 0;
-
-			*(premier + y * largeur + x) = couleur;
+			if (test_clipper(x, y, abs_clip_min, abs_clip_max, ord_clip_min, ord_clip_max, clipper)) {
+				*(premier + y * largeur + x) = couleur;
+			}
 
 			if (sign_delta_x == 1 && delta_x > delta_y) {
 				while (x != x2) {
@@ -84,7 +92,9 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 						E -= delta_x;
 					}
 
-					*(premier + y * largeur + x) = couleur;
+					if (test_clipper(x, y, abs_clip_min, abs_clip_max, ord_clip_min, ord_clip_max, clipper)) {
+						*(premier + y * largeur + x) = couleur;
+					}
 				}
 			} else if (sign_delta_x == 1 && delta_x <= delta_y) {
 				while (y != y2) {
@@ -96,7 +106,9 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 						E -=  delta_y;
 					}
 
-					*(premier + y * largeur + x) = couleur;
+					if (test_clipper(x, y, abs_clip_min, abs_clip_max, ord_clip_min, ord_clip_max, clipper)) {
+						*(premier + y * largeur + x) = couleur;
+					}
 				}
 			} else if (sign_delta_x == -1 && sign_delta_x * delta_x > delta_y) {
 				while (x != x2) {
@@ -108,7 +120,9 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 						E -= sign_delta_x * delta_x;
 					}
 
-					*(premier + y * largeur + x) = couleur;
+					if (test_clipper(x, y, abs_clip_min, abs_clip_max, ord_clip_min, ord_clip_max, clipper)) {
+						*(premier + y * largeur + x) = couleur;
+					}
 				}
 			} else if (sign_delta_x == -1 && sign_delta_x * delta_x <= delta_y) {
 				while (y != y2) {
@@ -120,7 +134,9 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 						E -= delta_y;
 					}
 
-					*(premier + y * largeur + x) = couleur;
+					if (test_clipper(x, y, abs_clip_min, abs_clip_max, ord_clip_min, ord_clip_max, clipper)) {
+						*(premier + y * largeur + x) = couleur;
+					}
 				}
 			}
 		}
