@@ -185,10 +185,10 @@ void	ei_draw_polygon		(ei_surface_t		surface,
 			int y_max = (pt1.y < pt2.y) ? pt2.y : pt1.y;
 			ei_cote *nv_cote = malloc(sizeof(ei_cote));
 			*nv_cote = (ei_cote) {y_max, pt_y_min.x, 1 / pente, NULL};
-			if (tc[y_min] == NULL) {
-				tc[y_min] = nv_cote;
+			if (tc[y_min-y_mini] == NULL) {
+				tc[y_min-y_mini] = nv_cote;
 			} else {
-				ei_cote *cote_courant = tc[y_min];
+				ei_cote *cote_courant = tc[y_min-y_mini];
 				while (cote_courant->ptr_cote != NULL) {
 					cote_courant = cote_courant->ptr_cote;
 				}
@@ -200,24 +200,14 @@ void	ei_draw_polygon		(ei_surface_t		surface,
 	int scanline = y_mini;
 	ei_cote *tca = NULL;
 
-	while (scanline < y_mini + tc_size || tca != NULL) {
+	while (scanline <= y_maxi) {
 
-		// Supprimer de TCA les cotes tels que y_max = y
-		ei_cote *pp = NULL;
-		ei_cote *pc = tca;
-		while (pc != NULL) {
-			pp = pc;
-			pc = pc->ptr_cote;
-			if (pc->y_max == scanline) {
-				pp->ptr_cote = pc->ptr_cote;
-				free(pc);
-			}
-		}
+
 
 		// Tri de TCA par abscisse croissant des intersection de côté avec la scanline
-		while (tc[scanline] != NULL) {
-			ei_cote *cote_courant_tc = tc[scanline];
-			tc[scanline] = cote_courant_tc->ptr_cote;
+		while (tc[scanline-y_mini] != NULL) {
+			ei_cote *cote_courant_tc = tc[scanline-y_mini];
+			tc[scanline-y_mini] = cote_courant_tc->ptr_cote;
 			cote_courant_tc->ptr_cote = NULL;
 
 			ei_cote *cote_courant_tca = tca;
@@ -234,28 +224,63 @@ void	ei_draw_polygon		(ei_surface_t		surface,
 					tca=cote_courant_tc;
 				}
 			}
-			while (cote_courant_tca->ptr_cote != NULL && !exit) {
-				if (cote_courant_tca->ptr_cote->x_ymin > cote_courant_tc->x_ymin){
-					exit = true;
-					cote_courant_tc->ptr_cote = cote_courant_tca->ptr_cote;
-					cote_courant_tca->ptr_cote = cote_courant_tc;
-				} else {
-					cote_courant_tca = cote_courant_tca->ptr_cote;
+			else
+				{while (cote_courant_tca->ptr_cote != NULL && !exit) {
+					if (cote_courant_tca->ptr_cote->x_ymin > cote_courant_tc->x_ymin){
+						exit = true;
+						cote_courant_tc->ptr_cote = cote_courant_tca->ptr_cote;
+						cote_courant_tca->ptr_cote = cote_courant_tc;
+					} else {
+						cote_courant_tca = cote_courant_tca->ptr_cote;
+					}
+					}
+					if (!exit) {
+						cote_courant_tca->ptr_cote = cote_courant_tc;
+					}
+
+
 				}
+
+		}
+
+
+		// Supprimer de TCA les cotes tels que y_max = y
+		ei_cote *pp = tca;
+		ei_cote *pc;
+		bool booleen=true;
+		while (tca!=NULL && booleen){
+			if(tca->y_max==scanline){
+				tca=tca->ptr_cote;
+				pp=tca;
 			}
-			if (!exit) {
-				cote_courant_tca->ptr_cote = cote_courant_tc;
+			else{
+				booleen=false;
 			}
 		}
+
+		while (pp != NULL && pp->ptr_cote!=NULL) {
+			pc=pp->ptr_cote;
+			if (pc!=NULL){if (pc->y_max == scanline) {
+					pp->ptr_cote = pc->ptr_cote;
+				}
+				else{
+					pp=pc;
+				}
+
+				}
+
+
+		}
+
 
 
 		// Modification des pixels de l’image sur la scanline, dans les intervalles intérieurs au polygone
 		ei_cote *cote_courant_tca = tca;
 		while (cote_courant_tca != NULL) {
-			int xmin = cote_courant_tca->x_ymin;
-			int xmax = cote_courant_tca->ptr_cote->x_ymin;
-			ei_point_t point1={xmin,scanline};
-			ei_point_t point2={xmax,scanline};
+			float xmin = cote_courant_tca->x_ymin;
+			float xmax = cote_courant_tca->ptr_cote->x_ymin;
+			ei_point_t point1={(int) xmin,scanline};
+			ei_point_t point2={(int) xmax,scanline};
 			ei_point_t point_array_ligne[2] = { point1, point2 };
 			size_t point_array_size_ligne = 2;
 			ei_draw_polyline(surface, point_array_ligne, point_array_size_ligne, color, clipper);
@@ -268,7 +293,7 @@ void	ei_draw_polygon		(ei_surface_t		surface,
 		// Mise à jour les abscisses d’intersections des côtés de TCA avec la nouvelle scanline
 		cote_courant_tca = tca;
 		while (cote_courant_tca != NULL) {
-			cote_courant_tca->x_ymin += (int) cote_courant_tca->inv_pente;
+			cote_courant_tca->x_ymin += cote_courant_tca->inv_pente;
 			cote_courant_tca = cote_courant_tca->ptr_cote;
 		}
 	}

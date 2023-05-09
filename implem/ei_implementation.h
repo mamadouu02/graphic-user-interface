@@ -112,7 +112,7 @@ bool in_clipper(int x, int y, int xc_min, int xc_max, int yc_min, int yc_max, co
  */
 typedef struct ei_cote {
     int y_max;
-    int x_ymin;
+    float x_ymin;
     float inv_pente;
     struct ei_cote *ptr_cote;
 } ei_cote;
