@@ -32,6 +32,8 @@ void test_line(ei_surface_t surface, ei_rect_t* clipper)
  *	algorithm that draws a polyline in each of the possible octants, that is,
  *	in each quadrant with dx>dy (canonical) and dy>dx (steep).
  */
+
+
 void test_octogone(ei_surface_t surface, ei_rect_t* clipper)
 {
 	ei_point_t		pts[9];
@@ -55,10 +57,10 @@ void test_octogone(ei_surface_t surface, ei_rect_t* clipper)
 	}
 
 	/* Draw the shape with a polygon */
-	ei_draw_polygon(surface, pts, sizeof(pts) / sizeof(ei_point_t), (ei_color_t){0, 0, 255, 10}, NULL);
+	ei_draw_polygon(surface, pts, sizeof(pts) / sizeof(ei_point_t), (ei_color_t){0, 0, 255, 10}, clipper);
 
 	/* Draw the shape with polylines */
-	ei_draw_polyline(surface, pts, sizeof(pts) / sizeof(ei_point_t), (ei_color_t){0, 255, 0, 255}, NULL);
+	ei_draw_polyline(surface, pts, sizeof(pts) / sizeof(ei_point_t), (ei_color_t){0, 255, 0, 255}, clipper);
 }
 
 

@@ -78,7 +78,7 @@ include_directories(${HEADER_DIRS})
 # target ei (libei)
 
 set(LIB_EI_SOURCES
-    ${SRC_DIR}/ei_draw.c
+	${SRC_DIR}/ei_draw.c
 	${SRC_DIR}/ei_implementation.c
 )
 
@@ -123,6 +123,11 @@ target_link_libraries(two048		ei ${PLATFORM_LIB_FLAGS})
 
 add_executable(minesweeper		${TEST_DIR}/minesweeper.c)
 target_link_libraries(minesweeper	ei ${PLATFORM_LIB_FLAGS})
+
+# target polygon
+
+add_executable(polygon			${TEST_DIR}/polygon.c)
+target_link_libraries(polygon		ei ${PLATFORM_LIB_FLAGS})
 
 # external_class
 
