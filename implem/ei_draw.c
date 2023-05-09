@@ -187,12 +187,11 @@ void	ei_draw_polygon		(ei_surface_t		surface,
 			if (tc[y_min] == NULL) {
 				tc[y_min] = nv_cote;
 			} else {
-				ei_cote *cote_courant = malloc(sizeof(ei_cote));
-				cote_courant = tc[y_min];
+				ei_cote *cote_courant = tc[y_min];
 				while (cote_courant->ptr_cote != NULL) {
 					cote_courant = cote_courant->ptr_cote;
-					cote_courant->ptr_cote = nv_cote;
 				}
+				cote_courant->ptr_cote = nv_cote;
 			}
 		}
 	}
@@ -220,12 +219,12 @@ void	ei_draw_polygon		(ei_surface_t		surface,
 			tc[scanline] = cote_courant_tc->ptr_cote;
 			cote_courant_tc->ptr_cote = NULL;
 
+			ei_cote *cote_courant_tca = tca;
+			bool exit = false;
 			if (tca == NULL) {
 				tca = cote_courant_tc;
 			}
-			ei_cote *cote_courant_tca = tca;
-			bool exit = false;
-			if (cote_courant_tca->ptr_cote==NULL){
+			else if (cote_courant_tca->ptr_cote==NULL){
 				if (cote_courant_tca->x_ymin<cote_courant_tc->x_ymin){
 					cote_courant_tca->ptr_cote=cote_courant_tc;
 			}
