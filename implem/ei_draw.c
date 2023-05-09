@@ -165,8 +165,9 @@ void	ei_draw_polygon		(ei_surface_t		surface,
 	}
 
 	tc_size = y_maxi - y_mini + 1;
-	ei_cote **tc = calloc(tc_size, sizeof(ei_cote*));
+	ei_cote **tc = calloc(tc_size, sizeof(ei_cote *));
 
+	// Initialisation de tc
 	for (size_t i = 0; i < point_array_size; i++) {
 		ei_point_t pt1, pt2;
 		if (i < point_array_size-1) {
@@ -178,7 +179,7 @@ void	ei_draw_polygon		(ei_surface_t		surface,
 			pt2 = point_array[0];
 		}
 		if (pt1.y != pt2.y) {
-			float pente = (float) (pt2.y - pt1.y) / (float) (pt2.x - pt1.x);
+		 	float pente = (float) (pt2.y - pt1.y) / (float) (pt2.x - pt1.x);
 			int y_min = (pt1.y < pt2.y) ? pt1.y : pt2.y;
 			ei_point_t pt_y_min = (pt1.y < pt2.y) ? pt1 : pt2;
 			int y_max = (pt1.y < pt2.y) ? pt2.y : pt1.y;
