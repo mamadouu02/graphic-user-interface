@@ -29,7 +29,6 @@
 uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color);
 
 
-
 /**
  * \brief	A structure storing the placement parameters of a widget.
  *		You have to define this structure: no suggestion provided.
@@ -92,5 +91,30 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		surface,
 					ei_surface_t		pick_surface,
 					ei_rect_t*		clipper);
+
+/**
+ * @brief	Teste si clipper pointe vers NULL ou si le pixel appartient au clippeur.
+ *
+ * @param	x		Abscisse du pixel.
+ * @param	y		Ordonnée du pixel.
+ * @param	xc_min		Abscisse minimale du clippeur.
+ * @param	xc_max		Abscisse maximale du clippeur.
+ * @param	yc_min		Ordonnée minimale du clippeur.
+ * @param	yc_max		Ordonnée maximale du clippeur.
+ * @param	clipper		Pointeur vers clippeur.
+ *
+ * @return 	true si clipper pointe vers NULL ou si le pixel appartient au clippeur.
+ */
+bool in_clipper(int x, int y, int xc_min, int xc_max, int yc_min, int yc_max, const ei_rect_t *clipper);
+
+/**
+ * @brief	Structure représentant un côté.
+ */
+typedef struct ei_cote {
+    int y_max;
+    int x_ymin;
+    float inv_pente;
+    struct ei_cote *ptr_cote;
+} ei_cote;
 
 #endif

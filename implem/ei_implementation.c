@@ -5,8 +5,7 @@
  *
  */
 
-#include <stdint.h>
-
+#include "ei_implementation.h"
 #include "hw_interface.h"
 #include "ei_types.h"
 #include "ei_widget.h"
@@ -30,12 +29,19 @@ uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color)
 	int ir, ig, ib, ia;
 	uint32_t color_32 = 0;
 	hw_surface_get_channel_indices(surface, &ir, &ig, &ib, &ia);
+
 	for (int i = 0; i < 4; i++) {
-		if (ir == i) color_32 += color.red << 8*i;
-		if (ig == i) color_32 += color.green << 8*i;
-		if (ib == i) color_32 += color.blue << 8*i;
-		if (ia == i) color_32 += color.alpha << 8*i;
+		if (i == ir) {
+			color_32 += color.red << 8*i;
+		} else if (i == ig) {
+			color_32 += color.green << 8*i;
+		} else if (i == ib) {
+			color_32 += color.blue << 8*i;
+		} else {
+			color_32 += color.alpha << 8*i;
+		}
 	}
+	
 	return color_32;
 }
 
@@ -64,3 +70,25 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		surface,
 					ei_surface_t		pick_surface,
 					ei_rect_t*		clipper);
+
+/**
+ * @brief	Teste si clipper pointe vers NULL ou si le pixel appartient au clippeur.
+ *
+ * @param	x		Abscisse du pixel.
+ * @param	y		Ordonnée du pixel.
+ * @param	xc_min	Abscisse minimale du clippeur.
+ * @param	xc_max	Abscisse maximale du clippeur.
+ * @param	yc_min	Ordonnée minimale du clippeur.
+ * @param	yc_max	Ordonnée maximale du clippeur.
+ * @param	clipper		Pointeur vers clippeur.
+ *
+ * @return 	true si clipper pointe vers NULL ou si le pixel appartient au clippeur.
+ */
+bool in_clipper(int x, int y, int xc_min, int xc_max, int yc_min, int yc_max, const ei_rect_t* clipper)
+{
+	if (clipper == NULL) {
+		return true;
+	} else {
+		return x >= xc_min && x <= xc_max && y >= yc_min && y <= yc_max;
+	}
+}

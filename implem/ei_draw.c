@@ -5,21 +5,10 @@
  *
  */
 
-#include <stdbool.h>
-
 #include "ei_draw.h"
 #include "ei_implementation.h"
 
 
-
-bool test_clipper(int x, int y, int x_clip_min, int x_clip_max, int y_clip_min, int y_clip_max, const ei_rect_t* clipper)
-{
-	if (clipper == NULL) {
-		return true;
-	} else {
-		return (x >= x_clip_min && x <= x_clip_max && y >= y_clip_min && y <= y_clip_max);
-	}
-}
 
 /**
  * \brief	Draws a line that can be made of many line segments.
@@ -42,35 +31,39 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 				     const ei_rect_t*	clipper)
 {
 
-		uint32_t * premier = (uint32_t *) hw_surface_get_buffer(surface);
+		uint32_t *premier = (uint32_t*) hw_surface_get_buffer(surface);
 		int largeur = hw_surface_get_size(surface).width;
 		uint32_t couleur = ei_impl_map_rgba(surface, color);
 
-		int abs_clip_min = (clipper != NULL) ? clipper->top_left.x : 0;
-		int abs_clip_max = (clipper != NULL) ? abs_clip_min+clipper->size.width : 0;
-		int ord_clip_min = (clipper != NULL) ? clipper->top_left.y : 0;
-		int ord_clip_max = (clipper != NULL) ? ord_clip_min+clipper->size.height : 0;
-
+		int xc_min = (clipper) ? clipper->top_left.x : 0;
+		int xc_max = (clipper) ? xc_min + clipper->size.width : 0;
+		int yc_min = (clipper) ? clipper->top_left.y : 0;
+		int yc_max = (clipper) ? yc_min + clipper->size.height : 0;
 
 		for (size_t i = 0; i < point_array_size - 1; i++) {
 			int x1 = point_array[i].x;
 			int y1 = point_array[i].y;
 			int x2 = point_array[i+1].x;
 			int y2 = point_array[i+1].y;
+
 			int delta_x = x2 - x1;
 			int delta_y = y2 - y1;
-			int sign_delta_x = delta_x > 0 ? 1 : -1;
-			int sign_delta_y = delta_y > 0 ? 1 : -1;
+
+			int sign_delta_x = (delta_x > 0) ? 1 : -1;
+			int sign_delta_y = (delta_y > 0) ? 1 : -1;
 
 			if (sign_delta_y == -1) {
-				int x_temp = x2;
+				int tmp = x2;
 				x2 = x1;
-				x1 = x_temp;
-				int y_temp = y2;
+				x1 = tmp;
+
+				tmp = y2;
 				y2 = y1;
-				y1 = y_temp;
+				y1 = tmp;
+
 				sign_delta_x = -sign_delta_x;
 				sign_delta_y = 1;
+
 				delta_x = -delta_x;
 				delta_y = -delta_y;
 			}
@@ -78,7 +71,8 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 			int x = x1;
 			int y = y1;
 			int E = 0;
-			if (test_clipper(x, y, abs_clip_min, abs_clip_max, ord_clip_min, ord_clip_max, clipper)) {
+			
+			if (in_clipper(x, y, xc_min, xc_max, yc_min, yc_max, clipper)) {
 				*(premier + y * largeur + x) = couleur;
 			}
 
@@ -92,7 +86,7 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 						E -= delta_x;
 					}
 
-					if (test_clipper(x, y, abs_clip_min, abs_clip_max, ord_clip_min, ord_clip_max, clipper)) {
+					if (in_clipper(x, y, xc_min, xc_max, yc_min, yc_max, clipper)) {
 						*(premier + y * largeur + x) = couleur;
 					}
 				}
@@ -106,7 +100,7 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 						E -=  delta_y;
 					}
 
-					if (test_clipper(x, y, abs_clip_min, abs_clip_max, ord_clip_min, ord_clip_max, clipper)) {
+					if (in_clipper(x, y, xc_min, xc_max, yc_min, yc_max, clipper)) {
 						*(premier + y * largeur + x) = couleur;
 					}
 				}
@@ -120,7 +114,7 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 						E -= sign_delta_x * delta_x;
 					}
 
-					if (test_clipper(x, y, abs_clip_min, abs_clip_max, ord_clip_min, ord_clip_max, clipper)) {
+					if (in_clipper(x, y, xc_min, xc_max, yc_min, yc_max, clipper)) {
 						*(premier + y * largeur + x) = couleur;
 					}
 				}
@@ -134,7 +128,7 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 						E -= delta_y;
 					}
 
-					if (test_clipper(x, y, abs_clip_min, abs_clip_max, ord_clip_min, ord_clip_max, clipper)) {
+					if (in_clipper(x, y, xc_min, xc_max, yc_min, yc_max, clipper)) {
 						*(premier + y * largeur + x) = couleur;
 					}
 				}
@@ -158,7 +152,127 @@ void	ei_draw_polygon		(ei_surface_t		surface,
 					    ei_point_t*		point_array,
 					    size_t			point_array_size,
 					    ei_color_t		color,
-					    const ei_rect_t*	clipper);
+					    const ei_rect_t*	clipper)
+{
+	int tc_size;
+	int y_mini = point_array[0].y;
+	int y_maxi = y_mini;
+
+	for (size_t i = 1; i < point_array_size; i++) {
+		int y = point_array[i].y;
+		y_mini = (y < y_mini) ? y : y_mini;
+		y_maxi = (y > y_maxi) ? y : y_maxi;
+	}
+
+	tc_size = y_maxi - y_mini + 1;
+	ei_cote **tc = calloc(tc_size, sizeof(ei_cote*));
+
+	for (size_t i = 0; i < point_array_size; i++) {
+		ei_point_t pt1, pt2;
+		if (i < point_array_size-1) {
+			pt1 = point_array[i];
+			pt2 = point_array[i + 1];
+		}
+		else{
+			pt1 = point_array[point_array_size-1];
+			pt2 = point_array[0];
+		}
+		if (pt1.y != pt2.y) {
+			float pente = (float) (pt2.y - pt1.y) / (float) (pt2.x - pt1.x);
+			int y_min = (pt1.y < pt2.y) ? pt1.y : pt2.y;
+			ei_point_t pt_y_min = (pt1.y < pt2.y) ? pt1 : pt2;
+			int y_max = (pt1.y < pt2.y) ? pt2.y : pt1.y;
+			ei_cote *nv_cote = malloc(sizeof(ei_cote));
+			*nv_cote = (ei_cote) {y_max, pt_y_min.x, 1 / pente, NULL};
+			if (tc[y_min] == NULL) {
+				tc[y_min] = nv_cote;
+			} else {
+				ei_cote *cote_courant = malloc(sizeof(ei_cote));
+				cote_courant = tc[y_min];
+				while (cote_courant->ptr_cote != NULL) {
+					cote_courant = cote_courant->ptr_cote;
+					cote_courant->ptr_cote = nv_cote;
+				}
+			}
+		}
+	}
+
+	int scanline = y_mini;
+	ei_cote *tca = NULL;
+
+	while (scanline < y_mini + tc_size || tca != NULL) {
+
+		// Supprimer de TCA les cotes tels que y_max = y
+		ei_cote *pp = NULL;
+		ei_cote *pc = tca;
+		while (pc != NULL) {
+			pp = pc;
+			pc = pc->ptr_cote;
+			if (pc->y_max == scanline) {
+				pp->ptr_cote = pc->ptr_cote;
+				free(pc);
+			}
+		}
+
+		// Tri de TCA par abscisse croissant des intersection de côté avec la scanline
+		while (tc[scanline] != NULL) {
+			ei_cote *cote_courant_tc = tc[scanline];
+			tc[scanline] = cote_courant_tc->ptr_cote;
+			cote_courant_tc->ptr_cote = NULL;
+
+			if (tca == NULL) {
+				tca = cote_courant_tc;
+			}
+			ei_cote *cote_courant_tca = tca;
+			bool exit = false;
+			if (cote_courant_tca->ptr_cote==NULL){
+				if (cote_courant_tca->x_ymin<cote_courant_tc->x_ymin){
+					cote_courant_tca->ptr_cote=cote_courant_tc;
+			}
+				else{
+					cote_courant_tc->ptr_cote=cote_courant_tca;
+					tca=cote_courant_tc;
+				}
+			}
+			while (cote_courant_tca->ptr_cote != NULL && !exit) {
+				if (cote_courant_tca->ptr_cote->x_ymin > cote_courant_tc->x_ymin){
+					exit = true;
+					cote_courant_tc->ptr_cote = cote_courant_tca->ptr_cote;
+					cote_courant_tca->ptr_cote = cote_courant_tc;
+				} else {
+					cote_courant_tca = cote_courant_tca->ptr_cote;
+				}
+			}
+			if (!exit) {
+				cote_courant_tca->ptr_cote = cote_courant_tc;
+			}
+		}
+
+
+		// Modification des pixels de l’image sur la scanline, dans les intervalles intérieurs au polygone
+		ei_cote *cote_courant_tca = tca;
+		while (cote_courant_tca != NULL) {
+			int xmin = cote_courant_tca->x_ymin;
+			int xmax = cote_courant_tca->ptr_cote->x_ymin;
+			ei_point_t point1={xmin,scanline};
+			ei_point_t point2={xmax,scanline};
+			ei_point_t point_array_ligne[2] = { point1, point2 };
+			size_t point_array_size_ligne = 2;
+			ei_draw_polyline(surface, point_array_ligne, point_array_size_ligne, color, clipper);
+			cote_courant_tca=cote_courant_tca->ptr_cote->ptr_cote;
+		}
+
+		// Incrémentation de y
+		scanline++;
+
+		// Mise à jour les abscisses d’intersections des côtés de TCA avec la nouvelle scanline
+		cote_courant_tca = tca;
+		while (cote_courant_tca != NULL) {
+			cote_courant_tca->x_ymin += (int) cote_courant_tca->inv_pente;
+			cote_courant_tca = cote_courant_tca->ptr_cote;
+		}
+	}
+}
 
 /**
  * \brief	Draws text by calling \ref hw_text_create_surface.
@@ -193,25 +307,25 @@ void	ei_fill			(ei_surface_t		surface,
 					    const ei_color_t*	color,
 					    const ei_rect_t*	clipper)
 {
-	uint32_t *pix_ptr = (uint32_t*) hw_surface_get_buffer(surface);
+	uint32_t *ptr_pix = (uint32_t*) hw_surface_get_buffer(surface);
 	ei_size_t size = hw_surface_get_size(surface);
 
 	if (clipper) {
-		int x_clip_min = clipper->top_left.x;
-		int x_clip_max = x_clip_min + clipper->size.width;
-		int y_clip_min = clipper->top_left.y;
-		int y_clip_max = y_clip_min + clipper->size.height;
+		int xc_min = clipper->top_left.x;
+		int xc_max = xc_min + clipper->size.width;
+		int yc_min = clipper->top_left.y;
+		int yc_max = yc_min + clipper->size.height;
 
-		for (int i = 0, x, y; i < size.width * size.height; i++, pix_ptr++) {
+		for (int i = 0, x, y; i < size.width * size.height; i++, ptr_pix++) {
 			x = i % size.width;
 			y = i / size.width;
-			if (test_clipper(x, y, x_clip_min, x_clip_max, y_clip_min, y_clip_max, clipper)) {
-				*pix_ptr = ei_impl_map_rgba(surface, *color);
+			if (in_clipper(x, y, xc_min, xc_max, yc_min, yc_max, clipper)) {
+				*ptr_pix = ei_impl_map_rgba(surface, *color);
 			}
 		}
 	} else {
-		for (int i = 0; i < size.width * size.height; i++, pix_ptr++) {
-			*pix_ptr = ei_impl_map_rgba(surface, *color);
+		for (int i = 0; i < size.width * size.height; i++, ptr_pix++) {
+			*ptr_pix = ei_impl_map_rgba(surface, *color);
 		}
 	}
 }

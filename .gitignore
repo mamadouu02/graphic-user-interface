@@ -6,3 +6,4 @@ clion/.idea
 clion/cmake-build-debug
 cmake
 docs
+.vscode

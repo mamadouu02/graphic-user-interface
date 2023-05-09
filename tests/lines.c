@@ -55,7 +55,7 @@ void test_octogone(ei_surface_t surface, ei_rect_t* clipper)
 	}
 
 	/* Draw the shape with a polygon */
-	//ei_draw_polygon(surface, pts, sizeof(pts) / sizeof(ei_point_t), (ei_color_t){0, 0, 255, 10}, clipper);
+	// ei_draw_polygon(surface, pts, sizeof(pts) / sizeof(ei_point_t), (ei_color_t){0, 0, 255, 10}, clipper);
 
 	/* Draw the shape with polylines */
 	ei_draw_polyline(surface, pts, sizeof(pts) / sizeof(ei_point_t), (ei_color_t){0, 255, 0, 255}, clipper);
