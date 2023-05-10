@@ -92,6 +92,17 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		pick_surface,
 					ei_rect_t*		clipper);
 
+
+/**
+ * @brief	Remplis le pixel avec la couleur donnée.
+ *
+ * @param	surface		La surface sur laquelle on dessine.
+ * @param  	color		Couleur du pixel.
+ * @param	pixel		Pixel à remplir.
+ */
+void ei_fill_pixel(ei_surface_t surface, const ei_color_t *color, ei_point_t pixel);
+
+
 /**
  * @brief	Teste si clipper pointe vers NULL ou si le pixel appartient au clippeur.
  *
