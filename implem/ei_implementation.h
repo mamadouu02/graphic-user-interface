@@ -7,6 +7,8 @@
 
 #ifndef EI_IMPLEMENTATION_H
 #define EI_IMPLEMENTATION_H
+#define TOP 0
+#define BOTTOM 1
 
 #include "hw_interface.h"
 #include "ei_types.h"
@@ -156,5 +158,15 @@ void tca_insert(ei_cote_t **tca_ptr, ei_cote_t **tc, int i_scan);
  * @param	y_scan		Ordonnée de la scanline.
  */
 void tca_remove(ei_cote_t **tca_ptr, ei_cote_t **tc, int y_scan);
+
+int ei_octant_array_size(int rayon);
+
+ei_point_t *ei_octant(ei_point_t centre, int rayon, int octant);
+
+int ei_octant_lines_array_size(int rayon);
+
+ei_point_t *ei_octant_lines(ei_point_t centre, int rayon);
+
+ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, int part);
 
 #endif

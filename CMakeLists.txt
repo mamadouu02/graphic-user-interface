@@ -10,7 +10,8 @@ project("ProjetC_IG")
 # Paths
 
 get_filename_component(ROOT_DIR		${CMAKE_CURRENT_LIST_FILE} PATH)
-set(HEADER_DIRS				"${ROOT_DIR}/api")
+set(HEADER_DIRS				"${ROOT_DIR}/api"
+					"${ROOT_DIR}/implem")
 set(TEST_DIR				"${ROOT_DIR}/tests")
 set(DOCS_DIR				"${ROOT_DIR}/docs")
 set(SRC_DIR				"${ROOT_DIR}/implem")
@@ -124,15 +125,20 @@ target_link_libraries(two048		ei ${PLATFORM_LIB_FLAGS})
 add_executable(minesweeper		${TEST_DIR}/minesweeper.c)
 target_link_libraries(minesweeper	ei ${PLATFORM_LIB_FLAGS})
 
-# target polyline
+# target test_polyline
 
-add_executable(polyline			${TEST_DIR}/polyline.c)
-target_link_libraries(polyline		ei ${PLATFORM_LIB_FLAGS})
+add_executable(test_polyline		${TEST_DIR}/test_polyline.c)
+target_link_libraries(test_polyline	ei ${PLATFORM_LIB_FLAGS})
 
-# target polygon
+# target test_polygon
 
-add_executable(polygon			${TEST_DIR}/polygon.c)
-target_link_libraries(polygon		ei ${PLATFORM_LIB_FLAGS})
+add_executable(test_polygon		${TEST_DIR}/test_polygon.c)
+target_link_libraries(test_polygon	ei ${PLATFORM_LIB_FLAGS})
+
+# target test_button
+
+add_executable(test_button		${TEST_DIR}/test_button.c)
+target_link_libraries(test_button	ei ${PLATFORM_LIB_FLAGS})
 
 # external_class
 

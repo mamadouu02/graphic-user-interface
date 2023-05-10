@@ -70,6 +70,19 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		pick_surface,
 					ei_rect_t*		clipper);
 
+void	ei_fill_pixel			(ei_surface_t		surface,
+						  const ei_color_t*	color,
+						  ei_point_t pixel)
+{
+	uint32_t *pix_ptr = (uint32_t*) hw_surface_get_buffer(surface);
+	ei_size_t size = hw_surface_get_size(surface);
+	int width = size.width;
+	uint32_t couleur = ei_impl_map_rgba(surface, *color);
+	int x = pixel.x;
+	int y = pixel.y;
+	pix_ptr[y * width + x] = couleur;
+}
+
 bool in_clipper(int x, int y, int xc_min, int xc_max, int yc_min, int yc_max, const ei_rect_t* clipper)
 {
 	if (clipper == NULL) {
