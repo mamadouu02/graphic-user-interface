@@ -13,6 +13,7 @@
 #include "hw_interface.h"
 #include "ei_types.h"
 #include "ei_widget.h"
+#include "ei_utils.h"
 
 
 
@@ -159,14 +160,39 @@ void tca_insert(ei_cote_t **tca_ptr, ei_cote_t **tc, int i_scan);
  */
 void tca_remove(ei_cote_t **tca_ptr, ei_cote_t **tc, int y_scan);
 
+/**
+ * @brief	Calcule la taille du tableau de points définissant un octant.
+ *
+ * @param	rayon		Rayon de l'octant.
+ *
+ * @return 	La taille du tableau de points.
+ */
 int ei_octant_array_size(int rayon);
 
+/**
+ * @brief	Crée un tableau de points définissant un octant.
+ *
+ * @param	centre		Centre de l'octant.
+ * @param	rayon		Rayon de l'octant.
+ * @param	octant		Numéro d'octant.
+ *
+ * @return 	Le tableau de points définissant l'octant.
+ */
 ei_point_t *ei_octant(ei_point_t centre, int rayon, int octant);
 
 int ei_octant_lines_array_size(int rayon);
 
 ei_point_t *ei_octant_lines(ei_point_t centre, int rayon);
 
-ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, int part);
+/**
+ * @brief	Crée un tableau de points définissant la partie haute ou basse d'un cadre aux bords arrondis.
+ *
+ * @param	rect		Un rectangle.
+ * @param	rayon		Rayon des arrondis.
+ * @param	part		Partie du cardre (TOP ou BOTTOM).
+ *
+ * @return 	Le tableau de points définissant la partie haute ou basse du cadre aux bords arrondis.
+ */
+ei_point_t *ei_half_rounded_frame(ei_rect_t rect, int rayon, int part);
 
 #endif

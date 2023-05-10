@@ -9,6 +9,7 @@
 #include "hw_interface.h"
 #include "ei_types.h"
 #include "ei_widget.h"
+#include "ei_utils.h"
 
 
 /**
@@ -70,9 +71,7 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		pick_surface,
 					ei_rect_t*		clipper);
 
-void	ei_fill_pixel			(ei_surface_t		surface,
-						  const ei_color_t*	color,
-						  ei_point_t pixel)
+void ei_fill_pixel(ei_surface_t surface, const ei_color_t *color, ei_point_t pixel)
 {
 	uint32_t *pix_ptr = (uint32_t*) hw_surface_get_buffer(surface);
 	ei_size_t size = hw_surface_get_size(surface);
@@ -198,47 +197,32 @@ ei_point_t* ei_octant(ei_point_t centre, int rayon, int octant)
 
 	switch (octant) {
 		case 0:
-			sign_x = 1;
-			sign_y = -1;
-			inverse = 0;
+			sign_x = 1, sign_y = -1, inverse = 0; 
 			break;
 		case 1:
-			sign_x = 1;
-			sign_y = -1;
-			inverse = 1;
+			sign_x = 1, sign_y = -1, inverse = 1;
 			break;
 		case 2:
-			sign_x = 1;
-			sign_y = 1;
-			inverse = 1;
+			sign_x = 1, sign_y = 1, inverse = 1;
 			break;
 		case 3:
-			sign_x = 1;
-			sign_y = 1;
-			inverse = 0;
+			sign_x = 1, sign_y = 1, inverse = 0;
 			break;
 		case 4:
-			sign_x = -1;
-			sign_y = 1;
-			inverse = 0;
+			sign_x = -1, sign_y = 1, inverse = 0;
 			break;
 		case 5:
-			sign_x = -1;
-			sign_y = 1;
-			inverse = 1;
+			sign_x = -1, sign_y = 1, inverse = 1;
 			break;
 		case 6:
-			sign_x = -1;
-			sign_y = -1;
-			inverse = 1;
+			sign_x = -1, sign_y = -1, inverse = 1;
 			break;
 		case 7:
-			sign_x = -1;
-			sign_y = -1;
-			inverse = 0;
+			sign_x = -1, sign_y = -1, inverse = 0;
 			break;
 	}
-	if (octant==0 || octant==2 || octant==4 || octant==6) {
+
+	if (octant % 2 == 0) {
 		for (int i = 0; i < tab_size; i++) {
 			tab[i].x = sign_x * ((y - x) * inverse + x) + x_centre;
 			tab[i].y = sign_y * ((y - x) * (1 - inverse) + x) + y_centre;
@@ -249,9 +233,8 @@ ei_point_t* ei_octant(ei_point_t centre, int rayon, int octant)
 			x++;
 			m += 8 * x + 4;
 		}
-	}
-	else{
-		for (int i = tab_size-1; i > -1; i--) {
+	} else {
+		for (int i = tab_size - 1; i > -1; i--) {
 			tab[i].x = sign_x * ((y - x) * inverse + x) + x_centre;
 			tab[i].y = sign_y * ((y - x) * (1 - inverse) + x) + y_centre;
 			if (m > 0) {
@@ -301,7 +284,7 @@ ei_point_t* ei_octant_lines(ei_point_t centre, int rayon)
 		if (m > 0) {
 			y--;
 			m -= 8 * y;
-			tab[i] = (ei_point_t) { x + x_centre,y+1 + y_centre };
+			tab[i] = ei_point(x + x_centre, y+1 + y_centre);
 			i++;
 		}
 		x++;
@@ -311,45 +294,46 @@ ei_point_t* ei_octant_lines(ei_point_t centre, int rayon)
 	return tab;
 }
 
-ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, int part)
+ei_point_t *ei_half_rounded_frame(ei_rect_t rect, int rayon, int part)
 {
 	int x0 = rect.top_left.x;
 	int y0 = rect.top_left.y;
 	int width = rect.size.width;
 	int height = rect.size.height;
+	int h = height / 2;
 
-	ei_point_t pt0 = (ei_point_t) { x0 + width - rayon,y0 + rayon };
-	ei_point_t pt1 = (ei_point_t) { x0 + width - rayon,y0 + height - rayon };
-	ei_point_t pt2 = (ei_point_t) { x0 + rayon,y0 + height - rayon };
-	ei_point_t pt3 = (ei_point_t) { x0 + rayon,y0 + rayon };
+	ei_point_t pt0 = { x0 + width - rayon, y0 + rayon };
+	ei_point_t pt1 = { x0 + width - rayon, y0 + height - rayon };
+	ei_point_t pt2 = { x0 + rayon, y0 + height - rayon };
+	ei_point_t pt3 = { x0 + rayon, y0 + rayon };
 	ei_point_t points[4] = { pt0, pt1, pt2, pt3 };
 
 	int octant_array_size = ei_octant_array_size(rayon);
-	ei_point_t *tab = malloc(sizeof(ei_point_t[4*octant_array_size + 2]));
+	ei_point_t *tab = malloc(sizeof(ei_point_t[4 * octant_array_size + 2]));
 
-	int h = height/2;
-	int count = 0;
-	bool b = true;
-	for (int octant = 1; b; octant++) {
-		if (octant == 8){
-			octant = 0;
-			b = false;
-		}
-		if ((part == TOP && (octant==5 || octant==6 || octant==7 || octant==0)) || (part == BOTTOM && (octant==1 || octant==2 || octant==3 || octant==4))) {
-			ei_point_t *octant_array = ei_octant(points[octant/2], rayon, octant);
-			for (int i = 0; i < octant_array_size; i++) {
-				tab[count * octant_array_size + i] = octant_array[i];
+	switch (part) {
+		case TOP:
+			for (int octant = 5; octant <= 8; octant++) {
+				ei_point_t *octant_array = ei_octant(points[octant % 8 / 2], rayon, octant % 8);
+				for (int i = 0; i < octant_array_size; i++) {
+					tab[(octant - 5) * octant_array_size + i] = octant_array[i];
+				}
+				free(octant_array);
 			}
-			count++;
-		}
-	}
-
-	if (part==TOP) {
-		tab[4*octant_array_size] = (ei_point_t) {x0+width-h,y0+h};
-		tab[4*octant_array_size+1] = (ei_point_t) {x0+h,y0+h};
-	} else {
-		tab[4*octant_array_size] = (ei_point_t) {x0+h,y0+h};
-		tab[4*octant_array_size+1] = (ei_point_t) {x0+width-h,y0+h};
+			tab[4 * octant_array_size] = ei_point(x0 + width - h, y0 + h);
+			tab[4 * octant_array_size + 1] = ei_point(x0 + h, y0 + h);
+			break;
+		case BOTTOM:
+			for (int octant = 1; octant <= 4; octant++) {
+				ei_point_t *octant_array = ei_octant(points[octant / 2], rayon, octant);
+				for (int i = 0; i < octant_array_size; i++) {
+					tab[(octant - 1) * octant_array_size + i] = octant_array[i];
+				}
+				free(octant_array);
+			}
+			tab[4 * octant_array_size] = ei_point(x0 + h, y0 + h);
+			tab[4 * octant_array_size + 1] = ei_point(x0 + width - h, y0 + h);
+			break;
 	}
 
 	return tab;

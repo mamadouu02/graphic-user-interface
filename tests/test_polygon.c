@@ -85,5 +85,6 @@ int main(int argc, char** argv)
 		hw_event_wait_next(&event);
 
 	hw_quit();
+	hw_surface_free(main_window);
 	return (EXIT_SUCCESS);
 }
