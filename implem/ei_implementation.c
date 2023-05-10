@@ -71,24 +71,84 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		pick_surface,
 					ei_rect_t*		clipper);
 
-/**
- * @brief	Teste si clipper pointe vers NULL ou si le pixel appartient au clippeur.
- *
- * @param	x		Abscisse du pixel.
- * @param	y		Ordonnée du pixel.
- * @param	xc_min	Abscisse minimale du clippeur.
- * @param	xc_max	Abscisse maximale du clippeur.
- * @param	yc_min	Ordonnée minimale du clippeur.
- * @param	yc_max	Ordonnée maximale du clippeur.
- * @param	clipper		Pointeur vers clippeur.
- *
- * @return 	true si clipper pointe vers NULL ou si le pixel appartient au clippeur.
- */
 bool in_clipper(int x, int y, int xc_min, int xc_max, int yc_min, int yc_max, const ei_rect_t* clipper)
 {
 	if (clipper == NULL) {
 		return true;
 	} else {
 		return x >= xc_min && x <= xc_max && y >= yc_min && y <= yc_max;
+	}
+}
+
+void tc_init(ei_cote_t **tc, int yp_min, ei_point_t *point_array, size_t point_array_size)
+{
+	for (size_t i = 0; i < point_array_size; i++) {
+		ei_point_t pt1 = point_array[i];
+		ei_point_t pt2 = point_array[(i+1) % point_array_size];
+
+		if (pt1.y != pt2.y) {
+			ei_point_t pt_ymin = (pt1.y < pt2.y) ? pt1 : pt2;
+			int y_min = pt_ymin.y;
+			int y_max = (pt1.y > pt2.y) ? pt1.y : pt2.y;
+		 	float pente = (float) (pt2.y - pt1.y) / (pt2.x - pt1.x);
+			ei_cote_t *nv_cote = malloc(sizeof(ei_cote_t));
+			*nv_cote = (ei_cote_t) { y_max, pt_ymin.x, 1/pente, NULL };
+			int i_scan = y_min - yp_min;
+
+			if (tc[i_scan] == NULL) {
+				tc[i_scan] = nv_cote;
+			} else {
+				ei_cote_t *cote = tc[i_scan];
+				while (cote->suiv != NULL) {
+					cote = cote->suiv;
+				}
+				cote->suiv = nv_cote;
+			}
+		}
+	}
+}
+
+void tca_insert(ei_cote_t **tca_ptr, ei_cote_t **tc, int i_scan)
+{
+	while (tc[i_scan] != NULL) {
+		ei_cote_t *tc_cote = tc[i_scan];
+		tc[i_scan] = tc_cote->suiv;
+		ei_cote_t *tca_cote_prec = NULL;
+		ei_cote_t *tca_cote = *tca_ptr;
+		
+		while (tca_cote != NULL && tc_cote->x_ymin >= tca_cote->x_ymin) {
+			tca_cote_prec = tca_cote;
+			tca_cote = tca_cote->suiv;
+		}
+
+		tc_cote->suiv = tca_cote;
+
+		if (tca_cote_prec) {
+			tca_cote_prec->suiv = tc_cote;
+		} else {
+			*tca_ptr = tc_cote;
+		}
+	}
+}
+
+void tca_remove(ei_cote_t **tca_ptr, ei_cote_t **tc, int y_scan)
+{
+	ei_cote_t *tca_cote_prec = NULL;
+	ei_cote_t *tca_cote = *tca_ptr;
+
+	while (tca_cote != NULL) {
+		if (tca_cote->y_max == y_scan) {
+			tca_cote = tca_cote->suiv;
+			if (tca_cote_prec) {
+				free(tca_cote_prec->suiv);
+				tca_cote_prec->suiv = tca_cote;
+			} else {
+				free(*tca_ptr);
+				*tca_ptr = tca_cote;
+			}
+		} else {
+			tca_cote_prec = tca_cote;
+			tca_cote = tca_cote->suiv;
+		}
 	}
 }

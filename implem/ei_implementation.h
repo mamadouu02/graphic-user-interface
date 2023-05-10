@@ -114,7 +114,36 @@ typedef struct ei_cote {
     int y_max;
     float x_ymin;
     float inv_pente;
-    struct ei_cote *ptr_cote;
-} ei_cote;
+    struct ei_cote *suiv;
+} ei_cote_t;
+
+/**
+ * @brief	Initialise TC avec tous les côtés du polygone en ignorant les côtés horizontaux
+ *
+ * @param	tc			Pointeur vers TC.
+ * @param	yp_min			Ordonnée minimale du polygone.
+ * @param	point_array		Vecteur de points définissant le polygone.
+ * @param	point_array_size	Taille du vecteur de points.
+ */
+void tc_init(ei_cote_t **tc, int yp_min, ei_point_t *point_array, size_t point_array_size);
+
+/**
+ * @brief	Déplace les côtés de TC(y) dans TCA et trie TCA par abscisses croissantes des
+ * 		intersections de côtés avec la scanline.
+ *
+ * @param	tca_ptr		Pointeur vers TCA.
+ * @param	tc		Table des côtés (TC).
+ * @param	i_scan		Index de la scanline dans TC.
+ */
+void tca_insert(ei_cote_t **tca_ptr, ei_cote_t **tc, int i_scan);
+
+/**
+ * @brief	Supprime de TCA les côtés tels que y_max = y_scan.
+ *
+ * @param	tca_ptr		Pointeur vers TCA.
+ * @param	tc		Table des côtés (TC).
+ * @param	y_scan		Ordonnée de la scanline.
+ */
+void tca_remove(ei_cote_t **tca_ptr, ei_cote_t **tc, int y_scan);
 
 #endif

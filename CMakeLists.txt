@@ -124,6 +124,11 @@ target_link_libraries(two048		ei ${PLATFORM_LIB_FLAGS})
 add_executable(minesweeper		${TEST_DIR}/minesweeper.c)
 target_link_libraries(minesweeper	ei ${PLATFORM_LIB_FLAGS})
 
+# target polyline
+
+add_executable(polyline			${TEST_DIR}/polyline.c)
+target_link_libraries(polyline		ei ${PLATFORM_LIB_FLAGS})
+
 # target polygon
 
 add_executable(polygon			${TEST_DIR}/polygon.c)
