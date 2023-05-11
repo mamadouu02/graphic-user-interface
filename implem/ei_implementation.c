@@ -379,3 +379,47 @@ void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_rec
 	free(button);
 }
 
+ei_rect_t rect_intersection(ei_rect_t rect1, ei_rect_t rect2)
+{
+	int x_min, x_max, y_min, y_max, width, height, width_other, height_other;
+
+	if (rect1.top_left.x < rect2.top_left.x) {
+		x_min = rect1.top_left.x;
+		x_max = rect2.top_left.x;
+		width = rect1.size.width;
+		width_other = rect2.size.width;
+	} else {
+		x_min = rect2.top_left.x;
+		x_max = rect1.top_left.x;
+		width = rect2.size.width;
+		width_other = rect1.size.width;
+	}
+
+	if (rect1.top_left.y < rect2.top_left.y) {
+		y_min = rect1.top_left.y;
+		y_max = rect2.top_left.y;
+		height = rect1.size.height;
+		height_other = rect2.size.height;
+	} else {
+		y_min = rect2.top_left.y;
+		y_max = rect1.top_left.y;
+		height = rect2.size.height;
+		height_other = rect1.size.height;
+	}
+
+	int width_final = width_other;
+	int height_final = height_other;
+	if (x_max <= x_min + width && y_max <= y_min + height) {
+		ei_point_t point = ei_point(x_max, y_max);
+		if (x_max + width_other > x_min + width) {
+			width_final = width - (x_max - x_min);
+		}
+		if (y_max + height_other > y_min + height) {
+			height_final = height - (y_max - y_min);
+		}
+		ei_size_t size = ei_size(width_final, height_final);
+		return ei_rect(point, size);
+	} else {
+		return ei_rect(ei_point(0, 0), ei_size(0, 0));
+	}
+}

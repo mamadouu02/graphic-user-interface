@@ -207,13 +207,13 @@ ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, int part);
 void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_rect_t *clipper);
 
 /**
- * @brief	.
+ * @brief	Calcule l'intersection entre deux rectangles.
  *
- * @param	rect1		.
- * @param	rect2		.
+ * @param	rect1		Premier rectangle.
+ * @param	rect2		Second rectangle.
  *
- * @return 	.
+ * @return 	L'intersection entre les deux rectangles si elle est non vide, sinon un rectangle vide.
  */
-ei_rect_t intersection(ei_rect_t rect1, ei_rect_t rect2);
+ei_rect_t rect_intersection(ei_rect_t rect1, ei_rect_t rect2);
 
 #endif
