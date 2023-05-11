@@ -184,15 +184,14 @@ int ei_octant_array_size(int rayon)
 	return tab_size;
 }
 
-ei_point_t* ei_octant(ei_point_t centre, int rayon, int octant)
+ei_point_t* ei_octant(ei_point_t centre, int rayon, int octant, int octant_array_size)
 {
 	int x_centre = centre.x;
 	int y_centre = centre.y;
 	int x = 0;
 	int y = rayon;
 	int m = 5 - 4*rayon;
-	int tab_size = ei_octant_array_size(rayon);
-	ei_point_t *tab = malloc(sizeof(ei_point_t[tab_size]));
+	ei_point_t *tab = malloc(sizeof(ei_point_t[octant_array_size]));
 	int sign_x, sign_y, inverse;
 
 	switch (octant) {
@@ -223,7 +222,7 @@ ei_point_t* ei_octant(ei_point_t centre, int rayon, int octant)
 	}
 
 	if (octant % 2 == 0) {
-		for (int i = 0; i < tab_size; i++) {
+		for (int i = 0; i < octant_array_size; i++) {
 			tab[i].x = sign_x * ((y - x) * inverse + x) + x_centre;
 			tab[i].y = sign_y * ((y - x) * (1 - inverse) + x) + y_centre;
 			if (m > 0) {
@@ -234,7 +233,7 @@ ei_point_t* ei_octant(ei_point_t centre, int rayon, int octant)
 			m += 8 * x + 4;
 		}
 	} else {
-		for (int i = tab_size - 1; i > -1; i--) {
+		for (int i = octant_array_size - 1; i > -1; i--) {
 			tab[i].x = sign_x * ((y - x) * inverse + x) + x_centre;
 			tab[i].y = sign_y * ((y - x) * (1 - inverse) + x) + y_centre;
 			if (m > 0) {
@@ -294,7 +293,7 @@ ei_point_t* ei_octant_lines(ei_point_t centre, int rayon)
 	return tab;
 }
 
-ei_point_t *ei_half_rounded_frame(ei_rect_t rect, int rayon, int part)
+ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, int part)
 {
 	int x0 = rect.top_left.x;
 	int y0 = rect.top_left.y;
@@ -309,32 +308,73 @@ ei_point_t *ei_half_rounded_frame(ei_rect_t rect, int rayon, int part)
 	ei_point_t points[4] = { pt0, pt1, pt2, pt3 };
 
 	int octant_array_size = ei_octant_array_size(rayon);
-	ei_point_t *tab = malloc(sizeof(ei_point_t[4 * octant_array_size + 2]));
+	ei_point_t *tab;
 
-	switch (part) {
-		case TOP:
+	if (part == TOTAL) {
+		tab = malloc(sizeof(ei_point_t[8 * octant_array_size]));
+		for (int octant = 0; octant < 8; octant++) {
+			ei_point_t *octant_array = ei_octant(points[octant / 2], rayon, octant, octant_array_size);
+			for (int i = 0; i < octant_array_size; i++) {
+				tab[octant * octant_array_size + i] = octant_array[i];
+			}
+			free(octant_array);
+		}
+	} else {
+		tab = malloc(sizeof(ei_point_t[4 * octant_array_size + 2]));
+		if (part == TOP) {
 			for (int octant = 5; octant <= 8; octant++) {
-				ei_point_t *octant_array = ei_octant(points[octant % 8 / 2], rayon, octant % 8);
+				ei_point_t *octant_array = ei_octant(points[octant % 8 / 2], rayon, octant % 8, octant_array_size);
 				for (int i = 0; i < octant_array_size; i++) {
 					tab[(octant - 5) * octant_array_size + i] = octant_array[i];
 				}
 				free(octant_array);
 			}
-			tab[4 * octant_array_size] = ei_point(x0 + width - h, y0 + h);
-			tab[4 * octant_array_size + 1] = ei_point(x0 + h, y0 + h);
-			break;
-		case BOTTOM:
+		} else {
 			for (int octant = 1; octant <= 4; octant++) {
-				ei_point_t *octant_array = ei_octant(points[octant / 2], rayon, octant);
+				ei_point_t *octant_array = ei_octant(points[octant / 2], rayon, octant, octant_array_size);
 				for (int i = 0; i < octant_array_size; i++) {
 					tab[(octant - 1) * octant_array_size + i] = octant_array[i];
 				}
 				free(octant_array);
 			}
-			tab[4 * octant_array_size] = ei_point(x0 + h, y0 + h);
-			tab[4 * octant_array_size + 1] = ei_point(x0 + width - h, y0 + h);
-			break;
+		}
+		tab[4 * octant_array_size] = ei_point(x0 + (width-2*h)*part + h, y0 + h);
+		tab[4 * octant_array_size + 1] = ei_point(x0 - (width-2*h)*(part-1) + h, y0 + h);
 	}
 
 	return tab;
+}
+
+void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_rect_t *clipper)
+{
+	int rayon = rect.size.height / 6;
+
+	unsigned char red = (color.red * 1.1 > 255) ? 255 : color.red * 1.1;
+	unsigned char green = (color.green * 1.1 > 255) ? 255 : color.green * 1.1;
+	unsigned char blue = (color.blue * 1.1 > 255) ? 255 : color.blue * 1.1;
+	ei_color_t light_color = { red, green, blue, color.alpha };
+	ei_color_t dark_color = { color.red / 1.1, color.green / 1.1 , color.blue / 1.1, color.alpha };
+
+	int octant_array_size = ei_octant_array_size(rayon);
+
+	ei_point_t *top = ei_rounded_frame(rect, rayon, TOP);
+	ei_draw_polygon(surface, top, 4 * octant_array_size + 2, light_color, NULL);
+	free(top);
+
+	ei_point_t *bottom = ei_rounded_frame(rect, rayon, BOTTOM);
+	ei_draw_polygon(surface, bottom, 4 * octant_array_size + 2, dark_color, NULL);
+	free(bottom);
+
+	float scale = 0.04;
+	rect.top_left.x += scale * rect.size.height;
+	rect.top_left.y += scale * rect.size.height;
+	int width = rect.size.width - 2 * rect.size.height * scale;
+	int height = rect.size.height * (1 - 2*scale);
+
+	rect = ei_rect(rect.top_left, ei_size(width, height));
+	rayon = rect.size.height / 6;
+	octant_array_size = ei_octant_array_size(rayon);
+	ei_point_t *button = ei_rounded_frame(rect, rayon, TOTAL);
+	ei_draw_polygon(surface, button, 8 * octant_array_size, color, NULL);
+	free(button);
 }

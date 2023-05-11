@@ -15,12 +15,12 @@
  */
 void test_circle(ei_surface_t surface, ei_point_t centre, int rayon, ei_color_t color, ei_rect_t* clipper)
 {
-	int tab_size = ei_octant_array_size(rayon);
+	int octant_array_size = ei_octant_array_size(rayon);
 
 	for (int octant = 0; octant < 8; octant++) {
-		ei_point_t *pts = ei_octant(centre, rayon, octant);
+		ei_point_t *pts = ei_octant(centre, rayon, octant, octant_array_size);
 		
-		for (int i = 0; i < tab_size; i++) {
+		for (int i = 0; i < octant_array_size; i++) {
 			ei_fill_pixel(surface, &color, pts[i]);
 		}
 
@@ -41,9 +41,13 @@ int main(int argc, char** argv)
 	ei_color_t		white		= { 255, 255, 255, 255 };
 	ei_color_t		black		= { 0, 0, 0, 255 };
 	ei_color_t		red		= { 255, 0, 0, 255 };
+	ei_color_t		belle		= { 164, 122, 84, 255 };
 	ei_color_t		dark_red	= { 100, 0, 0, 0 };
+	ei_color_t 		beige		= { 236, 207, 202, 0 };
 	ei_event_t		event;
 	ei_rect_t 		rect 		= ei_rect(ei_point(100, 100), ei_size(300, 200));
+	ei_rect_t 		rect_copy 		= ei_rect(ei_point(100, 350), ei_size(300, 200));
+	ei_rect_t 		rect_button 		= ei_rect(ei_point(450, 100), ei_size(300, 200));
 
 	hw_init();
 
@@ -62,13 +66,29 @@ int main(int argc, char** argv)
 	/* Draw button. */
 	int octant_array_size = ei_octant_array_size(rayon);
 
-	ei_point_t *top = ei_half_rounded_frame(rect, rayon, TOP);
+	ei_point_t *top = ei_rounded_frame(rect, rayon, TOP);
 	ei_draw_polygon(main_window, top, 4 * octant_array_size + 2, red, NULL);
 	free(top);
 
-	ei_point_t *bottom = ei_half_rounded_frame(rect, rayon, BOTTOM);
+	ei_point_t *bottom = ei_rounded_frame(rect, rayon, BOTTOM);
 	ei_draw_polygon(main_window, bottom, 4 * octant_array_size + 2, dark_red, NULL);
 	free(bottom);
+
+	draw_button(main_window, rect_button, beige, NULL);
+
+	/* Copy surface */
+	ei_copy_surface(main_window, &rect_copy, main_window, &rect_button, false);
+
+	/* Draw text */
+	ei_point_t where = ei_point(555,180);
+	ei_const_string_t text = "Button";
+
+	int font_size = rect.size.height/6;
+	ei_const_string_t font_filename = "misc/font.ttf";
+	ei_font_t font = hw_text_font_create(font_filename,ei_style_normal, font_size);
+
+	ei_draw_text(main_window, &where, text, font, belle, NULL);
+	hw_text_font_free(font);
 
 	/* Unlock and update the surface. */
 	hw_surface_unlock(main_window);

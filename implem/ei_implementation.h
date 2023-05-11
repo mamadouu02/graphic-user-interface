@@ -7,8 +7,9 @@
 
 #ifndef EI_IMPLEMENTATION_H
 #define EI_IMPLEMENTATION_H
-#define TOP 0
-#define BOTTOM 1
+#define BOTTOM 0
+#define TOP 1
+#define TOTAL 2
 
 #include "hw_interface.h"
 #include "ei_types.h"
@@ -97,9 +98,9 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 
 
 /**
- * @brief	Remplis le pixel avec la couleur donnée.
+ * @brief	Remplit le pixel avec la couleur donnée.
  *
- * @param	surface		La surface sur laquelle on dessine.
+ * @param	surface		Surface de dessin.
  * @param  	color		Couleur du pixel.
  * @param	pixel		Pixel à remplir.
  */
@@ -178,7 +179,7 @@ int ei_octant_array_size(int rayon);
  *
  * @return 	Le tableau de points définissant l'octant.
  */
-ei_point_t *ei_octant(ei_point_t centre, int rayon, int octant);
+ei_point_t *ei_octant(ei_point_t centre, int rayon, int octant, int octant_array_size);
 
 int ei_octant_lines_array_size(int rayon);
 
@@ -187,12 +188,22 @@ ei_point_t *ei_octant_lines(ei_point_t centre, int rayon);
 /**
  * @brief	Crée un tableau de points définissant la partie haute ou basse d'un cadre aux bords arrondis.
  *
- * @param	rect		Un rectangle.
+ * @param	rect		Rectangle définissant la zone de dessin.
  * @param	rayon		Rayon des arrondis.
- * @param	part		Partie du cardre (TOP ou BOTTOM).
+ * @param	part		Partie du cadre (TOP ou BOTTOM).
  *
  * @return 	Le tableau de points définissant la partie haute ou basse du cadre aux bords arrondis.
  */
-ei_point_t *ei_half_rounded_frame(ei_rect_t rect, int rayon, int part);
+ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, int part);
+
+/**
+ * @brief	Dessine un bouton.
+ *
+ * @param	surface		Surface de dessin.
+ * @param  	rect		Rectangle définissant la zone de dessin.
+ * @param	color		Couleur du bouton.
+ * @param	clipper		Clippeur.
+ */
+void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_rect_t *clipper);
 
 #endif
