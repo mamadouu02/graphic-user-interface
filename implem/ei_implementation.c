@@ -356,11 +356,9 @@ void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_rec
 	ei_color_t dark_color = { color.red / 1.1, color.green / 1.1 , color.blue / 1.1, color.alpha };
 
 	int octant_array_size = ei_octant_array_size(rayon);
-
 	ei_point_t *top = ei_rounded_frame(rect, rayon, TOP);
 	ei_draw_polygon(surface, top, 4 * octant_array_size + 2, light_color, clipper);
 	free(top);
-
 	ei_point_t *bottom = ei_rounded_frame(rect, rayon, BOTTOM);
 	ei_draw_polygon(surface, bottom, 4 * octant_array_size + 2, dark_color, clipper);
 	free(bottom);
@@ -369,10 +367,10 @@ void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_rec
 	rect.top_left.x += scale * rect.size.height;
 	rect.top_left.y += scale * rect.size.height;
 	int width = rect.size.width - 2 * rect.size.height * scale;
-	int height = rect.size.height * (1 - 2*scale);
-
+	int height = rect.size.height * (1 - 2 * scale);
 	rect = ei_rect(rect.top_left, ei_size(width, height));
 	rayon = rect.size.height / 6;
+
 	octant_array_size = ei_octant_array_size(rayon);
 	ei_point_t *button = ei_rounded_frame(rect, rayon, TOTAL);
 	ei_draw_polygon(surface, button, 8 * octant_array_size, color, clipper);
@@ -381,43 +379,49 @@ void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_rec
 
 ei_rect_t rect_intersection(ei_rect_t rect1, ei_rect_t rect2)
 {
-	int x_min, x_max, y_min, y_max, width, height, width_other, height_other;
+	int x_min, x_max, width_min, width_max;
 
 	if (rect1.top_left.x < rect2.top_left.x) {
 		x_min = rect1.top_left.x;
 		x_max = rect2.top_left.x;
-		width = rect1.size.width;
-		width_other = rect2.size.width;
+		width_min = rect1.size.width;
+		width_max = rect2.size.width;
 	} else {
 		x_min = rect2.top_left.x;
 		x_max = rect1.top_left.x;
-		width = rect2.size.width;
-		width_other = rect1.size.width;
+		width_min = rect2.size.width;
+		width_max = rect1.size.width;
 	}
+
+	int y_min, y_max, height_min, height_max;
 
 	if (rect1.top_left.y < rect2.top_left.y) {
 		y_min = rect1.top_left.y;
 		y_max = rect2.top_left.y;
-		height = rect1.size.height;
-		height_other = rect2.size.height;
+		height_min = rect1.size.height;
+		height_max = rect2.size.height;
 	} else {
 		y_min = rect2.top_left.y;
 		y_max = rect1.top_left.y;
-		height = rect2.size.height;
-		height_other = rect1.size.height;
+		height_min = rect2.size.height;
+		height_max = rect1.size.height;
 	}
 
-	int width_final = width_other;
-	int height_final = height_other;
-	if (x_max <= x_min + width && y_max <= y_min + height) {
+	if (x_max <= x_min + width_min && y_max <= y_min + height_min) {
 		ei_point_t point = ei_point(x_max, y_max);
-		if (x_max + width_other > x_min + width) {
-			width_final = width - (x_max - x_min);
+		int width = width_max;
+		int height = height_max;
+
+		if (x_max + width_max > x_min + width_min) {
+			width = width_min - (x_max - x_min);
 		}
-		if (y_max + height_other > y_min + height) {
-			height_final = height - (y_max - y_min);
+
+		if (y_max + height_max > y_min + height_min) {
+			height = height_min - (y_max - y_min);
 		}
-		ei_size_t size = ei_size(width_final, height_final);
+
+		ei_size_t size = ei_size(width, height);
+
 		return ei_rect(point, size);
 	} else {
 		return ei_rect(ei_point(0, 0), ei_size(0, 0));

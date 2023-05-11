@@ -5,10 +5,7 @@
  *
  */
 
-#ifndef EI_APPLICATION_H
-#define EI_APPLICATION_H
-
-
+#include "ei_application.h"
 #include "ei_types.h"
 #include "ei_widgetclass.h"
 
@@ -75,9 +72,3 @@ ei_widget_t ei_app_root_widget(void);
  * @return 			The surface of the root window.
  */
 ei_surface_t ei_app_root_surface(void);
-
-
-
-
-#endif
-

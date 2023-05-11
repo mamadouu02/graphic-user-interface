@@ -230,14 +230,15 @@ void	ei_draw_text		(ei_surface_t		surface,
 	int width_text_copy = rect_copy.size.width;
 	ei_point_t top_left_text = rect_copy.top_left;
 
-	int height_text, width_text;
+	int height_text = 0;
+	int width_text = 0;
 
 	if (clipper != NULL) {
 //		int height_clipper = clipper->size.height;
 //		int width_clipper = clipper->size.width;
 		ei_point_t top_left_clipper = clipper->top_left;
 
-		if (top_left_text.x>=5) {
+		if (top_left_text.x >= 5) {
 			height_text = (top_left_text.y + height_text_copy < top_left_clipper.y) ? \
                                                 top_left_text.y + height_text_copy : top_left_clipper.y;
 			height_text -= top_left_text.y;

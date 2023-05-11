@@ -37,8 +37,8 @@ void test_circle(ei_surface_t surface, ei_point_t centre, int rayon, ei_color_t 
 int main(int argc, char** argv)
 {
 	ei_size_t		win_size	= ei_size(800, 600);
-	ei_surface_t	main_window = NULL;
-	ei_surface_t	second_window = NULL;
+	ei_surface_t		main_window 	= NULL;
+//	ei_surface_t		second_window 	= NULL;
 	ei_color_t		white		= { 255, 255, 255, 255 };
 	ei_color_t		black		= { 0, 0, 0, 255 };
 	ei_color_t		red		= { 255, 0, 0, 255 };
@@ -47,11 +47,11 @@ int main(int argc, char** argv)
 	ei_color_t 		beige		= { 236, 207, 202, 0 };
 	ei_event_t		event;
 	ei_rect_t 		rect 		= ei_rect(ei_point(100, 100), ei_size(300, 200));
-//	ei_rect_t 		rect_petit 		= ei_rect(ei_point(100, 299), ei_size(300, 200));
-//	ei_rect_t 		rect_copy 		= ei_rect(ei_point(100, 350), ei_size(300, 200));
-	ei_rect_t 		rect_button 		= ei_rect(ei_point(450, 100), ei_size(300, 200));
+//	ei_rect_t 		rect_petit 	= ei_rect(ei_point(100, 299), ei_size(300, 200));
+//	ei_rect_t 		rect_copy 	= ei_rect(ei_point(100, 350), ei_size(300, 200));
+	ei_rect_t 		rect_button 	= ei_rect(ei_point(450, 100), ei_size(300, 200));
 //	ei_rect_t		clipper		= ei_rect(ei_point(555, 180), ei_size(15, 15));;
-	ei_rect_t		*clipper		= NULL;
+	ei_rect_t		*clipper	= NULL;
 	hw_init();
 
 	main_window = hw_create_window(win_size, false);
@@ -108,8 +108,8 @@ int main(int argc, char** argv)
 	/* Unlock and update the surface. */
 	hw_surface_unlock(main_window);
 	hw_surface_update_rects(main_window, NULL);
-	hw_surface_unlock(second_window);
-	hw_surface_update_rects(second_window, NULL);
+//	hw_surface_unlock(second_window);
+//	hw_surface_update_rects(second_window, NULL);
 
 	/* Wait for a character on command line. */
 	event.type = ei_ev_none;
@@ -118,7 +118,7 @@ int main(int argc, char** argv)
 
 	hw_quit();
 	hw_surface_free(main_window);
-	hw_surface_free(second_window);
+//	hw_surface_free(second_window);
 
 	return (EXIT_SUCCESS);
 }
