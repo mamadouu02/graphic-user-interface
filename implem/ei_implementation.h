@@ -206,4 +206,14 @@ ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, int part);
  */
 void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_rect_t *clipper);
 
+/**
+ * @brief	.
+ *
+ * @param	rect1		.
+ * @param	rect2		.
+ *
+ * @return 	.
+ */
+ei_rect_t intersection(ei_rect_t rect1, ei_rect_t rect2);
+
 #endif

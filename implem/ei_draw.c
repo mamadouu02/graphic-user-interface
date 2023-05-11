@@ -224,6 +224,7 @@ void	ei_draw_text		(ei_surface_t		surface,
 {
 	ei_surface_t surface_copy = hw_text_create_surface(text, font, color);
 	ei_rect_t rect_copy = hw_surface_get_rect(surface_copy);
+
 	int height_text_copy = rect_copy.size.height;
 	int width_text_copy = rect_copy.size.width;
 	ei_point_t top_left_text = rect_copy.top_left;
@@ -231,16 +232,18 @@ void	ei_draw_text		(ei_surface_t		surface,
 	int height_text, width_text;
 
 	if (clipper != NULL) {
-		int height_clipper = clipper->size.height;
-		int width_clipper = clipper->size.width;
+//		int height_clipper = clipper->size.height;
+//		int width_clipper = clipper->size.width;
 		ei_point_t top_left_clipper = clipper->top_left;
 
-		height_text = (top_left_text.y + height_text_copy < top_left_clipper.y + height_clipper)? \
-						top_left_text.y + height_text_copy : top_left_clipper.y + height_clipper;
-		height_text -= top_left_text.y;
-		width_text = (top_left_text.x + width_text_copy < top_left_clipper.x + width_clipper)? \
-						top_left_text.x + width_text_copy : top_left_clipper.x + width_clipper;
-		width_text -= top_left_text.x;
+		if (top_left_text.x>=5) {
+			height_text = (top_left_text.y + height_text_copy < top_left_clipper.y) ? \
+                                                top_left_text.y + height_text_copy : top_left_clipper.y;
+			height_text -= top_left_text.y;
+			width_text = (top_left_text.x + width_text_copy < top_left_clipper.x) ? \
+                                                top_left_text.x + width_text_copy : top_left_clipper.x;
+			width_text -= top_left_text.x;
+		}
 	} else {
 		height_text = height_text_copy;
 		width_text = width_text_copy;
@@ -338,6 +341,9 @@ int	ei_copy_surface		(ei_surface_t		destination,
 				if (alpha) {
 					int ir, ig, ib, ia;
 					hw_surface_get_channel_indices(destination, &ir, &ig, &ib, &ia);
+					if (ia == -1) {
+						ia = 6 - ir - ig - ib;
+					}
 					uint8_t pa = pix_ptr_src[4 * (y * size_surface_src.width + (top_left_x_src + top_left_y_src * size_surface_src.width) + x) + ia];
 					uint8_t pr = pix_ptr_src[4 * (y * size_surface_src.width + (top_left_x_src + top_left_y_src * size_surface_src.width) + x) + ir];
 					uint8_t pg = pix_ptr_src[4 * (y * size_surface_src.width + (top_left_x_src + top_left_y_src * size_surface_src.width) + x) + ig];

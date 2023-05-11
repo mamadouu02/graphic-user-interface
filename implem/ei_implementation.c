@@ -358,11 +358,11 @@ void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_rec
 	int octant_array_size = ei_octant_array_size(rayon);
 
 	ei_point_t *top = ei_rounded_frame(rect, rayon, TOP);
-	ei_draw_polygon(surface, top, 4 * octant_array_size + 2, light_color, NULL);
+	ei_draw_polygon(surface, top, 4 * octant_array_size + 2, light_color, clipper);
 	free(top);
 
 	ei_point_t *bottom = ei_rounded_frame(rect, rayon, BOTTOM);
-	ei_draw_polygon(surface, bottom, 4 * octant_array_size + 2, dark_color, NULL);
+	ei_draw_polygon(surface, bottom, 4 * octant_array_size + 2, dark_color, clipper);
 	free(bottom);
 
 	float scale = 0.04;
@@ -375,6 +375,7 @@ void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_rec
 	rayon = rect.size.height / 6;
 	octant_array_size = ei_octant_array_size(rayon);
 	ei_point_t *button = ei_rounded_frame(rect, rayon, TOTAL);
-	ei_draw_polygon(surface, button, 8 * octant_array_size, color, NULL);
+	ei_draw_polygon(surface, button, 8 * octant_array_size, color, clipper);
 	free(button);
 }
+
