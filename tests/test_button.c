@@ -38,7 +38,7 @@ int main(int argc, char** argv)
 {
 	ei_size_t		win_size	= ei_size(800, 600);
 	ei_surface_t		main_window 	= NULL;
-//	ei_surface_t		second_window 	= NULL;
+	ei_surface_t		second_window 	= NULL;
 	ei_color_t		white		= { 255, 255, 255, 255 };
 	ei_color_t		black		= { 0, 0, 0, 255 };
 	ei_color_t		red		= { 255, 0, 0, 255 };
@@ -48,17 +48,17 @@ int main(int argc, char** argv)
 	ei_event_t		event;
 	ei_rect_t 		rect 		= ei_rect(ei_point(100, 100), ei_size(300, 200));
 //	ei_rect_t 		rect_petit 	= ei_rect(ei_point(100, 299), ei_size(300, 200));
-//	ei_rect_t 		rect_copy 	= ei_rect(ei_point(100, 350), ei_size(300, 200));
+	ei_rect_t 		rect_copy 	= ei_rect(ei_point(150, 150), ei_size(200, 100));
 	ei_rect_t 		rect_button 	= ei_rect(ei_point(450, 100), ei_size(300, 200));
-	ei_rect_t		clipper		= ei_rect(ei_point(555, 180), ei_size(50, 30));;
+	ei_rect_t		clipper		= ei_rect(ei_point(555, 180), ei_size(50, 30));
 //	ei_rect_t		*clipper	= NULL;
 	hw_init();
 
 	main_window = hw_create_window(win_size, false);
-//	second_window = hw_create_window(win_size, false);
+	second_window = hw_create_window(win_size, false);
 	/* Lock the drawing surface, paint it white. */
 	hw_surface_lock	(main_window);
-//	hw_surface_lock	(second_window);
+	hw_surface_lock	(second_window);
 
 	ei_point_t centre = { 600, 400 };
 	int rayon = 50;
@@ -72,14 +72,14 @@ int main(int argc, char** argv)
 	int octant_array_size = ei_octant_array_size(rayon);
 
 	ei_point_t *top = ei_rounded_frame(rect, rayon, TOP);
-	ei_draw_polygon(main_window, top, 4 * octant_array_size + 2, red, &clipper);
+	ei_draw_polygon(main_window, top, 4 * octant_array_size + 2, red, NULL);
 	free(top);
 
 	ei_point_t *bottom = ei_rounded_frame(rect, rayon, BOTTOM);
-	ei_draw_polygon(main_window, bottom, 4 * octant_array_size + 2, dark_red, &clipper);
+	ei_draw_polygon(main_window, bottom, 4 * octant_array_size + 2, dark_red, NULL);
 	free(bottom);
 
-	draw_button(main_window, rect_button, beige, &clipper);
+	draw_button(main_window, rect_button, beige, NULL);
 
 	/* Test intersection */
 //	ei_rect_t rect_total = ei_rect(ei_point(0, 0), win_size);
@@ -92,7 +92,7 @@ int main(int argc, char** argv)
 //	ei_draw_polygon(second_window, point_array, 4, red, NULL);
 
 	/* Copy surface */
-//	ei_copy_surface(second_window, &rect_petit, main_window,&rect , false);
+	ei_copy_surface(second_window, &rect_copy, main_window,&rect , false);
 
 	/* Draw text */
 	ei_point_t where = ei_point(555,180);
@@ -102,14 +102,14 @@ int main(int argc, char** argv)
 	ei_const_string_t font_filename = "misc/font.ttf";
 	ei_font_t font = hw_text_font_create(font_filename,ei_style_normal, font_size);
 
-	ei_draw_text(main_window, &where, text, font, belle, &clipper);
+	ei_draw_text(main_window, &where, text, font, belle, NULL);
 	hw_text_font_free(font);
 
 	/* Unlock and update the surface. */
 	hw_surface_unlock(main_window);
 	hw_surface_update_rects(main_window, NULL);
-//	hw_surface_unlock(second_window);
-//	hw_surface_update_rects(second_window, NULL);
+	hw_surface_unlock(second_window);
+	hw_surface_update_rects(second_window, NULL);
 
 	/* Wait for a character on command line. */
 	event.type = ei_ev_none;
@@ -118,7 +118,7 @@ int main(int argc, char** argv)
 
 	hw_quit();
 	hw_surface_free(main_window);
-//	hw_surface_free(second_window);
+	hw_surface_free(second_window);
 
 	return (EXIT_SUCCESS);
 }
