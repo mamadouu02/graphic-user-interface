@@ -39,9 +39,11 @@ void ei_app_quit_request(void)
 ei_widget_t ei_app_root_widget(void)
 {
     /* A implémenter */
+    return 0;
 }
 
 ei_surface_t ei_app_root_surface(void)
 {
     /* A implémenter */
+    return 0;
 }
