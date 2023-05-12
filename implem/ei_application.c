@@ -8,12 +8,26 @@
 #include "ei_application.h"
 #include "ei_types.h"
 #include "ei_widgetclass.h"
+#include "ei_classes.h"
 
 
 
 void ei_app_create(ei_size_t main_window_size, bool fullscreen)
 {
-    /* A implémenter */
+	hw_init();
+
+	ei_widgetclass_t frame;
+	frame.allocfunc = &frame_allocfunction;
+	frame.releasefunc = &frame_releasefunc;
+	frame.drawfunc = &frame_drawfunc;
+	frame.setdefaultsfunc = &frame_setdefaultsfunc;
+
+	ei_widgetclass_register(&frame);
+
+	ei_surface_t main_window = hw_create_window(main_window_size, fullscreen);
+	ei_surface_t offscreen = hw_surface_create(main_window, main_window_size, false);
+	hw_surface_free(main_window);
+	hw_surface_free(offscreen);
 }
 
 void ei_app_free(void)
@@ -23,7 +37,13 @@ void ei_app_free(void)
 
 void ei_app_run(void)
 {
-    /* A implémenter */
+	int c;
+
+	do {
+		c = getchar();
+	} while (c != '\n');
+
+	ei_app_quit_request();
 }
 
 void ei_app_invalidate_rect(const ei_rect_t* rect)

@@ -251,6 +251,9 @@ int	ei_copy_surface		(ei_surface_t		destination,
 		rect_src = ei_rect(ei_point(0, 0), size_surface_src);
 		rect_dst = *dst_rect;
 	} else {
+		if (dst_rect->size.width != src_rect->size.width || dst_rect->size.height != src_rect->size.height) {
+			return EXIT_FAILURE;
+		}
 		rect_src = *src_rect;
 		rect_dst = *dst_rect;
 	}

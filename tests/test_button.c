@@ -48,7 +48,6 @@ int main(int argc, char** argv)
 	ei_event_t		event;
 	ei_rect_t 		rect 		= ei_rect(ei_point(100, 100), ei_size(300, 200));
 //	ei_rect_t 		rect_petit 	= ei_rect(ei_point(100, 299), ei_size(300, 200));
-	ei_rect_t 		rect_copy 	= ei_rect(ei_point(150, 150), ei_size(200, 100));
 	ei_rect_t 		rect_button 	= ei_rect(ei_point(450, 100), ei_size(300, 200));
 	ei_rect_t		clipper		= ei_rect(ei_point(555, 180), ei_size(50, 30));
 //	ei_rect_t		*clipper	= NULL;
@@ -92,7 +91,7 @@ int main(int argc, char** argv)
 //	ei_draw_polygon(second_window, point_array, 4, red, NULL);
 
 	/* Copy surface */
-	ei_copy_surface(second_window, &rect_copy, main_window,&rect , false);
+	ei_copy_surface(second_window, &rect, main_window,&rect , false);
 
 	/* Draw text */
 	ei_point_t where = ei_point(555,180);

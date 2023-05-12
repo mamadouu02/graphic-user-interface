@@ -79,9 +79,14 @@ include_directories(${HEADER_DIRS})
 # target ei (libei)
 
 set(LIB_EI_SOURCES
+	${SRC_DIR}/ei_application.c
+	${SRC_DIR}/ei_classes.c
 	${SRC_DIR}/ei_draw.c
 	${SRC_DIR}/ei_implementation.c
-	${SRC_DIR}/ei_application.c
+	${SRC_DIR}/ei_widget_attributes.c
+	${SRC_DIR}/ei_widget_configure.c
+	${SRC_DIR}/ei_widget.c
+	${SRC_DIR}/ei_widgetclass.c
 )
 
 add_library(ei STATIC			${LIB_EI_SOURCES})
@@ -145,7 +150,6 @@ target_link_libraries(test_button	ei ${PLATFORM_LIB_FLAGS})
 
 add_executable(external_class		${TEST_DIR}/external_class.c)
 target_link_libraries(external_class	ei ${PLATFORM_LIB_FLAGS} ${EXTCLASS})
-
 
 # target to build the documentation
 
