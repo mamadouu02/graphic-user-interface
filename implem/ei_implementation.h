@@ -216,4 +216,21 @@ void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_rec
  */
 ei_rect_t rect_intersection(ei_rect_t rect1, ei_rect_t rect2);
 
+/**
+ * @brief	Copie le rectangle source dans la surface de destination à la position du rectangle de destination.
+ *
+ * @param	destination		Surface de destination.
+ * @param	dst_rect		Rectangle de destination sur lequel faut copier le rectangle src_rect.
+ * @param	source			Surface source.
+ * @param	src_rect		Rectangle à copier.
+ * @param	alpha			Paramètre de transparence.
+ *
+ */
+
+void	ei_copy_rect		(ei_surface_t		destination,
+					 const ei_rect_t*	dst_rect,
+					 ei_surface_t		source,
+					 const ei_rect_t*	src_rect,
+					 bool			alpha);
+
 #endif

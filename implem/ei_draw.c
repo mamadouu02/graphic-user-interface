@@ -183,39 +183,23 @@ void	ei_draw_text		(ei_surface_t		surface,
 					 ei_color_t		color,
 					 const ei_rect_t*	clipper)
 {
-	ei_surface_t surface_cop = hw_text_create_surface(text, font, color);
-	ei_surface_t surface_copy = hw_create_window(hw_surface_get_size(surface_cop),false);
-	ei_rect_t rect_copy = hw_surface_get_rect(surface_cop);
+	ei_surface_t surface_copy = hw_text_create_surface(text, font, color);
+	ei_rect_t rect_copy = hw_surface_get_rect(surface_copy);
 
 	int height_text_copy = rect_copy.size.height;
 	int width_text_copy = rect_copy.size.width;
-	ei_point_t top_left_text = rect_copy.top_left;
 
-	int height_text = 0;
-	int width_text = 0;
-
+	ei_rect_t rect_text = ei_rect(*where, ei_size(width_text_copy, height_text_copy));
 	if (clipper != NULL) {
-//		int height_clipper = clipper->size.height;
-//		int width_clipper = clipper->size.width;
-		ei_point_t top_left_clipper = clipper->top_left;
-
-		if (top_left_text.x >= 5) {
-			height_text = (top_left_text.y + height_text_copy < top_left_clipper.y) ? \
-                                                top_left_text.y + height_text_copy : top_left_clipper.y;
-			height_text -= top_left_text.y;
-			width_text = (top_left_text.x + width_text_copy < top_left_clipper.x) ? \
-                                                top_left_text.x + width_text_copy : top_left_clipper.x;
-			width_text -= top_left_text.x;
-		}
-	} else {
-		height_text = height_text_copy;
-		width_text = width_text_copy;
+		rect_text = rect_intersection(rect_text, *clipper);
 	}
 
-	ei_rect_t rect_text = ei_rect(*where, ei_size(width_text, height_text));
+	hw_surface_lock(surface_copy);
 
-	ei_copy_surface(surface_copy, &rect_text, surface_cop, &rect_copy, true);
-	hw_surface_free(surface_cop);
+	ei_copy_rect(surface, &rect_text, surface_copy, &rect_copy, true);
+
+	hw_surface_unlock(surface_copy);
+	hw_surface_free(surface_copy);
 }
 
 void	ei_fill			(ei_surface_t		surface,
