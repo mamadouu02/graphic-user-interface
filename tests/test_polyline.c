@@ -9,7 +9,10 @@
 #include "ei_event.h"
 
 
-
+/* test_star_morocco
+ *
+ *	Draws a star in the middle of the screen.
+ */
 void test_star_morocco(ei_surface_t surface, ei_rect_t* clipper)
 {
 	ei_point_t		pts[6];
@@ -87,9 +90,11 @@ int main(int argc, char** argv)
 	/* Lock the drawing surface, paint it white. */
 	hw_surface_lock	(main_window);
 	ei_fill		(main_window, &white, NULL);
+
+	/* Fill the flag in red. */
 	ei_fill(main_window, &color, clipper_ptr);
 
-	/* Draw polylines. */
+	/* Draw the moroccan star. */
 	test_star_morocco(main_window, clipper_ptr);
 
 	/* Unlock and update the surface. */
