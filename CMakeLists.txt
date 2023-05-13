@@ -80,7 +80,7 @@ include_directories(${HEADER_DIRS})
 
 set(LIB_EI_SOURCES
 	${SRC_DIR}/ei_application.c
-	${SRC_DIR}/ei_classes.c
+	${SRC_DIR}/ei_class.c
 	${SRC_DIR}/ei_draw.c
 	${SRC_DIR}/ei_implementation.c
 	${SRC_DIR}/ei_widget_attributes.c

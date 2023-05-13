@@ -7,9 +7,6 @@
 
 #ifndef EI_IMPLEMENTATION_H
 #define EI_IMPLEMENTATION_H
-#define BOTTOM 0
-#define TOP 1
-#define TOTAL 2
 
 #include "hw_interface.h"
 #include "ei_types.h"
@@ -98,7 +95,7 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 
 
 /**
- * @brief	Remplit le pixel avec la couleur donnée.
+ * @brief	Remplit un pixel avec une couleur donnée.
  *
  * @param	surface		Surface de dessin.
  * @param  	color		Couleur du pixel.
@@ -179,22 +176,31 @@ int ei_octant_array_size(int rayon);
  *
  * @return 	Le tableau de points définissant l'octant.
  */
-ei_point_t *ei_octant(ei_point_t centre, int rayon, int octant, int octant_array_size);
+ei_point_t *ei_octant_array(ei_point_t centre, int rayon, int octant, int octant_array_size);
 
 int ei_octant_lines_array_size(int rayon);
 
-ei_point_t *ei_octant_lines(ei_point_t centre, int rayon);
+ei_point_t *ei_octant_lines_array(ei_point_t centre, int rayon);
+
+/**
+ * @brief	Identifies one part of a frame.
+ */
+typedef enum {
+	ei_frame_bottom,
+	ei_frame_top,
+	ei_frame_total
+} ei_frame_part_t;
 
 /**
  * @brief	Crée un tableau de points définissant la partie haute ou basse d'un cadre aux bords arrondis.
  *
  * @param	rect		Rectangle définissant la zone de dessin.
  * @param	rayon		Rayon des arrondis.
- * @param	part		Partie du cadre (TOP ou BOTTOM).
+ * @param	part		Partie du cadre (top, bottom ou total).
  *
  * @return 	Le tableau de points définissant la partie haute ou basse du cadre aux bords arrondis.
  */
-ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, int part);
+ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, ei_frame_part_t part);
 
 /**
  * @brief	Dessine un bouton.
@@ -219,18 +225,17 @@ ei_rect_t rect_intersection(ei_rect_t rect1, ei_rect_t rect2);
 /**
  * @brief	Copie le rectangle source dans la surface de destination à la position du rectangle de destination.
  *
- * @param	destination		Surface de destination.
- * @param	dst_rect		Rectangle de destination sur lequel faut copier le rectangle src_rect.
- * @param	source			Surface source.
- * @param	src_rect		Rectangle à copier.
- * @param	alpha			Paramètre de transparence.
+ * @param	destination	Surface de destination.
+ * @param	dst_rect	Rectangle de destination sur lequel faut copier le rectangle src_rect.
+ * @param	source		Surface source.
+ * @param	src_rect	Rectangle à copier.
+ * @param	alpha		Paramètre de transparence.
  *
  */
-
-void	ei_copy_rect		(ei_surface_t		destination,
-					 const ei_rect_t*	dst_rect,
-					 ei_surface_t		source,
-					 const ei_rect_t*	src_rect,
-					 bool			alpha);
+void	ei_copy_rect	(ei_surface_t		destination,
+			const ei_rect_t*	dst_rect,
+			ei_surface_t		source,
+			const ei_rect_t*	src_rect,
+			bool			alpha);
 
 #endif

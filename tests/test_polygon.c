@@ -82,7 +82,7 @@ void test_circle(ei_surface_t surface, ei_point_t centre, int rayon, ei_color_t 
 	int tour = 0;
 
 	for (int octant = 0; octant < 8; octant++) {
-		ei_point_t *pts = ei_octant(centre, rayon, octant, octant_array_size);
+		ei_point_t *pts = ei_octant_array(centre, rayon, octant, octant_array_size);
 
 		for (int i = tour*octant_array_size ; i < (tour+1)*octant_array_size; i++) {
 			circle[i] = pts[i - tour*octant_array_size];

@@ -11,19 +11,23 @@
 
 
 void	ei_draw_polyline	(ei_surface_t		surface,
-				     ei_point_t*		point_array,
-				     size_t			point_array_size,
-				     ei_color_t		color,
-				     const ei_rect_t*	clipper)
+				ei_point_t*		point_array,
+				size_t			point_array_size,
+				ei_color_t		color,
+				const ei_rect_t*	clipper)
 {
 	uint32_t *premier = (uint32_t*) hw_surface_get_buffer(surface);
 	int largeur = hw_surface_get_size(surface).width;
 	uint32_t couleur = ei_impl_map_rgba(surface, color);
 
-	int xc_min = (clipper) ? clipper->top_left.x : 0;
-	int xc_max = (clipper) ? xc_min + clipper->size.width : 0;
-	int yc_min = (clipper) ? clipper->top_left.y : 0;
-	int yc_max = (clipper) ? yc_min + clipper->size.height : 0;
+	int xc_min, xc_max, yc_min, yc_max;
+
+	if (clipper) {
+		xc_min = clipper->top_left.x;
+		xc_max = xc_min + clipper->size.width;
+		yc_min = clipper->top_left.y;
+		yc_max = yc_min + clipper->size.height;
+	}
 
 	for (size_t i = 0; i < point_array_size - 1; i++) {
 		int x1 = point_array[i].x;
@@ -122,10 +126,10 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 }
 
 void	ei_draw_polygon		(ei_surface_t		surface,
-					    ei_point_t*		point_array,
-					    size_t			point_array_size,
-					    ei_color_t		color,
-					    const ei_rect_t*	clipper)
+				ei_point_t*		point_array,
+				size_t			point_array_size,
+				ei_color_t		color,
+				const ei_rect_t*	clipper)
 {
 	// Initialisation de TC
 	int yp_min = point_array[0].y;
@@ -176,12 +180,12 @@ void	ei_draw_polygon		(ei_surface_t		surface,
 	free(tc);
 }
 
-void	ei_draw_text		(ei_surface_t		surface,
-					 const ei_point_t*	where,
-					 ei_const_string_t	text,
-					 ei_font_t		font,
-					 ei_color_t		color,
-					 const ei_rect_t*	clipper)
+void	ei_draw_text	(ei_surface_t		surface,
+			const ei_point_t*	where,
+			ei_const_string_t	text,
+			ei_font_t		font,
+			ei_color_t		color,
+			const ei_rect_t*	clipper)
 {
 	ei_surface_t surface_copy = hw_text_create_surface(text, font, color);
 	ei_rect_t rect_copy = hw_surface_get_rect(surface_copy);
@@ -190,6 +194,7 @@ void	ei_draw_text		(ei_surface_t		surface,
 	int width_text_copy = rect_copy.size.width;
 
 	ei_rect_t rect_text = ei_rect(*where, ei_size(width_text_copy, height_text_copy));
+
 	if (clipper != NULL) {
 		rect_text = rect_intersection(rect_text, *clipper);
 	}
@@ -202,9 +207,9 @@ void	ei_draw_text		(ei_surface_t		surface,
 	hw_surface_free(surface_copy);
 }
 
-void	ei_fill			(ei_surface_t		surface,
-					    const ei_color_t*	color,
-					    const ei_rect_t*	clipper)
+void	ei_fill		(ei_surface_t		surface,
+			const ei_color_t*	color,
+			const ei_rect_t*	clipper)
 {
 	uint32_t *pix_ptr = (uint32_t*) hw_surface_get_buffer(surface);
 	ei_size_t size = hw_surface_get_size(surface);
@@ -230,10 +235,10 @@ void	ei_fill			(ei_surface_t		surface,
 }
 
 int	ei_copy_surface		(ei_surface_t		destination,
-					   const ei_rect_t*	dst_rect,
-					   ei_surface_t		source,
-					   const ei_rect_t*	src_rect,
-					   bool			alpha)
+				const ei_rect_t*	dst_rect,
+				ei_surface_t		source,
+				const ei_rect_t*	src_rect,
+				bool			alpha)
 {
 	uint8_t *pix_ptr_src = hw_surface_get_buffer(source);
 	uint8_t *pix_ptr_dst = hw_surface_get_buffer(destination);
@@ -261,29 +266,34 @@ int	ei_copy_surface		(ei_surface_t		destination,
 	ei_rect_t inter = rect_intersection(rect_src, rect_dst);
 	int height_rect = inter.size.height;
 	int width_rect = inter.size.width;
-	int top_left_x_rect = inter.top_left.x;
-	int top_left_y_rect = inter.top_left.y;
+	int x_rect = inter.top_left.x;
+	int y_rect = inter.top_left.y;
 
-	if (size_surface_src.width == size_surface_dst.width && size_surface_src.height == size_surface_dst.height) {
+	int width_src = size_surface_src.width;
+	int height_src = size_surface_src.height;
+	int width_dst = size_surface_dst.width;
+	int height_dst = size_surface_dst.height;
+
+	if (width_src == width_dst && height_src == height_dst) {
 		for (int y = 0; y < height_rect; y++) {
 			for (int x = 0; x < width_rect + 1; x++) {
 				if (alpha) {
 					int ir, ig, ib, ia;
 					hw_surface_get_channel_indices(destination, &ir, &ig, &ib, &ia);
 					ia = (ia == -1) ? 6 - ir - ig - ib : ia;
-					uint8_t pa = pix_ptr_src[4 * (y * size_surface_src.width + (top_left_x_rect + top_left_y_rect * size_surface_src.width) + x) + ia];
-					uint8_t pr = pix_ptr_src[4 * (y * size_surface_src.width + (top_left_x_rect + top_left_y_rect * size_surface_src.width) + x) + ir];
-					uint8_t pg = pix_ptr_src[4 * (y * size_surface_src.width + (top_left_x_rect + top_left_y_rect * size_surface_src.width) + x) + ig];
-					uint8_t pb = pix_ptr_src[4 * (y * size_surface_src.width + (top_left_x_rect + top_left_y_rect * size_surface_src.width) + x) + ib];
-					uint8_t sr = pix_ptr_dst[4 * (y * size_surface_dst.width + (top_left_x_rect + top_left_y_rect * size_surface_dst.width) + x) + ir];
-					uint8_t sg = pix_ptr_dst[4 * (y * size_surface_dst.width + (top_left_x_rect + top_left_y_rect * size_surface_dst.width) + x) + ig];
-					uint8_t sb = pix_ptr_dst[4 * (y * size_surface_dst.width + (top_left_x_rect + top_left_y_rect * size_surface_dst.width) + x) + ib];
-					pix_ptr_dst[4 * (y * size_surface_dst.width + (top_left_x_rect + top_left_y_rect * size_surface_dst.width) + x) + ir] = (pa * pr + (255 - pa) * sr)/255;
-					pix_ptr_dst[4 * (y * size_surface_dst.width + (top_left_x_rect + top_left_y_rect * size_surface_dst.width) + x) + ig] = (pa * pg + (255 - pa) * sg)/255;
-					pix_ptr_dst[4 * (y * size_surface_dst.width + (top_left_x_rect + top_left_y_rect * size_surface_dst.width) + x) + ib] = (pa * pb + (255 - pa) * sb)/255;
+					uint8_t pa = pix_ptr_src[4 * (y * width_src + (x_rect + y_rect * width_src) + x) + ia];
+					uint8_t pr = pix_ptr_src[4 * (y * width_src + (x_rect + y_rect * width_src) + x) + ir];
+					uint8_t pg = pix_ptr_src[4 * (y * width_src + (x_rect + y_rect * width_src) + x) + ig];
+					uint8_t pb = pix_ptr_src[4 * (y * width_src + (x_rect + y_rect * width_src) + x) + ib];
+					uint8_t sr = pix_ptr_dst[4 * (y * width_dst + (x_rect + y_rect * width_dst) + x) + ir];
+					uint8_t sg = pix_ptr_dst[4 * (y * width_dst + (x_rect + y_rect * width_dst) + x) + ig];
+					uint8_t sb = pix_ptr_dst[4 * (y * width_dst + (x_rect + y_rect * width_dst) + x) + ib];
+					pix_ptr_dst[4 * (y * width_dst + (x_rect + y_rect * width_dst) + x) + ir] = (pa * pr + (255 - pa) * sr)/255;
+					pix_ptr_dst[4 * (y * width_dst + (x_rect + y_rect * width_dst) + x) + ig] = (pa * pg + (255 - pa) * sg)/255;
+					pix_ptr_dst[4 * (y * width_dst + (x_rect + y_rect * width_dst) + x) + ib] = (pa * pb + (255 - pa) * sb)/255;
 				} else {
 					for (int i = 0; i < 4; i++) {
-						pix_ptr_dst[4 * (y * size_surface_dst.width + (top_left_x_rect + top_left_y_rect * size_surface_dst.width) + x) + i] = pix_ptr_src[4 * (y * size_surface_src.width + (top_left_x_rect + top_left_y_rect * size_surface_src.width) + x) + i];
+						pix_ptr_dst[4 * (y * width_dst + (x_rect + y_rect * width_dst) + x) + i] = pix_ptr_src[4 * (y * width_src + (x_rect + y_rect * width_src) + x) + i];
 					}
 				}
 			}

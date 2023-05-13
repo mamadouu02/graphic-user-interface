@@ -1,23 +1,25 @@
 /**
- * @file	ei_classes.h
+ * @file	ei_class.h
  *
- * @brief 	...
+ * @brief 	Classes definitions.
  *
  */
 
-#ifndef EI_CLASSES_H
-#define EI_CLASSES_H
+#ifndef EI_CLASS_H
+#define EI_CLASS_H
 
 #include "ei_implementation.h"
 
-ei_widget_t 	frame_allocfunction 	(void);
-void 		frame_releasefunc 	(ei_widget_t widget);
-void 		frame_drawfunc 		(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper);
-void 		frame_setdefaultsfunc 	(ei_widget_t widget);
+ei_widget_t frame_allocfunction(void);
+
+void frame_releasefunc(ei_widget_t widget);
+
+void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper);
+
+void frame_setdefaultsfunc(ei_widget_t widget);
 
 typedef struct ei_impl_frame_t {
     ei_impl_widget_t 	widget;
-
     ei_size_t		*requested_size;
     const ei_color_t	*color;
     int			*border_width;
@@ -33,7 +35,6 @@ typedef struct ei_impl_frame_t {
 
 typedef struct ei_impl_button_t {
     ei_impl_widget_t	widget;
-
     ei_size_t		*requested_size;
     const ei_color_t	*color;
     int			*border_width;
@@ -52,7 +53,6 @@ typedef struct ei_impl_button_t {
 
 typedef struct ei_impl_toplevel_t {
     ei_impl_widget_t	widget;
-
     ei_size_t 	 	*requested_size;
     ei_color_t		*color;
     int 		*border_width;

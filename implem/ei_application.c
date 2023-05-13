@@ -6,9 +6,7 @@
  */
 
 #include "ei_application.h"
-#include "ei_types.h"
-#include "ei_widgetclass.h"
-#include "ei_classes.h"
+#include "ei_class.h"
 
 
 

@@ -1,11 +1,11 @@
 /**
  * @file	ei_classes.c
  *
- * @brief 	...
+ * @brief 	Classes definitions.
  *
  */
 
-#include "ei_classes.h"
+#include "ei_class.h"
 
 ei_widget_t frame_allocfunction(void)
 {
@@ -15,9 +15,9 @@ ei_widget_t frame_allocfunction(void)
 
 void frame_releasefunc(ei_widget_t widget)
 {
-	ei_impl_frame_t* frame = (ei_impl_frame_t*) widget;
+	ei_impl_frame_t *frame = (ei_impl_frame_t *) widget;
 	free(frame->requested_size);
-	free((void*) frame->color);
+	free((void *) frame->color);
 	free(frame->border_width);
 	free(frame->relief);
 	free(frame->text);
@@ -32,8 +32,9 @@ void frame_releasefunc(ei_widget_t widget)
 void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
 {
 	ei_widget_t child = widget;
+
 	while (child != NULL) {
-		ei_impl_frame_t* frame = (ei_impl_frame_t*) widget;
+		ei_impl_frame_t* frame = (ei_impl_frame_t *) widget;
 
 		ei_rect_t final_location = rect_intersection(widget->screen_location, *clipper);
 		ei_draw_text(surface, &final_location.top_left, (ei_const_string_t) frame->text, frame->text_font, *(frame->text_color), clipper);
@@ -47,7 +48,7 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
 
 void frame_setdefaultsfunc(ei_widget_t widget)
 {
-	ei_impl_frame_t* frame = (ei_impl_frame_t*) widget;
+	ei_impl_frame_t *frame = (ei_impl_frame_t *) widget;
 	frame->requested_size = NULL;
 	frame->color = &ei_default_background_color;
 	frame->border_width = NULL;

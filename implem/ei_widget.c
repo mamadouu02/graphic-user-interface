@@ -6,6 +6,7 @@
  */
 
 #include "ei_widget.h"
+#include "ei_class.h"
 
 ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, ei_user_param_t user_data, ei_widget_destructor_t destructor)
 {
@@ -36,7 +37,6 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, e
 void ei_widget_destroy (ei_widget_t widget)
 {
         /* A implémenter */
-        return 0;
 }
 
 bool ei_widget_is_displayed (ei_widget_t widget)
@@ -45,7 +45,7 @@ bool ei_widget_is_displayed (ei_widget_t widget)
         return 0;
 }
 
-ei_widget_t ei_widget_pick (ei_point_t* where);
+ei_widget_t ei_widget_pick (ei_point_t* where)
 {
         /* A implémenter */
         return 0;

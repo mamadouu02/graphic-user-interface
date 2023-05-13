@@ -18,7 +18,7 @@ void test_circle(ei_surface_t surface, ei_point_t centre, int rayon, ei_color_t 
 	int octant_array_size = ei_octant_array_size(rayon);
 
 	for (int octant = 0; octant < 8; octant++) {
-		ei_point_t *pts = ei_octant(centre, rayon, octant, octant_array_size);
+		ei_point_t *pts = ei_octant_array(centre, rayon, octant, octant_array_size);
 		
 		for (int i = 0; i < octant_array_size; i++) {
 			ei_fill_pixel(surface, &color, pts[i]);
@@ -70,11 +70,11 @@ int main(int argc, char** argv)
 	/* Draw button. */
 	int octant_array_size = ei_octant_array_size(rayon);
 
-	ei_point_t *top = ei_rounded_frame(rect, rayon, TOP);
+	ei_point_t *top = ei_rounded_frame(rect, rayon, ei_frame_top);
 	ei_draw_polygon(main_window, top, 4 * octant_array_size + 2, red, NULL);
 	free(top);
 
-	ei_point_t *bottom = ei_rounded_frame(rect, rayon, BOTTOM);
+	ei_point_t *bottom = ei_rounded_frame(rect, rayon, ei_frame_bottom);
 	ei_draw_polygon(main_window, bottom, 4 * octant_array_size + 2, dark_red, NULL);
 	free(bottom);
 
@@ -84,9 +84,9 @@ int main(int argc, char** argv)
 //	ei_rect_t rect_total = ei_rect(ei_point(0, 0), win_size);
 //	ei_rect_t inter = rect_intersection(rect_total, rect);
 //	ei_point_t top_left = inter.top_left;
-//	ei_point_t top_right = (ei_point_t) {top_left.x+inter.size.width, top_left.y};
-//	ei_point_t bottom_left = (ei_point_t) {top_left.x, top_left.y + inter.size.height};
-//	ei_point_t bottom_right = (ei_point_t) {top_left.x + inter.size.width, top_left.y + inter.size.height};
+//	ei_point_t top_right = { top_left.x + inter.size.width, top_left.y };
+//	ei_point_t bottom_left = { top_left.x, top_left.y + inter.size.height };
+//	ei_point_t bottom_right = { top_left.x + inter.size.width, top_left.y + inter.size.height };
 //	ei_point_t point_array[4] = { top_left, top_right, bottom_right, bottom_left };
 //	ei_draw_polygon(second_window, point_array, 4, red, NULL);
 
@@ -99,7 +99,7 @@ int main(int argc, char** argv)
 
 	int font_size = rect.size.height/6;
 	ei_const_string_t font_filename = "misc/font.ttf";
-	ei_font_t font = hw_text_font_create(font_filename,ei_style_normal, font_size);
+	ei_font_t font = hw_text_font_create(font_filename, ei_style_normal, font_size);
 
 	ei_draw_text(main_window, &where, text, font, belle, NULL);
 	hw_text_font_free(font);
