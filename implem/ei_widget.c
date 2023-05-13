@@ -36,16 +36,15 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, e
 
 void ei_widget_destroy (ei_widget_t widget)
 {
-        ei_widget_t child = widget;
-		ei_widget_t next_sibling = widget->next_sibling;
-		while (child != NULL) {
-			while (next_sibling != NULL) {
-				next_sibling = next_sibling->next_sibling;
-			}
-			child = child->children_head;
-			next_sibling = child;
-		}
-
+        // ei_widget_t child = widget;
+	// 	ei_widget_t next_sibling = widget->next_sibling;
+	// 	while (child != NULL) {
+	// 		while (next_sibling != NULL) {
+	// 			next_sibling = next_sibling->next_sibling;
+	// 		}
+	// 		child = child->children_head;
+	// 		next_sibling = child;
+	// 	}
 }
 
 bool ei_widget_is_displayed (ei_widget_t widget)

@@ -30,24 +30,19 @@ void ei_app_free(void)
 
 void ei_app_run(void)
 {
-	int c;
+	getchar();
+	// ei_widget_t child = root;
 
-	do {
-		c = getchar();
-//		ei_widget_t child = root;
-//
-//		while (child != NULL){
-//			ei_widget_t sibling = child;
-//			child->wclass->drawfunc;
-//
-//			while (sibling != NULL){
-//				sibling->wclass->drawfunc;
-//				sibling = sibling->next_sibling;
-//			}
-//			child = child->children_head;
-//		}
-	} while (c != '\n');
-	ei_app_quit_request();
+	// while (child != NULL){
+	// 	ei_widget_t sibling = child;
+	// 	child->wclass->drawfunc;
+
+	// 	while (sibling != NULL){
+	// 		sibling->wclass->drawfunc;
+	// 		sibling = sibling->next_sibling;
+	// 	}
+	// 	child = child->children_head;
+	// }
 }
 
 void ei_app_invalidate_rect(const ei_rect_t* rect)
