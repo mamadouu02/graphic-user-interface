@@ -56,7 +56,7 @@ typedef struct ei_impl_toplevel_t {
     ei_size_t 	 	*requested_size;
     ei_color_t		*color;
     int 		*border_width;
-    ei_string_t		* title;
+    ei_string_t		*title;
     bool 		*closable;
     ei_axis_set_t	*resizable;
     ei_size_ptr_t 	*min_size;

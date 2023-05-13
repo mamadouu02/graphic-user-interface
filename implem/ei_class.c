@@ -15,18 +15,38 @@ ei_widget_t frame_allocfunction(void)
 
 void frame_releasefunc(ei_widget_t widget)
 {
-	ei_impl_frame_t *frame = (ei_impl_frame_t *) widget;
-	free(frame->requested_size);
-	free((void *) frame->color);
-	free(frame->border_width);
-	free(frame->relief);
-	free(frame->text);
-	free(frame->text_font);
-	free(frame->text_color);
-	free(frame->text_anchor);
-	free(frame->img);
-	free(frame->img_rect);
-	free(frame->img_anchor);
+	if (widget != NULL) {
+		ei_widget_t child = widget->children_head;
+		ei_widget_t next_child;
+
+		if (child != NULL) {
+			next_child = child->next_sibling;
+		}
+
+		while (child != NULL) {
+			if (child->children_head != NULL) {
+				frame_releasefunc(child);
+			}
+
+			ei_impl_frame_t *frame = (ei_impl_frame_t *) child;
+			free(frame->requested_size);
+			free((void *) frame->color);
+			free(frame->border_width);
+			free(frame->relief);
+			free(frame->text);
+			free(frame->text_font);
+			free(frame->text_color);
+			free(frame->text_anchor);
+			free(frame->img);
+			free(frame->img_rect);
+			free(frame->img_anchor);
+			free(frame);
+			free(child);
+
+			child = next_child;
+			next_child = child == NULL ? NULL : child->next_sibling;
+		}
+	}
 }
 
 void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
