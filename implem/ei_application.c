@@ -9,16 +9,41 @@
 #include "ei_class.h"
 #include "ei_event.h"
 
+ei_widget_t root;
+ei_surface_t main_window = NULL;
+ei_surface_t offscreen = NULL;
+
 
 void ei_app_create(ei_size_t main_window_size, bool fullscreen)
 {
 	hw_init();
 
-	// ei_widgetclass_t *frame = ei_widgetclass_from_name("frame");
-	// ei_widgetclass_register(frame);
+	//ei_widgetclass_t *frame = ei_widgetclass_from_name("frame");
+	//ei_widgetclass_register(frame);
 
-	ei_surface_t main_window = hw_create_window(main_window_size, fullscreen);
-	hw_surface_update_rects(main_window, NULL);
+	main_window = hw_create_window(main_window_size, fullscreen);
+
+	root = frame_allocfunction();
+
+	root->wclass = ei_widgetclass_from_name("frame");
+	root->pick_id = 0;
+	root->pick_color = NULL;
+	root->user_data = NULL;
+	root->destructor = NULL;
+
+	root->parent = NULL;
+	root->children_head = NULL;
+	root->children_tail = NULL;
+	root->next_sibling = NULL;
+
+	root->placer_params = NULL;
+	root->requested_size = hw_surface_get_size(ei_app_root_surface());
+	root->screen_location = ei_rect(ei_point_zero(), root->requested_size);
+	root->content_rect = &root->screen_location;
+
+	frame_setdefaultsfunc(root);
+
+//	free(frame);
 }
 
 void ei_app_free(void)
@@ -40,6 +65,10 @@ void ei_app_run(void)
 	// 	}
 	// 	child = child->children_head;
 	// }
+	hw_surface_unlock(main_window);
+
+	frame_drawfunc(root, main_window, offscreen, NULL);
+	hw_surface_update_rects(main_window, NULL);
 
 	ei_event_t event;
 	hw_event_wait_next(&event);
@@ -58,34 +87,10 @@ void ei_app_quit_request(void)
 
 ei_widget_t ei_app_root_widget(void)
 {
-	// ei_widget_t root = frame_allocfunction();
-
-	// root->wclass = ei_widgetclass_from_name("frame");
-	// root->pick_id = 0;
-	// root->pick_color = (ei_color_t *) &ei_default_background_color;
-	// root->user_data = NULL;
-	// root->destructor = NULL;
-
-	// root->parent = NULL;
-	// root->children_head = NULL;
-	// root->children_tail = NULL;
-	// root->next_sibling = NULL;
-
-	// root->placer_params = NULL;
-	// root->requested_size = hw_surface_get_size(ei_app_root_surface());
-	// root->requested_size = ei_size(600, 600);
-	// root->screen_location = ei_rect(ei_point_zero(), root->requested_size);
-	// root->content_rect = &root->screen_location;
-
-	// frame_setdefaultsfunc(root);
-
-    	// return root;
-	return 0;
+    	return root;
 }
 
 ei_surface_t ei_app_root_surface(void)
 {
-	// ei_surface_t surface = hw_surface_create();
-    	// return surface;
-	return 0;
+	return main_window;
 }

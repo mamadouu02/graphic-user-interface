@@ -27,18 +27,17 @@ void ei_widgetclass_register(ei_widgetclass_t* widgetclass)
 		new_class->handlefunc = widgetclass->handlefunc;
 		widgetclass = widgetclass->next;
 
-		if (previous_class != NULL){
+		if (previous_class != NULL) {
 			previous_class->next = new_class;
 		}
 
 		previous_class = new_class;
 	}
-
 }
 
 ei_widgetclass_t* ei_widgetclass_from_name(ei_const_string_t name)
 {
-	ei_widgetclass_t *widgetclass = malloc(sizeof(ei_widgetclass_t));
+	ei_widgetclass_t *widgetclass = calloc(1, sizeof(ei_widgetclass_t));
 
 	if (!strcmp(name, "frame") || !strcmp(name, "button") || !strcmp(name, "toplevel")) {
 		strcpy(widgetclass->name, name);
@@ -48,10 +47,6 @@ ei_widgetclass_t* ei_widgetclass_from_name(ei_const_string_t name)
 			widgetclass->releasefunc = &frame_releasefunc;
 			widgetclass->drawfunc = &frame_drawfunc;
 			widgetclass->setdefaultsfunc = &frame_setdefaultsfunc;
-		} else if (!strcmp(name, "button")) {
-
-		} else if (!strcmp(name, "toplevel")) {
-
 		}
 	}
 

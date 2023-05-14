@@ -34,9 +34,10 @@ uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color);
  * \brief	A structure storing the placement parameters of a widget.
  *		You have to define this structure: no suggestion provided.
  */
-struct ei_impl_placer_params_t;
-
-
+struct ei_impl_placer_params_t {
+    ei_anchor_t*	anchor;
+    ei_rect_t*		rectangle;
+};
 
 
 /**

@@ -32,7 +32,7 @@ uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color)
 
 void ei_impl_placer_run(ei_widget_t widget)
 {
-    /* A implémenter! */
+
 }
 
 

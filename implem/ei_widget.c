@@ -10,29 +10,26 @@
 
 ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, ei_user_param_t user_data, ei_widget_destructor_t destructor)
 {
-	// ei_widget_t widget = frame_allocfunction();
+	ei_widgetclass_t *class = ei_widgetclass_from_name(class_name);
+	ei_widget_t widget = class->allocfunc();
 
-	// widget->wclass = ei_widgetclass_from_name(class_name);
-	// widget->wclass->next = NULL;
-	// widget->pick_id = 0;
-	// widget->pick_color = NULL;
-	// widget->user_data = user_data;
-	// widget->destructor = destructor;
+	widget->wclass = class;
+	widget->user_data = user_data;
+	widget->destructor = destructor;
+	widget->parent = parent;
 
-	// /* Widget Hierachy Management */
-	// widget->parent = parent;
-	// widget->children_head = NULL;
-	// widget->children_tail = NULL;
-	// widget->next_sibling = NULL;
+	if (parent->children_tail) {
+		parent->children_tail->next_sibling = widget;
+		parent->children_tail = widget;
+	} else {
+		parent->children_head = widget;
+		parent->children_tail = widget;
+	}
 
-	// /* Geometry Management */
-	// widget->placer_params = NULL;
-	// widget->requested_size = ei_size(0, 0);
-	// widget->screen_location = ei_rect(ei_point(0, 0), ei_size(0, 0));
-	// widget->content_rect = &widget->screen_location;
+	widget->content_rect = &widget->screen_location;
+	class->setdefaultsfunc(widget);
 
-	// return widget;
-	return 0;
+	return widget;
 }
 
 void ei_widget_destroy(ei_widget_t widget)
