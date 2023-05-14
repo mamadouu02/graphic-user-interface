@@ -9,20 +9,10 @@
 
 size_t ei_widget_struct_size()
 {
-	size_t size = sizeof(ei_widgetclass_t *);
-	size += sizeof(uint32_t);
-	size += sizeof(ei_color_t *);
-	size += sizeof(void *);
-	size += sizeof(ei_widget_destructor_t);
-	size += 4 * sizeof(ei_widget_t);
-	size += sizeof(struct ei_impl_placer_params_t *);
-	size += sizeof(ei_size_t);
-	size += sizeof(ei_rect_t);
-	size += sizeof(ei_rect_t *);
-        return size;
+        return sizeof(ei_impl_widget_t);
 }
 
-void ei_widgetclass_register (ei_widgetclass_t* widgetclass)
+void ei_widgetclass_register(ei_widgetclass_t* widgetclass)
 {
 	ei_widgetclass_t *previous_class = NULL;
 
@@ -46,7 +36,7 @@ void ei_widgetclass_register (ei_widgetclass_t* widgetclass)
 
 }
 
-ei_widgetclass_t* ei_widgetclass_from_name (ei_const_string_t name)
+ei_widgetclass_t* ei_widgetclass_from_name(ei_const_string_t name)
 {
 	ei_widgetclass_t *widgetclass = malloc(sizeof(ei_widgetclass_t));
 
