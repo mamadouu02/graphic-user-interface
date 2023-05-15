@@ -5,8 +5,6 @@
  */
 
 #include "ei_placer.h"
-#include "ei_types.h"
-#include "ei_widget.h"
 #include "ei_implementation.h"
 
 

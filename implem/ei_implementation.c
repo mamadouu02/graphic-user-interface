@@ -32,7 +32,7 @@ uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color)
 
 void ei_impl_placer_run(ei_widget_t widget)
 {
-
+	/* A implémenter! */
 }
 
 
@@ -41,7 +41,7 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		pick_surface,
 					ei_rect_t*		clipper)
 {
-    /* A implémenter! */
+	/* A implémenter! */
 }
 
 void ei_fill_pixel(ei_surface_t surface, const ei_color_t *color, ei_point_t pixel)

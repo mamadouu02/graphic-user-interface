@@ -1,5 +1,5 @@
 /**
- * @file	ei_classes.c
+ * @file	ei_class.c
  *
  * @brief 	Classes definitions.
  *
@@ -9,8 +9,7 @@
 
 ei_widget_t frame_allocfunction(void)
 {
-	ei_widget_t frame = calloc(1, sizeof(ei_impl_frame_t));
-	return frame;
+	return calloc(1, sizeof(ei_impl_frame_t));
 }
 
 void frame_releasefunc(ei_widget_t widget)
@@ -51,45 +50,41 @@ void frame_releasefunc(ei_widget_t widget)
 
 void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
 {
-	ei_widget_t child = widget;
+	// ei_widget_t child = widget;
 
-	while (child != NULL) {
+	// while (child != NULL) {
 		ei_impl_frame_t *frame = (ei_impl_frame_t *) widget;
 
-//		ei_rect_t final_location;
-//		ei_rect_t rect_image;
+		// ei_rect_t final_location;
+		// ei_rect_t rect_image;
 
 
-//		if (clipper == NULL) {
-//			final_location = widget->screen_location;
-//			rect_image = **(frame->img_rect);
-//		} else
-//			final_location = rect_intersection(widget->screen_location, *clipper);
-//			rect_image = rect_intersection(**(frame->img_rect), *clipper);
-//		}
+		// if (clipper == NULL) {
+		// 	final_location = widget->screen_location;
+		// 	rect_image = **(frame->img_rect);
+		// } else
+		// 	final_location = rect_intersection(widget->screen_location, *clipper);
+		// 	rect_image = rect_intersection(**(frame->img_rect), *clipper);
+		// }
 
 		ei_fill(surface, frame->color, clipper);
 
-//		ei_draw_text(surface, &final_location.top_left, (ei_const_string_t) frame->text, frame->text_font, *(frame->text_color), clipper);
+		// ei_draw_text(surface, &final_location.top_left, (ei_const_string_t) frame->text, frame->text_font, *(frame->text_color), clipper);
 
-//		ei_copy_surface(surface, &rect_image, frame->img, *(frame->img_rect), true);
+		// ei_copy_surface(surface, &rect_image, frame->img, *(frame->img_rect), true);
 
-		child = child->children_head;
-	}
+		// child = child->children_head;
+	// }
 }
 
 
 void frame_setdefaultsfunc(ei_widget_t widget)
 {
-	ei_relief_t relief = ei_relief_none;
-	ei_color_t font_color = ei_font_default_color;
-	ei_anchor_t anchor = ei_anc_center;
-
 	ei_impl_frame_t *frame = (ei_impl_frame_t *) widget;
 	frame->color = &ei_default_background_color;
-	frame->relief = &relief;
+	frame->relief = &(ei_relief_t) { ei_relief_none };
 	frame->text_font = &ei_default_font;
-	frame->text_color = &font_color;
-	frame->text_anchor = &anchor;
-	frame->img_anchor = &anchor;
+	frame->text_color = (ei_color_t *) &ei_font_default_color;
+	frame->text_anchor = &(ei_anchor_t) { ei_anc_center };
+	frame->img_anchor = &(ei_anchor_t) { ei_anc_center };
 }

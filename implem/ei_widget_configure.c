@@ -22,17 +22,17 @@ void    ei_frame_configure      (ei_widget_t		widget,
 			        ei_anchor_t*		img_anchor)
 {
 	ei_impl_frame_t *frame = (ei_impl_frame_t *) widget;
-	frame->requested_size = requested_size == NULL ? frame->requested_size : requested_size;
-	frame->color = color == NULL ? frame->color : color;
-	frame->border_width = border_width == NULL ? frame->border_width : border_width;
-	frame->relief = relief == NULL ? frame->relief : relief;
-	frame->text = text == NULL ? frame->text : text;
-	frame->text_font = text_font == NULL ? frame->text_font : text_font;
-	frame->text_color = text_color == NULL ? frame->text_color : text_color;
-	frame->text_anchor = text_anchor == NULL ? frame->text_anchor : text_anchor;
-	frame->img = img == NULL ? frame->img : img;
-	frame->img_rect = img_rect == NULL ? frame->img_rect : img_rect;
-	frame->img_anchor = img_anchor == NULL ? frame->img_anchor : img_anchor;
+	frame->requested_size = (requested_size == NULL) ? frame->requested_size : requested_size;
+	frame->color = (color == NULL) ? frame->color : color;
+	frame->border_width = (border_width == NULL) ? frame->border_width : border_width;
+	frame->relief = (relief == NULL) ? frame->relief : relief;
+	frame->text = (text == NULL) ? frame->text : text;
+	frame->text_font = (text_font == NULL) ? frame->text_font : text_font;
+	frame->text_color = (text_color == NULL) ? frame->text_color : text_color;
+	frame->text_anchor = (text_anchor == NULL) ? frame->text_anchor : text_anchor;
+	frame->img = (img == NULL) ? frame->img : img;
+	frame->img_rect = (img_rect == NULL) ? frame->img_rect : img_rect;
+	frame->img_anchor = (img_anchor == NULL) ? frame->img_anchor : img_anchor;
 }
 
 void    ei_button_configure	(ei_widget_t		widget,
