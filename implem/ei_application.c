@@ -43,8 +43,12 @@ void ei_app_run(void)
 
 	ei_widget_t widget = root->children_head;
 
+	/* Provisoire pour tester */
 	while (widget != NULL) {
 		ei_place_calculate(widget);
+		if (widget->children_head) {
+			ei_place_calculate(widget->children_head);
+		}
 		widget = widget->next_sibling;
 	}
 

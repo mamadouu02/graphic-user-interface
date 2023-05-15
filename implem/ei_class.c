@@ -55,6 +55,12 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
 		}
 		draw_frame(surface, widget_rect, frame->color, frame->relief, &clipper_frame);
 
+		ei_rect_t new_screen_loc = rect_intersection(widget_rect, clipper_frame);
+		widget->screen_location = new_screen_loc;
+		/* à changer pour tous les enfants aussi ! */
+		if (widget->children_head) {
+			widget->children_head->content_rect = &widget->screen_location;
+		}
 
 		ei_rect_t clipper_text_image = widget_rect;
 		if (clipper != NULL) {
