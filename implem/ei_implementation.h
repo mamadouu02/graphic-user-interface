@@ -35,8 +35,16 @@ uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color);
  *		You have to define this structure: no suggestion provided.
  */
 struct ei_impl_placer_params_t {
-    ei_anchor_t*	anchor;
-    ei_rect_t*		rectangle;
+    int		x;
+    int		y;
+    int		width;
+    int		height;
+    float	rel_x;
+    float	rel_y;
+    float	*rel_width;
+    float	*rel_height;
+    ei_anchor_t	anchor;
+    ei_rect_t	rectangle;
 };
 
 
@@ -209,9 +217,22 @@ ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, ei_frame_part_t part);
  * @param	surface		Surface de dessin.
  * @param  	rect		Rectangle définissant la zone de dessin.
  * @param	color		Couleur du bouton.
+ * @param	radius		Rayon des coins.
+ * @param	relief		Relief du bouton.
  * @param	clipper		Clippeur.
  */
-void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_rect_t *clipper);
+void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int radius, ei_relief_t relief, ei_rect_t *clipper);
+
+/**
+ * @brief	Dessine une frame.
+ *
+ * @param	surface		Surface de dessin.
+ * @param  	rect		Rectangle définissant la zone de dessin.
+ * @param	color		Couleur de la frame.
+ * @param	relief		Relief de la frame.
+ * @param	clipper		Clippeur.
+ */
+void draw_frame(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_relief_t relief, ei_rect_t *clipper);
 
 /**
  * @brief	Calcule l'intersection entre deux rectangles.
@@ -222,6 +243,8 @@ void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_rec
  * @return 	L'intersection entre les deux rectangles si elle est non vide, sinon un rectangle vide.
  */
 ei_rect_t rect_intersection(ei_rect_t rect1, ei_rect_t rect2);
+
+bool rect_cmp(ei_rect_t rect1, ei_rect_t rect2);
 
 /**
  * @brief	Copie le rectangle source dans la surface de destination à la position du rectangle de destination.
@@ -238,5 +261,11 @@ void	ei_copy_rect	(ei_surface_t		destination,
 			ei_surface_t		source,
 			const ei_rect_t*	src_rect,
 			bool			alpha);
+
+ei_point_t anchor_rect(ei_anchor_t *anchor_ptr, ei_rect_t *rect);
+
+ei_point_t anchor_text_image(ei_anchor_t *anchor_ptr, ei_rect_t *rect, ei_rect_t *limit);
+
+void ei_place_calculate(ei_widget_t widget);
 
 #endif

@@ -41,7 +41,15 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		pick_surface,
 					ei_rect_t*		clipper)
 {
-	/* A implémenter! */
+	if (widget != NULL) {
+		widget->wclass->drawfunc(widget, surface, pick_surface, clipper);
+		widget = widget->next_sibling;
+
+		while (widget != NULL) {
+			widget->wclass->drawfunc(widget, surface, pick_surface, clipper);
+			widget = widget->next_sibling;
+		}
+	}
 }
 
 void ei_fill_pixel(ei_surface_t surface, const ei_color_t *color, ei_point_t pixel)
@@ -188,6 +196,8 @@ ei_point_t* ei_octant_array(ei_point_t centre, int rayon, int octant, int octant
 		case 7:
 			sign_x = -1, sign_y = -1, inverse = 0;
 			break;
+		default:
+			break;
 	}
 
 	if (octant % 2 == 0) {
@@ -314,24 +324,41 @@ ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, ei_frame_part_t part)
 	return tab;
 }
 
-void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_rect_t *clipper)
+void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int radius, ei_relief_t relief, ei_rect_t *clipper)
 {
-	int rayon = rect.size.height / 6;
-
 	unsigned char red = (color.red * 1.1 > 255) ? 255 : color.red * 1.1;
 	unsigned char green = (color.green * 1.1 > 255) ? 255 : color.green * 1.1;
 	unsigned char blue = (color.blue * 1.1 > 255) ? 255 : color.blue * 1.1;
 	ei_color_t light_color = { red, green, blue, color.alpha };
 	ei_color_t dark_color = { color.red / 1.1, color.green / 1.1 , color.blue / 1.1, color.alpha };
 
-	int octant_array_size = ei_octant_array_size(rayon);
+	ei_color_t top_color, bottom_color;
 
-	ei_point_t *top = ei_rounded_frame(rect, rayon, ei_frame_top);
-	ei_draw_polygon(surface, top, 4 * octant_array_size + 2, light_color, clipper);
+	switch (relief) {
+		case ei_relief_none:
+			top_color = color;
+			bottom_color = color;
+			break;
+		case ei_relief_raised:
+			top_color = light_color;
+			bottom_color = dark_color;
+			break;
+		case ei_relief_sunken:
+			top_color = dark_color;
+			bottom_color = light_color;
+			break;
+		default:
+			break;
+	}
+
+	int octant_array_size = ei_octant_array_size(radius);
+
+	ei_point_t *top = ei_rounded_frame(rect, radius, ei_frame_top);
+	ei_draw_polygon(surface, top, 4 * octant_array_size + 2, top_color, clipper);
 	free(top);
 
-	ei_point_t *bottom = ei_rounded_frame(rect, rayon, ei_frame_bottom);
-	ei_draw_polygon(surface, bottom, 4 * octant_array_size + 2, dark_color, clipper);
+	ei_point_t *bottom = ei_rounded_frame(rect, radius, ei_frame_bottom);
+	ei_draw_polygon(surface, bottom, 4 * octant_array_size + 2, bottom_color, clipper);
 	free(bottom);
 
 	float scale = 0.04;
@@ -340,12 +367,71 @@ void draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_rec
 	int width = rect.size.width - 2 * rect.size.height * scale;
 	int height = rect.size.height * (1 - 2 * scale);
 	rect = ei_rect(rect.top_left, ei_size(width, height));
-	rayon = rect.size.height / 6;
+	radius = rect.size.height / 6;
 
-	octant_array_size = ei_octant_array_size(rayon);
-	ei_point_t *button = ei_rounded_frame(rect, rayon, ei_frame_total);
+	octant_array_size = ei_octant_array_size(radius);
+	ei_point_t *button = ei_rounded_frame(rect, radius, ei_frame_total);
+
 	ei_draw_polygon(surface, button, 8 * octant_array_size, color, clipper);
 	free(button);
+}
+
+
+void draw_frame(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_relief_t relief, ei_rect_t *clipper)
+{
+	unsigned char red = (color.red * 1.1 > 255) ? 255 : color.red * 1.1;
+	unsigned char green = (color.green * 1.1 > 255) ? 255 : color.green * 1.1;
+	unsigned char blue = (color.blue * 1.1 > 255) ? 255 : color.blue * 1.1;
+	ei_color_t light_color = { red, green, blue, color.alpha };
+	ei_color_t dark_color = { color.red / 1.1, color.green / 1.1 , color.blue / 1.1, color.alpha };
+
+	ei_color_t top_color, bottom_color;
+
+	switch (relief) {
+		case ei_relief_none:
+			top_color = color;
+			bottom_color = color;
+			break;
+		case ei_relief_raised:
+			top_color = light_color;
+			bottom_color = dark_color;
+			break;
+		case ei_relief_sunken:
+			top_color = dark_color;
+			bottom_color = light_color;
+			break;
+		default:
+			break;
+	}
+
+	ei_point_t top_right = rect.top_left;
+	ei_point_t bottom_left = rect.top_left;
+	ei_point_t bottom_right = rect.top_left;
+	top_right.x += rect.size.width;
+	bottom_right.x += rect.size.width;
+	bottom_right.y += rect.size.height;
+	bottom_left.y += rect.size.height;
+
+	ei_point_t top[3] = { rect.top_left, top_right, bottom_left };
+	ei_draw_polygon(surface, top,  3, top_color, clipper);
+
+	ei_point_t bottom[3] = { bottom_right, top_right, bottom_left };
+	ei_draw_polygon(surface, bottom, 3, bottom_color, clipper);
+
+	float scale = 0.04;
+	float scale_width = scale * rect.size.width;
+	float scale_height = (float) rect.size.height / rect.size.width * scale_width;
+	rect.top_left.x += scale_width;
+	rect.top_left.y += scale_height;
+	bottom_left.x += scale_width;
+	bottom_left.y -= scale_height;
+	bottom_right.x -= scale_width;
+	bottom_right.y -= scale_height;
+	top_right.x -= scale_width;
+	top_right.y += scale_height;
+
+	ei_point_t button[4] = { rect.top_left, top_right, bottom_right, bottom_left };
+	ei_draw_polygon(surface, button, 4, color, clipper);
 }
 
 ei_rect_t rect_intersection(ei_rect_t rect1, ei_rect_t rect2)
@@ -399,6 +485,19 @@ ei_rect_t rect_intersection(ei_rect_t rect1, ei_rect_t rect2)
 	}
 }
 
+bool rect_cmp(ei_rect_t rect1, ei_rect_t rect2)
+{
+	int x1 = rect1.top_left.x;
+	int y1 = rect1.top_left.y;
+	int width_1 = rect1.size.width;
+	int height_1 = rect1.size.height;
+	int x2 = rect1.top_left.x;
+	int y2 = rect1.top_left.y;
+	int width_2 = rect1.size.width;
+	int height_2 = rect2.size.height;
+	return x1 == x2 && y1 == y2 && width_1 == width_2 && height_1 == height_2;
+}
+
 void	ei_copy_rect	(ei_surface_t		destination,
 			const ei_rect_t*	dst_rect,
 			ei_surface_t		source,
@@ -449,4 +548,132 @@ void	ei_copy_rect	(ei_surface_t		destination,
 			}
 		}
 	}
+}
+
+ei_point_t anchor_rect(ei_anchor_t *anchor_ptr, ei_rect_t *rect)
+{
+	ei_point_t top_left = rect->top_left;
+	int width = rect->size.width;
+	int height = rect->size.height;
+
+	if (anchor_ptr) {
+		ei_anchor_t anchor = *anchor_ptr;
+		switch (anchor) {
+			case ei_anc_center:
+				top_left = ei_point_sub(rect->top_left, ei_point(width/2, height/2));
+				break;
+			case ei_anc_north:
+				top_left = ei_point_sub(rect->top_left, ei_point(width/2, 0));
+				break;
+			case ei_anc_northeast:
+				top_left = ei_point_sub(rect->top_left, ei_point(width, 0));
+				break;
+			case ei_anc_east:
+				top_left = ei_point_sub(rect->top_left, ei_point(width, height/2));
+				break;
+			case ei_anc_southeast:
+				top_left = ei_point_sub(rect->top_left, ei_point(width, height));
+				break;
+			case ei_anc_south:
+				top_left = ei_point_sub(rect->top_left, ei_point(width/2, height));
+				break;
+			case ei_anc_southwest:
+				top_left = ei_point_sub(rect->top_left, ei_point(0, height));
+				break;
+			case ei_anc_west:
+				top_left = ei_point_sub(rect->top_left, ei_point(0, height/2));
+				break;
+			case ei_anc_northwest:
+			case ei_anc_none:
+				top_left = rect->top_left;
+				break;
+			default:
+				break;
+		}
+	} else {
+		top_left = rect->top_left;
+	}
+
+	return top_left;
+}
+
+ei_point_t anchor_text_image(ei_anchor_t *anchor_ptr, ei_rect_t *rect, ei_rect_t *limit)
+{
+	ei_point_t top_left = rect->top_left;
+	int width = rect->size.width;
+	int height = rect->size.height;
+
+	int width_limit = limit->size.width;
+	int height_limit = limit->size.height;
+
+	if (anchor_ptr) {
+		ei_anchor_t anchor = *anchor_ptr;
+		switch (anchor) {
+			case ei_anc_north:
+				top_left = ei_point((width_limit - width)/2,0);
+				break;
+			case ei_anc_northeast:
+				top_left = ei_point((width_limit - width),0);
+				break;
+			case ei_anc_east:
+				top_left = ei_point((width_limit-width),(height_limit-height)/2);
+				break;
+			case ei_anc_southeast:
+				top_left = ei_point((width_limit - width),(height_limit - height));
+				break;
+			case ei_anc_south:
+				top_left = ei_point((width_limit - width)/2,(height_limit - height));
+				break;
+			case ei_anc_southwest:
+				top_left = ei_point(0,(height_limit - height));
+				break;
+			case ei_anc_west:
+				top_left = ei_point(0,(height_limit - height)/2);
+				break;
+			case ei_anc_northwest:
+				top_left = ei_point(0,0);
+				break;
+			case ei_anc_center:
+			case ei_anc_none:
+			default:
+				top_left = ei_point((width_limit - width)/2, (height_limit - height)/2);
+				break;
+		}
+	} else {
+		top_left = ei_point((width_limit - width)/2, (height_limit - height)/2);
+	}
+
+	return top_left;
+}
+
+void ei_place_calculate(ei_widget_t widget)
+{
+	int parent_height = widget->parent->content_rect->size.height;
+	int parent_width = widget->parent->content_rect->size.width;
+
+	int x = widget->placer_params->x;
+	int y = widget->placer_params->y;
+	int width = widget->placer_params->width;
+	int height = widget->placer_params->height;
+	float rel_x = widget->placer_params->rel_x;
+	float rel_y = widget->placer_params->rel_y;
+	float *rel_width = widget->placer_params->rel_width;
+	float *rel_height = widget->placer_params->rel_height;
+
+	int height_widget = (rel_height == NULL) ? height : (*rel_height * parent_height);
+	int width_widget = (rel_width == NULL) ? width : (*rel_width * parent_width);
+
+	ei_point_t *where = malloc(sizeof(ei_point_t));
+	where->x = rel_x * parent_width + x;
+	where->y = rel_y * parent_height + y;
+
+	ei_rect_t widget_rectangle = ei_rect(*where, ei_size(width_widget, height_widget));
+
+	if (widget->placer_params == NULL) {
+		widget->placer_params = malloc(sizeof(struct ei_impl_placer_params_t));
+	}
+
+	widget->placer_params->rectangle = widget_rectangle;
+
+	free(where);
 }

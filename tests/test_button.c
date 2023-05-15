@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 	ei_draw_polygon(main_window, bottom, 4 * octant_array_size + 2, dark_red, NULL);
 	free(bottom);
 
-	draw_button(main_window, rect_button, beige, NULL);
+	draw_button(main_window, rect_button, beige, 6, ei_relief_none, NULL);
 
 	/* Test intersection */
 //	ei_rect_t rect_total = ei_rect(ei_point(0, 0), win_size);

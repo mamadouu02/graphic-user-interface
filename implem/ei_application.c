@@ -12,12 +12,11 @@
 ei_widget_t root;
 ei_surface_t main_window, offscreen;
 
-
 void ei_app_create(ei_size_t main_window_size, bool fullscreen)
 {
 	hw_init();
 
-	ei_widgetclass_register(ei_widgetclass_from_name("frame"));
+	ei_frame_register();
 
 	main_window = hw_create_window(main_window_size, fullscreen);
 
@@ -26,6 +25,8 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen)
 	root->wclass = frame;
 	root->requested_size = hw_surface_get_size(ei_app_root_surface());
 	root->screen_location = ei_rect(ei_point_zero(), root->requested_size);
+	root->placer_params = malloc(sizeof(struct ei_impl_placer_params_t));
+	root->placer_params->rectangle = ei_rect(ei_point_zero(), root->requested_size);
 	root->content_rect = &root->screen_location;
 	frame_setdefaultsfunc(root);
 }
@@ -40,6 +41,13 @@ void ei_app_run(void)
 {
 	hw_surface_lock(main_window);
 
+	ei_widget_t widget = root->children_head;
+
+	while (widget != NULL) {
+		ei_place_calculate(widget);
+		widget = widget->next_sibling;
+	}
+
 	root->wclass->drawfunc(root, main_window, offscreen, NULL);
 	
 	hw_surface_unlock(main_window);
@@ -48,19 +56,6 @@ void ei_app_run(void)
 	ei_event_t event;
 	while ((event.type != ei_ev_close) && (event.type != ei_ev_keydown))
 		hw_event_wait_next(&event);
-
-	// ei_widget_t child = ei_app_root_widget();
-
-	// while (child != NULL){
-	// 	ei_widget_t sibling = child;
-	// 	child->wclass->drawfunc(child, ei_app_root_surface(), ei_app_root_surface(), NULL);
-
-	// 	while (sibling != NULL){
-	// 		sibling->wclass->drawfunc(sibling, ei_app_root_surface(), ei_app_root_surface(), NULL);
-	// 		sibling = sibling->next_sibling;
-	// 	}
-	// 	child = child->children_head;
-	// }
 }
 
 void ei_app_invalidate_rect(const ei_rect_t* rect)

@@ -68,8 +68,7 @@ void		ei_place	(ei_widget_t		widget,
  */
 void		ei_placer_forget(ei_widget_t widget);
 
-
-static inline void ei_place_xy		(ei_widget_t widget, int x, int y)			{ ei_place(widget, NULL, &x, &y, NULL, NULL, NULL, NULL, NULL, NULL); }
+static inline void ei_place_xy		(ei_widget_t widget, int x, int y)			{ ei_place(widget, &(ei_anchor_t){ei_anc_southeast}, &x, &y, NULL, NULL, NULL, NULL, NULL, NULL); }
 static inline void ei_place_anchored_xy	(ei_widget_t widget, ei_anchor_t anchor, int x, int y)	{ ei_place(widget, &anchor, &x, &y, NULL, NULL, NULL, NULL, NULL, NULL); }
 
 #endif

@@ -28,17 +28,6 @@ void frame_releasefunc(ei_widget_t widget)
 			}
 
 			ei_impl_frame_t *frame = (ei_impl_frame_t *) child;
-			free(frame->requested_size);
-			free((void *) frame->color);
-			free(frame->border_width);
-			free(frame->relief);
-			free(frame->text);
-			free(frame->text_font);
-			free(frame->text_color);
-			free(frame->text_anchor);
-			free(frame->img);
-			free(frame->img_rect);
-			free(frame->img_anchor);
 			free(frame);
 			free(child);
 
@@ -50,41 +39,73 @@ void frame_releasefunc(ei_widget_t widget)
 
 void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
 {
-	// ei_widget_t child = widget;
+	ei_impl_frame_t *frame = (ei_impl_frame_t *) widget;
 
-	// while (child != NULL) {
-		ei_impl_frame_t *frame = (ei_impl_frame_t *) widget;
+	if (widget->parent == NULL) {
+		ei_fill(surface, &frame->color, clipper);
+	} else if (widget->placer_params != NULL) {
 
-		// ei_rect_t final_location;
-		// ei_rect_t rect_image;
+		ei_rect_t widget_rect;
+		widget_rect = widget->placer_params->rectangle;
+		widget_rect.top_left = anchor_rect(&widget->placer_params->anchor, &widget_rect);
+
+		ei_rect_t clipper_frame = *widget->content_rect;
+		if (clipper != NULL) {
+			clipper_frame = rect_intersection(clipper_frame, *clipper);
+		}
+		draw_frame(surface, widget_rect, frame->color, frame->relief, &clipper_frame);
 
 
-		// if (clipper == NULL) {
-		// 	final_location = widget->screen_location;
-		// 	rect_image = **(frame->img_rect);
-		// } else
-		// 	final_location = rect_intersection(widget->screen_location, *clipper);
-		// 	rect_image = rect_intersection(**(frame->img_rect), *clipper);
-		// }
+		ei_rect_t clipper_text_image = widget_rect;
+		if (clipper != NULL) {
+			clipper_text_image = rect_intersection(clipper_text_image, *clipper);
+		}
 
-		ei_fill(surface, frame->color, clipper);
+		if (frame->text) {
+			ei_surface_t surface_text = hw_text_create_surface(frame->text, frame->text_font, frame->text_color);
+			ei_rect_t text_rect = hw_surface_get_rect(surface_text);
 
-		// ei_draw_text(surface, &final_location.top_left, (ei_const_string_t) frame->text, frame->text_font, *(frame->text_color), clipper);
+			text_rect.top_left = anchor_text_image(&(frame->text_anchor), &text_rect, &clipper_text_image);
+			if (!rect_cmp(*widget->content_rect, clipper_frame)) {
+				text_rect.top_left.x += clipper_frame.top_left.x;
+				text_rect.top_left.y += clipper_frame.top_left.y;
+			} else{
+				text_rect.top_left.x += widget_rect.top_left.x;
+				text_rect.top_left.y += widget_rect.top_left.y;
+			}
+			ei_draw_text(surface, &text_rect.top_left, (ei_const_string_t) frame->text, frame->text_font,
+				frame->text_color, clipper);
+		} else if (frame->img) {
+			ei_rect_t img_rect = (clipper) ? rect_intersection(*(frame->img_rect), *clipper)
+						       : *(frame->img_rect);
+			img_rect.top_left = anchor_text_image(&frame->img_anchor, &img_rect, &clipper_text_image);
+			img_rect.top_left.x+=widget_rect.top_left.x;
+			img_rect.top_left.y+=widget_rect.top_left.y;
+			ei_copy_surface(surface, &img_rect, frame->img, frame->img_rect, true);
+		}
+	}
 
-		// ei_copy_surface(surface, &rect_image, frame->img, *(frame->img_rect), true);
-
-		// child = child->children_head;
-	// }
+	ei_impl_widget_draw_children(widget->children_head, surface, pick_surface, clipper);
 }
-
 
 void frame_setdefaultsfunc(ei_widget_t widget)
 {
 	ei_impl_frame_t *frame = (ei_impl_frame_t *) widget;
-	frame->color = &ei_default_background_color;
-	frame->relief = &(ei_relief_t) { ei_relief_none };
-	frame->text_font = &ei_default_font;
-	frame->text_color = (ei_color_t *) &ei_font_default_color;
-	frame->text_anchor = &(ei_anchor_t) { ei_anc_center };
-	frame->img_anchor = &(ei_anchor_t) { ei_anc_center };
+	frame->color = ei_default_background_color;
+	frame->relief = (ei_relief_t) { ei_relief_none };
+	frame->text_font = ei_default_font;
+	frame->text_color = ei_font_default_color;
+	frame->text_anchor = (ei_anchor_t) { ei_anc_center };
+	frame->img_anchor = (ei_anchor_t) { ei_anc_center };
+}
+
+void ei_frame_register(void)
+{
+	ei_widgetclass_t *frame = calloc(1, sizeof(ei_widgetclass_t));
+	strcpy(frame->name, "frame");
+	frame->allocfunc = &frame_allocfunction;
+	frame->releasefunc = &frame_releasefunc;
+	frame->drawfunc = &frame_drawfunc;
+	frame->setdefaultsfunc = &frame_setdefaultsfunc;
+	ei_widgetclass_register(frame);
 }

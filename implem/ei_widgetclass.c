@@ -22,18 +22,11 @@ void ei_widgetclass_register(ei_widgetclass_t* widgetclass)
 
 ei_widgetclass_t* ei_widgetclass_from_name(ei_const_string_t name)
 {
-	ei_widgetclass_t *widgetclass = calloc(1, sizeof(ei_widgetclass_t));
+	ei_widgetclass_t *class = classes;
 
-	if (!strcmp(name, "frame") || !strcmp(name, "button") || !strcmp(name, "toplevel")) {
-		strcpy(widgetclass->name, name);
-
-		if (!strcmp(name, "frame")) {
-			widgetclass->allocfunc = &frame_allocfunction;
-			widgetclass->releasefunc = &frame_releasefunc;
-			widgetclass->drawfunc = &frame_drawfunc;
-			widgetclass->setdefaultsfunc = &frame_setdefaultsfunc;
-		}
+	while (class && strcmp(class->name, name) != 0) {
+		class = class->next;
 	}
 
-	return widgetclass;
+	return class;
 }
