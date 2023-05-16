@@ -111,6 +111,8 @@ typedef struct ei_impl_widget_t {
 	ei_rect_t*		content_rect;	///< Where to place children, when this widget is used as a container. By defaults, points to the screen_location.
 } ei_impl_widget_t;
 
+void ei_widget_set_pick(ei_widget_t widget);
+
 /**
  * @brief	Draws the children of a widget.
  * 		The children are draw withing the limits of the clipper and
@@ -126,6 +128,27 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		surface,
 					ei_surface_t		pick_surface,
 					ei_rect_t*		clipper);
+
+/**
+ * @brief	
+ *
+ * @param	anchor_ptr		
+ * @param	rect		
+ *
+ * @return 	
+ */
+ei_point_t ei_anchor_rect(ei_anchor_t *anchor_ptr, ei_rect_t *rect);
+
+/**
+ * @brief	
+ *
+ * @param	anchor_ptr		
+ * @param	rect		
+ * @param	limit		
+ *
+ * @return 	
+ */
+ei_point_t ei_anchor_text_img(ei_anchor_t *anchor_ptr, ei_rect_t *rect, ei_rect_t *limit);
 
 /**
  * \brief	A structure storing the placement parameters of a widget.
@@ -156,26 +179,5 @@ void ei_impl_placer_run(ei_widget_t widget);
 void ei_impl_app_run_children(ei_widget_t widget);
 
 void ei_impl_app_run_siblings(ei_widget_t widget);
-
-/**
- * @brief	
- *
- * @param	anchor_ptr		
- * @param	rect		
- *
- * @return 	
- */
-ei_point_t ei_anchor_rect(ei_anchor_t *anchor_ptr, ei_rect_t *rect);
-
-/**
- * @brief	
- *
- * @param	anchor_ptr		
- * @param	rect		
- * @param	limit		
- *
- * @return 	
- */
-ei_point_t ei_anchor_text_img(ei_anchor_t *anchor_ptr, ei_rect_t *rect, ei_rect_t *limit);
 
 #endif

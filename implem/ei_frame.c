@@ -41,7 +41,7 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
 
 	if (widget->parent == NULL) {
 		ei_fill(surface, &frame->color, clipper);
-		// ei_fill(pick_surface, widget->pick_color, clipper);
+		ei_fill(pick_surface, widget->pick_color, clipper);
 	} else if (widget->placer_params) {
 
 		ei_rect_t widget_rect;
@@ -53,7 +53,7 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
 		}
 
 		ei_draw_frame(surface, widget_rect, frame->color, frame->relief, &clipper_frame);
-		// ei_draw_frame(pick_surface, widget_rect, *widget->pick_color, ei_relief_none, &clipper_frame);
+		ei_draw_frame(pick_surface, widget_rect, *widget->pick_color, ei_relief_none, &clipper_frame);
 
 		ei_rect_t new_screen_loc = ei_rect_intersect(widget_rect, clipper_frame);
 		/* where to place children */

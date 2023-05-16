@@ -18,12 +18,13 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen)
 
 	ei_frame_register();
 
-	offscreen = hw_create_window(main_window_size, fullscreen);
 	main_window = hw_create_window(main_window_size, fullscreen);
+	offscreen = hw_create_window(main_window_size, fullscreen);
 
 	ei_widgetclass_t *frame = ei_widgetclass_from_name("frame");
 	root = frame->allocfunc();
 	root->wclass = frame;
+	ei_widget_set_pick(root);
 	root->requested_size = hw_surface_get_size(ei_app_root_surface());
 	root->screen_location = ei_rect(ei_point_zero(), root->requested_size);
 	root->content_rect = &root->screen_location;
