@@ -8,6 +8,7 @@
 #include "ei_frame.h"
 #include "ei_polygon.h"
 
+
 ei_widget_t frame_allocfunction(void)
 {
 	return calloc(1, sizeof(ei_impl_frame_t));
@@ -84,10 +85,12 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
 			ei_draw_text(surface, &text_rect.top_left, (ei_const_string_t) frame->text, frame->text_font,
 				     frame->text_color, &clipper_text_image);
 		} else if (frame->img) {
-			ei_rect_t img_rect = (clipper) ? ei_rect_intersect((frame->img_rect), *clipper) : (frame->img_rect);
+			ei_rect_t img_rect = (clipper) ? ei_rect_intersect(*(frame->img_rect), *clipper) : *(frame->img_rect);
+			img_rect.top_left = clipper_text_image.top_left;
+			img_rect = ei_rect_intersect(img_rect,clipper_text_image);
 			img_rect.top_left = ei_anchor_text_img(&frame->img_anchor, &img_rect, &clipper_text_image);
 
-			ei_rect_cpy(surface, &img_rect, frame->img, &frame->img_rect, true);
+			ei_rect_cpy(surface, &img_rect, frame->img, frame->img_rect, true);
 		}
 	}
 
