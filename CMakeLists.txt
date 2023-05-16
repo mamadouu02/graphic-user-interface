@@ -153,7 +153,7 @@ target_link_libraries(test_button	ei ${PLATFORM_LIB_FLAGS})
 # external_class
 
 add_executable(external_class		${TEST_DIR}/external_class.c)
-target_link_libraries(external_class	ei ${PLATFORM_LIB_FLAGS} ${EXTCLASS})
+target_link_libraries(external_class ${EXTCLASS} ei ${PLATFORM_LIB_FLAGS})
 
 # target to build the documentation
 

@@ -91,6 +91,15 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		pick_surface,
 					ei_rect_t*		clipper);
 
+
+void ei_impl_placer_run(ei_widget_t widget);
+
+
+void ei_impl_app_run_siblings(ei_widget_t widget);
+
+
+void ei_impl_app_run_children(ei_widget_t widget);
+
 /**
  * @brief	Compare deux rectangles.
  *
@@ -162,7 +171,6 @@ struct ei_impl_placer_params_t {
     float	*rel_width;
     float	*rel_height;
     ei_anchor_t	anchor;
-    ei_rect_t	rectangle;
 };
 
 /**
@@ -173,13 +181,5 @@ struct ei_impl_placer_params_t {
  *
  * @param	widget		The widget which geometry must be re-computed.
  */
-void ei_impl_placer_run(ei_widget_t widget);
-
-/**
- * \brief	
- *
- * @param	widget		
- */
-void ei_place_calculate(ei_widget_t widget);
 
 #endif
