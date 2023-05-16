@@ -52,6 +52,42 @@ void ei_fill_pixel(ei_surface_t surface, const ei_color_t *color, ei_point_t pix
 bool in_clipper(int x, int y, int xc_min, int xc_max, int yc_min, int yc_max, const ei_rect_t *clipper);
 
 /**
+ * @brief	Compare deux rectangles.
+ *
+ * @param	rect1		Premier rectangle.
+ * @param	rect2		Second rectangle.
+ *
+ * @return 	true si les deux rectangles sont égaux, false sinon.
+ */
+bool ei_rect_cmp(ei_rect_t rect1, ei_rect_t rect2);
+
+/**
+ * @brief	Calcule l'intersection entre deux rectangles.
+ *
+ * @param	rect1		Premier rectangle.
+ * @param	rect2		Second rectangle.
+ *
+ * @return 	L'intersection entre les deux rectangles si elle est non vide, sinon un rectangle vide.
+ */
+ei_rect_t ei_rect_intersect(ei_rect_t rect1, ei_rect_t rect2);
+
+/**
+ * @brief	Copie le rectangle source dans la surface de destination à la position du rectangle de destination.
+ *
+ * @param	destination	Surface de destination.
+ * @param	dst_rect	Rectangle de destination sur lequel faut copier le rectangle src_rect.
+ * @param	source		Surface source.
+ * @param	src_rect	Rectangle à copier.
+ * @param	alpha		Paramètre de transparence.
+ *
+ */
+void	ei_rect_cpy	(ei_surface_t		destination,
+				const ei_rect_t*	dst_rect,
+				ei_surface_t		source,
+				const ei_rect_t*	src_rect,
+				bool			alpha);
+
+/**
  * \brief	Fields common to all types of widget. Every widget classes specializes this base
  *		class by adding its own fields. 
  */
@@ -91,72 +127,6 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		pick_surface,
 					ei_rect_t*		clipper);
 
-
-void ei_impl_placer_run(ei_widget_t widget);
-
-
-void ei_impl_app_run_siblings(ei_widget_t widget);
-
-
-void ei_impl_app_run_children(ei_widget_t widget);
-
-/**
- * @brief	Compare deux rectangles.
- *
- * @param	rect1		Premier rectangle.
- * @param	rect2		Second rectangle.
- *
- * @return 	true si les deux rectangles sont égaux, false sinon.
- */
-bool ei_rect_cmp(ei_rect_t rect1, ei_rect_t rect2);
-
-/**
- * @brief	Calcule l'intersection entre deux rectangles.
- *
- * @param	rect1		Premier rectangle.
- * @param	rect2		Second rectangle.
- *
- * @return 	L'intersection entre les deux rectangles si elle est non vide, sinon un rectangle vide.
- */
-ei_rect_t ei_rect_intersect(ei_rect_t rect1, ei_rect_t rect2);
-
-/**
- * @brief	Copie le rectangle source dans la surface de destination à la position du rectangle de destination.
- *
- * @param	destination	Surface de destination.
- * @param	dst_rect	Rectangle de destination sur lequel faut copier le rectangle src_rect.
- * @param	source		Surface source.
- * @param	src_rect	Rectangle à copier.
- * @param	alpha		Paramètre de transparence.
- *
- */
-void	ei_rect_cpy	(ei_surface_t		destination,
-			const ei_rect_t*	dst_rect,
-			ei_surface_t		source,
-			const ei_rect_t*	src_rect,
-			bool			alpha);
-
-/**
- * @brief	
- *
- * @param	anchor_ptr		
- * @param	rect		
- *
- * @return 	
- */
-ei_point_t ei_anchor_rect(ei_anchor_t *anchor_ptr, ei_rect_t *rect);
-
-/**
- * @brief	
- *
- * @param	anchor_ptr		
- * @param	rect		
- * @param	limit		
- *
- * @return 	
- */
-ei_point_t ei_anchor_text_img(ei_anchor_t *anchor_ptr, ei_rect_t *rect, ei_rect_t *limit);
-
 /**
  * \brief	A structure storing the placement parameters of a widget.
  *		You have to define this structure: no suggestion provided.
@@ -181,5 +151,31 @@ struct ei_impl_placer_params_t {
  *
  * @param	widget		The widget which geometry must be re-computed.
  */
+void ei_impl_placer_run(ei_widget_t widget);
+
+void ei_impl_app_run_children(ei_widget_t widget);
+
+void ei_impl_app_run_siblings(ei_widget_t widget);
+
+/**
+ * @brief	
+ *
+ * @param	anchor_ptr		
+ * @param	rect		
+ *
+ * @return 	
+ */
+ei_point_t ei_anchor_rect(ei_anchor_t *anchor_ptr, ei_rect_t *rect);
+
+/**
+ * @brief	
+ *
+ * @param	anchor_ptr		
+ * @param	rect		
+ * @param	limit		
+ *
+ * @return 	
+ */
+ei_point_t ei_anchor_text_img(ei_anchor_t *anchor_ptr, ei_rect_t *rect, ei_rect_t *limit);
 
 #endif

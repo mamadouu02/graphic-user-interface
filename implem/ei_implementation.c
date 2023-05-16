@@ -7,6 +7,8 @@
 
 #include "ei_implementation.h"
 
+uint32_t pick_id = 0;
+
 uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color)
 {
 	int ir, ig, ib, ia;

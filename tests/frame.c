@@ -5,7 +5,8 @@
 #include "ei_event.h"
 #include "hw_interface.h"
 #include "ei_widget_configure.h"
-
+#include "ei_types.h"
+#include "ei_frame.h"
 
 /*
  * ei_main --
@@ -15,34 +16,39 @@
 int main(int argc, char** argv)
 {
 	ei_widget_t	frame;
-	ei_widget_t	frame2;
-	ei_widget_t 	second_frame;
+//	ei_widget_t	frame2;
+//	ei_widget_t 	second_frame;
 
 	/* Create the application and change the color of the background. */
 	ei_app_create((ei_size_t){600, 600}, false);
 	ei_frame_set_bg_color(ei_app_root_widget(), (ei_color_t){0x52, 0x7f, 0xb4, 0xff});
 
-	/* Create, configure and place the frame on screen. */
+	ei_surface_t surface_image_copy = hw_surface_create(ei_app_root_surface(), ei_size(100, 100), true);
+	ei_surface_t 	surface_image = hw_image_load("misc/bomb.png", surface_image_copy);
+	ei_rect_t **rect_image = malloc(sizeof(ei_rect_t **));
+	*rect_image = malloc(sizeof(ei_rect_t *));
+	**rect_image = ei_rect(ei_point_zero() ,hw_surface_get_size(surface_image));
+
 	frame = ei_widget_create	("frame", ei_app_root_widget(), NULL, NULL);
-	ei_frame_configure		(frame, &(ei_size_t){300,200},
-			   			&(ei_color_t){0x88, 0x88, 0x88, 0xff},
-			 			&(int){6},
-					 	&(ei_relief_t){ei_relief_raised}, &(ei_string_t) {"RATIO"}, NULL, NULL , NULL, NULL, NULL, NULL);
+	ei_frame_configure		(ei_app_root_widget(), &(ei_size_t){100,100},
+					   &(ei_color_t){0x88, 0x88, 0x88, 0xff},
+					   &(int){6},
+					   &(ei_relief_t){ei_relief_raised}, NULL, NULL, NULL , NULL, surface_image, rect_image, NULL);
 	ei_place_xy			(frame, 150, 200);
 
-	frame2 = ei_widget_create	("frame", ei_app_root_widget(), NULL, NULL);
-	ei_frame_configure		(frame2, &(ei_size_t){300,200},
-					   &(ei_color_t){0x88, 0x00, 0x88, 0xff},
-					   &(int){6},
-					   &(ei_relief_t){ei_relief_raised}, NULL, NULL,NULL , NULL, NULL, NULL, NULL);
-	ei_place_xy			(frame2, 500, 500);
-
-	second_frame = ei_widget_create	("frame", frame, NULL, NULL);
-	ei_frame_configure		(second_frame, &(ei_size_t){100,100},
-					   &(ei_color_t){0x00, 0x00, 0xff, 0xff},
-					   &(int){6},
-					   &(ei_relief_t){ei_relief_raised}, &(ei_string_t) {"Ratio mon reuf"}, NULL,&(ei_color_t){0x00, 0xff, 0x00, 0xff} , NULL, NULL, NULL, NULL);
-	ei_place_xy			(second_frame, 150, 200);
+//	frame2 = ei_widget_create	("frame", ei_app_root_widget(), NULL, NULL);
+//	ei_frame_configure		(frame2, &(ei_size_t){300,200},
+//					   &(ei_color_t){0x88, 0x00, 0x88, 0xff},
+//					   &(int){6},
+//					   &(ei_relief_t){ei_relief_raised}, NULL, NULL,NULL , NULL, NULL, NULL, NULL);
+//	ei_place_xy			(frame2, 500, 500);
+//
+//	second_frame = ei_widget_create	("frame", frame, NULL, NULL);
+//	ei_frame_configure		(second_frame, &(ei_size_t){100,100},
+//					   &(ei_color_t){0x00, 0x00, 0xff, 0xff},
+//					   &(int){6},
+//					   &(ei_relief_t){ei_relief_raised}, &(ei_string_t) {"Ratio mon reuf"}, NULL,&(ei_color_t){0x00, 0xff, 0x00, 0xff} , NULL, NULL, NULL, NULL);
+//	ei_place_xy			(second_frame, 150, 200);
 	/* Run the application's main loop. */
 	ei_app_run();
 

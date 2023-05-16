@@ -71,22 +71,23 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
 		}
 
 		ei_rect_t clipper_text_image = new_screen_loc;
-
 		if (clipper) {
 			clipper_text_image = ei_rect_intersect(clipper_text_image, *clipper);
 		}
 
 		if (frame->text) {
-			ei_surface_t surface_text = hw_text_create_surface(frame->text, frame->text_font, frame->text_color);
+			ei_surface_t surface_text = hw_text_create_surface(frame->text, frame->text_font,
+									   frame->text_color);
 			ei_rect_t text_rect = hw_surface_get_rect(surface_text);
 			text_rect.top_left = ei_anchor_text_img(&(frame->text_anchor), &text_rect, &clipper_text_image);
 
-			ei_draw_text(surface, &text_rect.top_left, (ei_const_string_t) frame->text, frame->text_font, frame->text_color, &clipper_text_image);
+			ei_draw_text(surface, &text_rect.top_left, (ei_const_string_t) frame->text, frame->text_font,
+				     frame->text_color, &clipper_text_image);
 		} else if (frame->img) {
-			ei_rect_t img_rect = (clipper) ? ei_rect_intersect(*(frame->img_rect), *clipper) : *(frame->img_rect);
+			ei_rect_t img_rect = (clipper) ? ei_rect_intersect((frame->img_rect), *clipper) : (frame->img_rect);
 			img_rect.top_left = ei_anchor_text_img(&frame->img_anchor, &img_rect, &clipper_text_image);
 
-			ei_copy_surface(surface, &img_rect, frame->img, frame->img_rect, true);
+			ei_rect_cpy(surface, &img_rect, frame->img, &frame->img_rect, true);
 		}
 	}
 
