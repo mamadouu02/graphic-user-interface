@@ -7,6 +7,7 @@
 
 #include "ei_widget.h"
 #include "ei_implementation.h"
+#include "ei_frame.h"
 
 ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, ei_user_param_t user_data, ei_widget_destructor_t destructor)
 {
@@ -36,15 +37,26 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, e
 
 void ei_widget_destroy(ei_widget_t widget)
 {
-        // ei_widget_t child = widget;
-	// 	ei_widget_t next_sibling = widget->next_sibling;
-	// 	while (child != NULL) {
-	// 		while (next_sibling != NULL) {
-	// 			next_sibling = next_sibling->next_sibling;
-	// 		}
-	// 		child = child->children_head;
-	// 		next_sibling = child;
-	// 	}
+	if (widget != NULL) {
+		ei_widget_t child = widget->children_head;
+		ei_widget_t next_child;
+
+		if (child != NULL) {
+			next_child = child->next_sibling;
+		}
+
+		while (child != NULL) {
+			if (child->children_head != NULL) {
+				ei_widget_destroy(child);
+			}
+
+			frame_releasefunc(child);
+			free(child);
+
+			child = next_child;
+			next_child = child == NULL ? NULL : child->next_sibling;
+		}
+	}
 }
 
 bool ei_widget_is_displayed(ei_widget_t widget)
