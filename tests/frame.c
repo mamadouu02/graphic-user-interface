@@ -56,6 +56,9 @@ int main(int argc, char** argv)
 	/* Run the application's main loop. */
 	ei_app_run();
 
+	hw_surface_unlock(surface_image);
+	hw_surface_free(surface_image);
+
 	/* We just exited from the main loop. Terminate the application (cleanup). */
 	ei_app_free();
 

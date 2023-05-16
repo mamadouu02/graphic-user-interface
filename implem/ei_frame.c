@@ -16,27 +16,23 @@ ei_widget_t frame_allocfunction(void)
 
 void frame_releasefunc(ei_widget_t widget)
 {
-	if (widget != NULL) {
-		ei_widget_t child = widget->children_head;
-		ei_widget_t next_child;
+	ei_impl_frame_t* frame = (ei_impl_frame_t*) widget;
 
-		if (child != NULL) {
-			next_child = child->next_sibling;
-		}
+	free(widget->user_data);
+	free(widget->children_head);
+	free(widget->content_rect);
+	free(widget->parent);
+	free(widget->children_tail);
+	free(widget->destructor);
+	free(widget->next_sibling);
+	free(widget->pick_color);
+	free(widget->placer_params);
+	free(widget->wclass);
 
-		while (child != NULL) {
-			if (child->children_head != NULL) {
-				frame_releasefunc(child);
-			}
-
-			ei_impl_frame_t *frame = (ei_impl_frame_t *) child;
-			free(frame);
-			free(child);
-
-			child = next_child;
-			next_child = child == NULL ? NULL : child->next_sibling;
-		}
-	}
+	free(frame->text_font);
+	free(frame->img);
+	free(frame->img_rect);
+	free(frame->text);
 }
 
 void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
@@ -71,6 +67,8 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
 			child = child->next_sibling;
 		}
 
+		free(child);
+
 		ei_rect_t clipper_text_image = new_screen_loc;
 		if (clipper) {
 			clipper_text_image = ei_rect_intersect(clipper_text_image, *clipper);
@@ -84,6 +82,7 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
 
 			ei_draw_text(surface, &text_rect.top_left, (ei_const_string_t) frame->text, frame->text_font,
 				     frame->text_color, &clipper_text_image);
+			hw_surface_free(surface_text);
 		} else if (frame->img) {
 			ei_rect_t img_rect = (clipper) ? ei_rect_intersect(*(frame->img_rect), *clipper) : *(frame->img_rect);
 			img_rect.top_left = clipper_text_image.top_left;

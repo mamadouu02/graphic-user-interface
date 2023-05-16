@@ -64,7 +64,7 @@ void ei_app_invalidate_rect(const ei_rect_t* rect)
 
 void ei_app_quit_request(void)
 {
-	frame_releasefunc(root);
+	ei_widget_destroy(root);
 	hw_surface_free(main_window);
 	hw_surface_free(offscreen);
 	hw_quit();
