@@ -94,7 +94,7 @@ void	ei_rect_cpy	(ei_surface_t		destination,
 typedef struct ei_impl_widget_t {
 	ei_widgetclass_t*	wclass;		///< The class of widget of this widget. Avoids the field name "class" which is a keyword in C++.
 	uint32_t		pick_id;	///< Id of this widget in the picking offscreen.
-	ei_color_t*		pick_color;	///< pick_id encoded as a color.
+	ei_color_t		pick_color;	///< pick_id encoded as a color.
 	void*			user_data;	///< Pointer provided by the programmer for private use. May be NULL.
 	ei_widget_destructor_t	destructor;	///< Pointer to the programmer's function to call before destroying this widget. May be NULL.
 

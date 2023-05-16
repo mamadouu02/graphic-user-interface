@@ -15,7 +15,7 @@ ei_widgetclass_t* ei_widget_get_class(ei_widget_t widget)
 
 const ei_color_t* ei_widget_get_pick_color(ei_widget_t widget)
 {
-	return widget->pick_color;
+	return &widget->pick_color;
 }
 
 ei_widget_t ei_widget_get_parent(ei_widget_t widget)

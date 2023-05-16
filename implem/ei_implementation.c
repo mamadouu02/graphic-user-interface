@@ -8,7 +8,6 @@
 #include "ei_implementation.h"
 
 uint32_t pick_id = 0;
-ei_color_t pick_color;
 
 uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color)
 {
@@ -167,11 +166,10 @@ void ei_widget_set_pick(ei_widget_t widget)
 {
 	widget->pick_id = pick_id;
 
-	pick_color.red = (pick_id >> 16) & 0xFF;
-	pick_color.green = (pick_id >> 8) & 0xFF;
-	pick_color.blue = pick_id & 0xFF;
-	pick_color.alpha = 0xFF;
-	widget->pick_color = &pick_color;
+	widget->pick_color.red = (pick_id >> 16) & 0xFF;
+	widget->pick_color.green = (pick_id >> 8) & 0xFF;
+	widget->pick_color.blue = pick_id & 0xFF;
+	widget->pick_color.alpha = 0xFF;
 
 	pick_id += 100;
 }
