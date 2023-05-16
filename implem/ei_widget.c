@@ -14,6 +14,7 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, e
 	ei_widget_t widget = class->allocfunc();
 
 	widget->wclass = class;
+	ei_widget_set_pick(widget);
 	widget->user_data = user_data;
 	widget->destructor = destructor;
 	widget->parent = parent;
