@@ -33,9 +33,9 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen)
 
 void ei_app_free(void)
 {
-    hw_surface_free(main_window);
-    hw_surface_free(offscreen);
-    hw_quit();
+	ei_widget_destroy(root);
+	hw_surface_free(main_window);
+	hw_surface_free(offscreen);
 }
 
 void ei_app_run(void)
@@ -47,7 +47,7 @@ void ei_app_run(void)
 	ei_impl_app_run_children(widget);
 
 	root->wclass->drawfunc(root, main_window, offscreen, NULL);
-	
+
 	hw_surface_unlock(main_window);
 	hw_surface_unlock(offscreen);
 	hw_surface_update_rects(main_window, NULL);
@@ -65,9 +65,6 @@ void ei_app_invalidate_rect(const ei_rect_t* rect)
 
 void ei_app_quit_request(void)
 {
-	ei_widget_destroy(root);
-	hw_surface_free(main_window);
-	hw_surface_free(offscreen);
 	hw_quit();
 }
 
