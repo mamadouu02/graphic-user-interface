@@ -6,7 +6,7 @@
  */
 
 #include "ei_widget_attributes.h"
-#include "ei_class.h"
+#include "ei_implementation.h"
 
 ei_widgetclass_t* ei_widget_get_class(ei_widget_t widget)
 {

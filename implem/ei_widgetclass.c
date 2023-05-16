@@ -5,7 +5,7 @@
  */
 
 #include "ei_widgetclass.h"
-#include "ei_class.h"
+#include "ei_implementation.h"
 
 ei_widgetclass_t *classes = NULL;
 

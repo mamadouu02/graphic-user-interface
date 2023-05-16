@@ -6,7 +6,7 @@
  */
 
 #include "ei_application.h"
-#include "ei_class.h"
+#include "ei_frame.h"
 #include "ei_event.h"
 
 ei_widget_t root;

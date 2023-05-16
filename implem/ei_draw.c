@@ -7,8 +7,7 @@
 
 #include "ei_draw.h"
 #include "ei_implementation.h"
-
-
+#include "ei_polygon.h"
 
 void	ei_draw_polyline	(ei_surface_t		surface,
 				ei_point_t*		point_array,
@@ -151,7 +150,7 @@ void	ei_draw_polygon		(ei_surface_t		surface,
 
 	while (y_scan <= yp_max) {
 		int i_scan = y_scan - yp_min;
-		tca_insert(&tca, tc, i_scan);
+		ei_tca_insert(&tca, tc, i_scan);
 		tca_remove(&tca, tc, y_scan);
 
 		// Modification des pixels
@@ -196,12 +195,12 @@ void	ei_draw_text	(ei_surface_t		surface,
 	ei_rect_t rect_text = ei_rect(*where, ei_size(width_text_copy, height_text_copy));
 
 	if (clipper != NULL) {
-		rect_text = rect_intersection(rect_text, *clipper);
+		rect_text = ei_rect_intersect(rect_text, *clipper);
 	}
 
 	hw_surface_lock(surface_copy);
 
-	ei_copy_rect(surface, &rect_text, surface_copy, &rect_copy, true);
+	ei_rect_cpy(surface, &rect_text, surface_copy, &rect_copy, true);
 
 	hw_surface_unlock(surface_copy);
 	hw_surface_free(surface_copy);
@@ -263,7 +262,7 @@ int	ei_copy_surface		(ei_surface_t		destination,
 		rect_dst = *dst_rect;
 	}
 
-	ei_rect_t inter = rect_intersection(rect_src, rect_dst);
+	ei_rect_t inter = ei_rect_intersect(rect_src, rect_dst);
 	int height_rect = inter.size.height;
 	int width_rect = inter.size.width;
 	int x_rect = inter.top_left.x;

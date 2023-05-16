@@ -6,8 +6,6 @@
 
 #include "ei_placer.h"
 #include "ei_implementation.h"
-#include "ei_class.h"
-
 
 void	ei_place	(ei_widget_t		widget,
 			ei_anchor_t*		anchor,

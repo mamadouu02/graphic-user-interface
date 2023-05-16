@@ -1,11 +1,11 @@
 /**
- * @file	ei_class.c
+ * @file	ei_frame.c
  *
- * @brief 	Classes definitions.
+ * @brief 	Frame class.
  *
  */
 
-#include "ei_class.h"
+#include "ei_frame.h"
 
 ei_widget_t frame_allocfunction(void)
 {
@@ -43,50 +43,51 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
 
 	if (widget->parent == NULL) {
 		ei_fill(surface, &frame->color, clipper);
-	} else if (widget->placer_params != NULL) {
-
+	} else if (widget->placer_params) {
 		ei_rect_t widget_rect;
 		widget_rect = widget->placer_params->rectangle;
-		widget_rect.top_left = anchor_rect(&widget->placer_params->anchor, &widget_rect);
-
+		widget_rect.top_left = ei_anchor_rect(&widget->placer_params->anchor, &widget_rect);
 		ei_rect_t clipper_frame = *widget->content_rect;
-		if (clipper != NULL) {
-			clipper_frame = rect_intersection(clipper_frame, *clipper);
-		}
-		draw_frame(surface, widget_rect, frame->color, frame->relief, &clipper_frame);
 
-		ei_rect_t new_screen_loc = rect_intersection(widget_rect, clipper_frame);
+		if (clipper) {
+			clipper_frame = ei_rect_intersect(clipper_frame, *clipper);
+		}
+
+		ei_draw_frame(surface, widget_rect, frame->color, frame->relief, &clipper_frame);
+
+		ei_rect_t new_screen_loc = ei_rect_intersect(widget_rect, clipper_frame);
 		widget->screen_location = new_screen_loc;
+		
 		/* à changer pour tous les enfants aussi ! */
 		if (widget->children_head) {
 			widget->children_head->content_rect = &widget->screen_location;
 		}
 
 		ei_rect_t clipper_text_image = widget_rect;
-		if (clipper != NULL) {
-			clipper_text_image = rect_intersection(clipper_text_image, *clipper);
+
+		if (clipper) {
+			clipper_text_image = ei_rect_intersect(clipper_text_image, *clipper);
 		}
 
 		if (frame->text) {
 			ei_surface_t surface_text = hw_text_create_surface(frame->text, frame->text_font, frame->text_color);
 			ei_rect_t text_rect = hw_surface_get_rect(surface_text);
+			text_rect.top_left = ei_anchor_text_img(&(frame->text_anchor), &text_rect, &clipper_text_image);
 
-			text_rect.top_left = anchor_text_image(&(frame->text_anchor), &text_rect, &clipper_text_image);
-			if (!rect_cmp(*widget->content_rect, clipper_frame)) {
+			if (!ei_rect_cmp(*widget->content_rect, clipper_frame)) {
 				text_rect.top_left.x += clipper_frame.top_left.x;
 				text_rect.top_left.y += clipper_frame.top_left.y;
-			} else{
+			} else {
 				text_rect.top_left.x += widget_rect.top_left.x;
 				text_rect.top_left.y += widget_rect.top_left.y;
 			}
-			ei_draw_text(surface, &text_rect.top_left, (ei_const_string_t) frame->text, frame->text_font,
-				frame->text_color, clipper);
+
+			ei_draw_text(surface, &text_rect.top_left, (ei_const_string_t) frame->text, frame->text_font, frame->text_color, clipper);
 		} else if (frame->img) {
-			ei_rect_t img_rect = (clipper) ? rect_intersection(*(frame->img_rect), *clipper)
-						       : *(frame->img_rect);
-			img_rect.top_left = anchor_text_image(&frame->img_anchor, &img_rect, &clipper_text_image);
-			img_rect.top_left.x+=widget_rect.top_left.x;
-			img_rect.top_left.y+=widget_rect.top_left.y;
+			ei_rect_t img_rect = (clipper) ? ei_rect_intersect(*(frame->img_rect), *clipper) : *(frame->img_rect);
+			img_rect.top_left = ei_anchor_text_img(&frame->img_anchor, &img_rect, &clipper_text_image);
+			img_rect.top_left.x += widget_rect.top_left.x;
+			img_rect.top_left.y += widget_rect.top_left.y;
 			ei_copy_surface(surface, &img_rect, frame->img, frame->img_rect, true);
 		}
 	}

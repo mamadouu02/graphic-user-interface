@@ -6,7 +6,9 @@
  */
 
 #include "ei_widget_configure.h"
-#include "ei_class.h"
+#include "ei_frame.h"
+#include "ei_button.h"
+#include "ei_toplevel.h"
 
 void    ei_frame_configure      (ei_widget_t		widget,
 			        ei_size_t*		requested_size,

@@ -80,10 +80,13 @@ include_directories(${HEADER_DIRS})
 
 set(LIB_EI_SOURCES
 	${SRC_DIR}/ei_application.c
-	${SRC_DIR}/ei_class.c
+	${SRC_DIR}/ei_button.c
 	${SRC_DIR}/ei_draw.c
+	${SRC_DIR}/ei_frame.c
 	${SRC_DIR}/ei_implementation.c
 	${SRC_DIR}/ei_placer.c
+	${SRC_DIR}/ei_polygon.c
+	${SRC_DIR}/ei_toplevel.c
 	${SRC_DIR}/ei_widget_attributes.c
 	${SRC_DIR}/ei_widget_configure.c
 	${SRC_DIR}/ei_widget.c
