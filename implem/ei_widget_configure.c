@@ -33,7 +33,7 @@ void    ei_frame_configure      (ei_widget_t		widget,
 	frame->text_color = (text_color == NULL) ? frame->text_color : *text_color;
 	frame->text_anchor = (text_anchor == NULL) ? frame->text_anchor : *text_anchor;
 	frame->img = (img == NULL) ? frame->img : *img;
-	frame->img_rect = (img_rect == NULL) ? frame->img_rect : *img_rect;
+	frame->img_rect = (img_rect == NULL) ? frame->img_rect : **img_rect;
 	frame->img_anchor = (img_anchor == NULL) ? frame->img_anchor : *img_anchor;
 }
 
