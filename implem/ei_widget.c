@@ -6,9 +6,10 @@
  */
 
 #include "ei_widget.h"
-#include "ei_implementation.h"
 #include "ei_frame.h"
 #include "ei_application.h"
+
+extern ei_surface_t offscreen;
 
 ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, ei_user_param_t user_data, ei_widget_destructor_t destructor)
 {
@@ -51,7 +52,7 @@ void ei_widget_destroy(ei_widget_t widget)
 				ei_widget_destroy(child);
 			}
 
-			//child->wclass->releasefunc(child); /* * Libération d'adresses non allouées */
+			// child->wclass->releasefunc(child);
 			free(child);
 
 			child = next_child;
@@ -66,24 +67,22 @@ bool ei_widget_is_displayed(ei_widget_t widget)
         uint32_t pick_id = widget->pick_id;
         ei_point_t top_left = widget->screen_location.top_left;
         ei_widget_t widget_top_left = ei_widget_pick(&top_left);
-        if (widget_top_left->pick_id == pick_id) {
-        	return true;
-        }
-        return false;
+
+	return widget_top_left->pick_id == pick_id;
 }
 
 ei_widget_t ei_widget_pick(ei_point_t* where)
 {
 	hw_surface_lock(offscreen);
-	uint8_t *pix = (uint8_t*) hw_surface_get_buffer(offscreen);
+	uint8_t *pix = hw_surface_get_buffer(offscreen);
 	ei_size_t size = hw_surface_get_size(offscreen);
 	int ir, ig, ib, ia;
 	hw_surface_get_channel_indices(offscreen, &ir, &ig, &ib, &ia);
-	uint32_t pick_id = pix[where->y * size.width * 4 + where->x * 4 + ir];
+	uint32_t pick_id = pix[4 * (where->y * size.width + where->x) + ir];
 	hw_surface_unlock(offscreen);
-	ei_widget_t *widget_ptr= malloc(sizeof(ei_widget_t));
-	pick(ei_app_root_widget(), pick_id, widget_ptr);
+	
+	ei_widget_t *widget_ptr = malloc(sizeof(ei_widget_t));
+	ei_pick(ei_app_root_widget(), pick_id, widget_ptr);
+
 	return *widget_ptr;
 }
-
-

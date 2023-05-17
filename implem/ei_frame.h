@@ -68,6 +68,21 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
  */
 void frame_setdefaultsfunc(ei_widget_t widget);
 
+/**
+ * @brief	A function that is called in response to an event. This function
+ *		is internal to the library. It implements the generic behavior of
+ *		a widget (for example a button looks sunken when clicked)
+ *
+ * @param	widget		The widget for which the event was generated.
+ * @param	event		The event containing all its parameters (type, etc.)
+ *
+ * @return			A boolean telling if the event was consumed by the callback or not.
+ *				If true, the library does not try to call other callbacks for this
+ *				event. If false, the library will call the next callback registered
+ *				for this event, if any.
+ *				Note: The callback may execute many operations and still return
+ *				false, or return true without having done anything.
+ */
 bool frame_handlefunc(ei_widget_t widget ,struct ei_event_t* event);
 
 /**

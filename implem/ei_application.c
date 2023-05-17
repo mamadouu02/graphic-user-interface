@@ -1,31 +1,37 @@
 /**
  *  @file	ei_application.c
+ * 
  *  @brief	Manages the main steps of a graphical application: initialization, main window,
  *		main loop, quitting, resource freeing.
  *
  */
 
 #include "ei_application.h"
-#include "ei_frame.h"
 #include "ei_event.h"
+#include "ei_frame.h"
 #include "ei_button.h"
 
 ei_widget_t root;
 ei_surface_t main_window, offscreen;
 
-void ei_app_create(ei_size_t main_window_size, bool fullscreen) {
+void ei_app_create(ei_size_t main_window_size, bool fullscreen)
+{
+	/* Initializes the hardware */
 	hw_init();
 
+	/* Registers all classes of widget */
 	ei_frame_register();
 	ei_button_register();
 
+	/* Creates the root window */
 	main_window = hw_create_window(main_window_size, fullscreen);
-	offscreen = hw_create_window(main_window_size, fullscreen);
+	offscreen = hw_surface_create(main_window, main_window_size, false);
 
+	/* Creates the root widget */
 	ei_widgetclass_t *frame = ei_widgetclass_from_name("frame");
+
 	root = frame->allocfunc();
 	root->wclass = frame;
-
 	ei_widget_set_pick(root);
 	root->requested_size = hw_surface_get_size(ei_app_root_surface());
 	root->screen_location = ei_rect(ei_point_zero(), root->requested_size);
@@ -54,24 +60,31 @@ void ei_app_run(void)
 	hw_surface_unlock(offscreen);
 
 	hw_surface_update_rects(main_window, NULL);
-	hw_surface_update_rects(offscreen, NULL);
 
 	ei_event_t event;
+
 	while ((event.type != ei_ev_close) && (event.type != ei_ev_keydown)) {
-		if (event.type == ei_ev_mouse_buttondown) {
-			ei_widget_t widget_event = ei_widget_pick(&event.param.mouse.where);
-			widget_event->wclass->handlefunc(widget_event,&event);
-		}
-		else if (event.type == ei_ev_mouse_buttonup) {
-			ei_widget_t widget_event = ei_widget_pick(&event.param.mouse.where);
-			widget_event->wclass->handlefunc(widget_event,&event);
-		}
-		else if (event.type == ei_ev_mouse_move) {
-			if (ei_event_get_active_widget() != NULL) {
-				ei_widget_t widget_event = ei_event_get_active_widget();
+		ei_widget_t widget_event;
+
+		switch (event.type) {
+			case ei_ev_mouse_buttondown:
+				widget_event = ei_widget_pick(&event.param.mouse.where);
 				widget_event->wclass->handlefunc(widget_event, &event);
-			}
+				break;
+			case ei_ev_mouse_buttonup:
+				widget_event = ei_widget_pick(&event.param.mouse.where);
+				widget_event->wclass->handlefunc(widget_event, &event);
+				break;
+			case ei_ev_mouse_move:
+				if (ei_event_get_active_widget() != NULL) {
+					widget_event = ei_event_get_active_widget();
+					widget_event->wclass->handlefunc(widget_event, &event);
+				}
+				break;
+			default:
+				break;
 		}
+		
 		hw_event_wait_next(&event);
 	}
 

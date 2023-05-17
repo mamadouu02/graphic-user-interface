@@ -13,6 +13,8 @@
 #include "ei_widget.h"
 #include "ei_utils.h"
 
+/* Pixel */
+
 /**
  * \brief	Converts the red, green, blue and alpha components of a color into a 32 bits integer
  * 		than can be written directly in the memory returned by \ref hw_surface_get_buffer.
@@ -36,6 +38,8 @@ uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color);
  */
 void ei_fill_pixel(ei_surface_t surface, const ei_color_t *color, ei_point_t pixel);
 
+/* Clipping */
+
 /**
  * @brief	Teste si clipper pointe vers NULL ou si le pixel appartient au clippeur.
  *
@@ -50,6 +54,8 @@ void ei_fill_pixel(ei_surface_t surface, const ei_color_t *color, ei_point_t pix
  * @return 	true si clipper pointe vers NULL ou si le pixel appartient au clippeur.
  */
 bool in_clipper(int x, int y, int xc_min, int xc_max, int yc_min, int yc_max, const ei_rect_t *clipper);
+
+/* Rectangle */
 
 /**
  * @brief	Compare deux rectangles.
@@ -71,7 +77,15 @@ bool ei_rect_cmp(ei_rect_t rect1, ei_rect_t rect2);
  */
 ei_rect_t ei_rect_intersect(ei_rect_t rect1, ei_rect_t rect2);
 
-bool in_rect(ei_point_t point, ei_rect_t rect);
+/**
+ * @brief	Teste si un point appartient à un rectangle.
+ *
+ * @param	point		Point.
+ * @param	rect		Rectangle.
+ *
+ * @return 	true si le point appartient au rectangle.
+ */
+bool ei_in_rect(ei_point_t point, ei_rect_t rect);
 
 /**
  * @brief	Copie le rectangle source dans la surface de destination à la position du rectangle de destination.
@@ -81,13 +95,14 @@ bool in_rect(ei_point_t point, ei_rect_t rect);
  * @param	source		Surface source.
  * @param	src_rect	Rectangle à copier.
  * @param	alpha		Paramètre de transparence.
- *
  */
 void	ei_rect_cpy	(ei_surface_t		destination,
 				const ei_rect_t*	dst_rect,
 				ei_surface_t		source,
 				const ei_rect_t*	src_rect,
 				bool			alpha);
+
+/* Widget */
 
 /**
  * \brief	Fields common to all types of widget. Every widget classes specializes this base
@@ -113,9 +128,23 @@ typedef struct ei_impl_widget_t {
 	ei_rect_t*		content_rect;	///< Where to place children, when this widget is used as a container. By defaults, points to the screen_location.
 } ei_impl_widget_t;
 
+/* Picking */
+
+/**
+ * @brief	Définit les attributs pick_id et pick_color d'un widget.
+ *
+ * @param	widget		Widget à configurer
+ */
 void ei_widget_set_pick(ei_widget_t widget);
 
-void pick(ei_widget_t widget, uint32_t pick_id_, ei_widget_t *widget_ptr);
+/**
+ * @brief	
+ *
+ * @param	widget		
+ */
+void ei_pick(ei_widget_t widget, uint32_t pick_id, ei_widget_t *widget_ptr);
+
+/* Widget drawing */
 
 /**
  * @brief	Draws the children of a widget.
@@ -132,6 +161,8 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		surface,
 					ei_surface_t		pick_surface,
 					ei_rect_t*		clipper);
+
+/* Anchor */
 
 /**
  * @brief	
@@ -153,6 +184,8 @@ ei_point_t ei_anchor_rect(ei_anchor_t *anchor_ptr, ei_rect_t *rect);
  * @return 	
  */
 ei_point_t ei_anchor_text_img(ei_anchor_t *anchor_ptr, ei_rect_t *rect, ei_rect_t *limit);
+
+/* Geometry managment */
 
 /**
  * \brief	A structure storing the placement parameters of a widget.
@@ -180,8 +213,18 @@ struct ei_impl_placer_params_t {
  */
 void ei_impl_placer_run(ei_widget_t widget);
 
-void ei_impl_app_run_children(ei_widget_t widget);
-
+/**
+ * @brief	
+ *
+ * @param	widget		
+ */
 void ei_impl_app_run_siblings(ei_widget_t widget);
+
+/**
+ * @brief	
+ *
+ * @param	widget		
+ */
+void ei_impl_app_run_children(ei_widget_t widget);
 
 #endif

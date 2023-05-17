@@ -371,19 +371,19 @@ void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int
 	ei_draw_polygon(surface, button, 8 * octant_array_size, color, clipper);
 
 	if (text) {
-		ei_rect_t clipper_text_image = rect;
+		ei_rect_t clipper_text_img = rect;
+
 		if (clipper) {
-			clipper_text_image = ei_rect_intersect(ei_rect_intersect(rect, *clipper), *clipper);
+			clipper_text_img = ei_rect_intersect(ei_rect_intersect(rect, *clipper), *clipper);
 		}
 
-		ei_surface_t surface_text = hw_text_create_surface(*text, *text_font,
-								   *text_color);
-		ei_rect_t text_rect = hw_surface_get_rect(surface_text);
-		text_rect.top_left = ei_anchor_text_img(text_anchor, &text_rect, &clipper_text_image);
+		ei_surface_t text_surface = hw_text_create_surface(*text, *text_font, *text_color);
+		ei_rect_t text_rect = hw_surface_get_rect(text_surface);
+		text_rect.top_left = ei_anchor_text_img(text_anchor, &text_rect, &clipper_text_img);
 
-		ei_draw_text(surface, &text_rect.top_left, (ei_const_string_t) *text, *text_font,
-			     *text_color, &clipper_text_image);
-		hw_surface_free(surface_text);
+		ei_draw_text(surface, &text_rect.top_left, (ei_const_string_t) *text, *text_font, *text_color, &clipper_text_img);
+		
+		hw_surface_free(text_surface);
 	}
 
 	free(button);

@@ -7,7 +7,9 @@
 
 #include "ei_implementation.h"
 
-uint32_t pick_id = 0;
+uint32_t id = 0;
+
+/* Pixel */
 
 uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color)
 {
@@ -41,10 +43,14 @@ void ei_fill_pixel(ei_surface_t surface, const ei_color_t *color, ei_point_t pix
 	pix_ptr[y * width + x] = couleur;
 }
 
+/* Clipping */
+
 bool in_clipper(int x, int y, int xc_min, int xc_max, int yc_min, int yc_max, const ei_rect_t* clipper)
 {
 	return clipper == NULL || (x >= xc_min && x <= xc_max && y >= yc_min && y <= yc_max);
 }
+
+/* Rectangle */
 
 bool ei_rect_cmp(ei_rect_t rect1, ei_rect_t rect2)
 {
@@ -110,7 +116,7 @@ ei_rect_t ei_rect_intersect(ei_rect_t rect1, ei_rect_t rect2)
 	}
 }
 
-bool in_rect(ei_point_t point, ei_rect_t rect)
+bool ei_in_rect(ei_point_t point, ei_rect_t rect)
 {
 	if (rect.top_left.x <= point.x && point.x <= rect.top_left.x + rect.size.width && rect.top_left.y <= point.y && point.y <= rect.top_left.y + rect.size.height) {
 		return true;
@@ -170,32 +176,33 @@ void	ei_rect_cpy	(ei_surface_t		destination,
 	}
 }
 
+/* Picking */
+
 void ei_widget_set_pick(ei_widget_t widget)
 {
-//	widget->pick_id = pick_id;
-//
-//	widget->pick_color.red = (pick_id >> 16) & 0xFF;
-//	widget->pick_color.green = (pick_id >> 8) & 0xFF;
-//	widget->pick_color.blue = pick_id & 0xFF;
-//	widget->pick_color.alpha = 0xFF;
-//
-//	pick_id += 100;
+	widget->pick_id = id;
 
 	/* Changement provisoire pour faciliter ei_widget_pick */
-	widget->pick_id = pick_id;
 
-	widget->pick_color.red = pick_id;
-	widget->pick_color.green = pick_id;
-	widget->pick_color.blue = pick_id;
+	// widget->pick_color.red = (id >> 16) & 0xFF;
+	// widget->pick_color.green = (id >> 8) & 0xFF;
+	// widget->pick_color.blue = id & 0xFF;
+	// widget->pick_color.alpha = 0xFF;
+
+	// id += 100;
+
+	widget->pick_color.red = id;
+	widget->pick_color.green = id;
+	widget->pick_color.blue = id;
 	widget->pick_color.alpha = 0xFF;
 
-	pick_id += 1;
+	id += 1;
 }
 
-void pick(ei_widget_t widget,uint32_t pick_id_, ei_widget_t *widget_ptr)
+void ei_pick(ei_widget_t widget, uint32_t pick_id, ei_widget_t *widget_ptr)
 {
 	if (widget != NULL) {
-		if (widget->pick_id == pick_id_){
+		if (widget->pick_id == pick_id) {
 			*widget_ptr = widget;
 		}
 
@@ -207,14 +214,14 @@ void pick(ei_widget_t widget,uint32_t pick_id_, ei_widget_t *widget_ptr)
 		}
 
 		while (child != NULL) {
-			pick(child, pick_id_, widget_ptr);
-
+			ei_pick(child, pick_id, widget_ptr);
 			child = next_child;
-			next_child = child == NULL ? NULL : child->next_sibling;
-
+			next_child = (child == NULL) ? NULL : child->next_sibling;
 		}
 	}
 }
+
+/* Widget drawing */
 
 void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		surface,
@@ -231,6 +238,8 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 		}
 	}
 }
+
+/* Anchor */
 
 ei_point_t ei_anchor_rect(ei_anchor_t *anchor_ptr, ei_rect_t *rect)
 {
@@ -330,6 +339,8 @@ ei_point_t ei_anchor_text_img(ei_anchor_t *anchor_ptr, ei_rect_t *rect, ei_rect_
 	return ei_point(top_left.x + limit->top_left.x, top_left.y+ limit->top_left.y);
 }
 
+/* Geometry managment */
+
 void ei_impl_placer_run(ei_widget_t widget)
 {
 	int parent_height = widget->parent->content_rect->size.height;
@@ -363,25 +374,6 @@ void ei_impl_placer_run(ei_widget_t widget)
 	free(where);
 }
 
-void ei_impl_app_run_children(ei_widget_t widget)
-{
-	if (widget != NULL) {
-		if (widget->placer_params) {
-			ei_impl_app_run_siblings(widget);
-		}
-
-		widget = widget->children_head;
-
-		while (widget != NULL) {
-			if (widget->placer_params) {
-				ei_impl_app_run_siblings(widget);
-			}
-
-			widget = widget->children_head;
-		}
-	}
-}
-
 void ei_impl_app_run_siblings(ei_widget_t widget)
 {
 	if (widget != NULL) {
@@ -397,6 +389,25 @@ void ei_impl_app_run_siblings(ei_widget_t widget)
 			}
 
 			widget = widget->next_sibling;
+		}
+	}
+}
+
+void ei_impl_app_run_children(ei_widget_t widget)
+{
+	if (widget != NULL) {
+		if (widget->placer_params) {
+			ei_impl_app_run_siblings(widget);
+		}
+
+		widget = widget->children_head;
+
+		while (widget != NULL) {
+			if (widget->placer_params) {
+				ei_impl_app_run_siblings(widget);
+			}
+
+			widget = widget->children_head;
 		}
 	}
 }

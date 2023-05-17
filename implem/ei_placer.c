@@ -1,5 +1,6 @@
 /**
  *  @file	ei_placer.c
+ * 
  *  @brief	Manages the positioning and sizing of widgets on the screen.
  *
  */

@@ -1,15 +1,15 @@
 /**
  *  @file	ei_event.c
+ * 
  *  @brief	Allows the binding and unbinding of callbacks to events.
  *
  */
 
-
 #include "ei_event.h"
 #include "ei_application.h"
 
-ei_default_handle_func_t default_func;
 ei_widget_t active_widget;
+ei_default_handle_func_t default_func;
 
 void ei_event_set_active_widget(ei_widget_t widget)
 {

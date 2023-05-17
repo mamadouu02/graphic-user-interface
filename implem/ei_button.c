@@ -6,10 +6,6 @@
  */
 
 #include "ei_button.h"
-#include "ei_polygon.h"
-#include "ei_event.h"
-#include "ei_widget_configure.h"
-#include "ei_application.h"
 
 ei_widget_t button_allocfunction(void)
 {
@@ -18,13 +14,12 @@ ei_widget_t button_allocfunction(void)
 
 void button_releasefunc(ei_widget_t widget)
 {
-	//ei_impl_button_t* button = (ei_impl_button_t*) widget;
+	// ei_impl_button_t *button = (ei_impl_button_t *) widget;
 
 	free(widget->user_data);
 	free(widget->content_rect);
-	free(widget->destructor);
+	// free(widget->destructor);
 	free(widget->placer_params);
-
 }
 
 void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
@@ -35,11 +30,11 @@ void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick
 		ei_fill(surface, &button->color, clipper);
 		ei_fill(pick_surface, &widget->pick_color, clipper);
 	} else if (widget->placer_params) {
-
 		ei_rect_t widget_rect;
 		widget_rect = widget->screen_location;
 
 		ei_rect_t clipper_frame = *widget->parent->content_rect;
+		
 		if (clipper) {
 			clipper_frame = ei_rect_intersect(clipper_frame, *clipper);
 		}
@@ -48,18 +43,22 @@ void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick
 		ei_draw_button(pick_surface, widget_rect, widget->pick_color, button->corner_radius, ei_relief_none, &clipper_frame, NULL, NULL, NULL, NULL);
 
 		ei_rect_t new_screen_loc = ei_rect_intersect(widget_rect, clipper_frame);
+		
 		/* where to place children */
 		widget->screen_location = new_screen_loc;
 		widget->content_rect = &widget->screen_location;
+		
 		/* à changer pour tous les enfants aussi ! */
 		ei_widget_t child = widget->children_head;
+		
 		while (child) {
-			child->screen_location = ei_rect_intersect(*widget->content_rect,widget->children_head->screen_location);
+			child->screen_location = ei_rect_intersect(*widget->content_rect, widget->children_head->screen_location);
 			child->content_rect = &widget->children_head->screen_location;
 			child = child->next_sibling;
 		}
 
 		ei_rect_t clipper_text_image = new_screen_loc;
+		
 		if (clipper) {
 			clipper_text_image = ei_rect_intersect(clipper_text_image, *clipper);
 		}
@@ -67,9 +66,8 @@ void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick
 		if (!button->text && button->img) {
 			ei_rect_t img_rect = (clipper) ? ei_rect_intersect(*(button->img_rect), *clipper) : *(button->img_rect);
 			img_rect.top_left = clipper_text_image.top_left;
-			img_rect = ei_rect_intersect(img_rect,clipper_text_image);
+			img_rect = ei_rect_intersect(img_rect, clipper_text_image);
 			img_rect.top_left = ei_anchor_text_img(&button->img_anchor, &img_rect, &clipper_text_image);
-
 			ei_rect_cpy(surface, &img_rect, button->img, button->img_rect, true);
 		}
 	}
@@ -80,39 +78,40 @@ void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick
 void button_setdefaultsfunc(ei_widget_t widget)
 {
 	ei_impl_button_t *button = (ei_impl_button_t *) widget;
-
 	button->color = ei_default_background_color;
+	button->border_width = k_default_button_border_width;
+	button->corner_radius = k_default_button_corner_radius;
 	button->relief = (ei_relief_t) { ei_relief_raised };
 	button->text_font = ei_default_font;
 	button->text_color = ei_font_default_color;
 	button->text_anchor = (ei_anchor_t) { ei_anc_center };
 	button->img_anchor = (ei_anchor_t) { ei_anc_center };
-	button->corner_radius = k_default_button_corner_radius;
 }
 
 bool ei_button_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 {
 	hw_surface_lock(ei_app_root_surface());
-	ei_impl_button_t *button = (ei_impl_button_t*) widget;
-	if (event->type == ei_ev_mouse_move && !in_rect(event->param.mouse.where,widget->screen_location) && (button->relief == ei_relief_sunken)){
-		ei_draw_button(ei_app_root_surface(),widget->screen_location,button->color,button->corner_radius,ei_relief_raised,NULL, &button->text, &button->text_font, &button->text_color, &button->text_anchor);
+	ei_impl_button_t *button = (ei_impl_button_t *) widget;
+
+	if (event->type == ei_ev_mouse_move && !ei_in_rect(event->param.mouse.where, widget->screen_location) && button->relief == ei_relief_sunken) {
+		ei_draw_button(ei_app_root_surface(), widget->screen_location, button->color, button->corner_radius, ei_relief_raised, NULL, &button->text, &button->text_font, &button->text_color, &button->text_anchor);
 		button->relief = ei_relief_raised;
 		ei_event_set_active_widget(NULL);
-	}
-	else if (event->type == ei_ev_mouse_buttonup && event->param.mouse.button == ei_mouse_button_left && in_rect(event->param.mouse.where,widget->screen_location) && (button->relief == ei_relief_sunken)){
-		ei_draw_button(ei_app_root_surface(),widget->screen_location,button->color,button->corner_radius,ei_relief_raised,NULL, &button->text, &button->text_font, &button->text_color, &button->text_anchor);
+	} else if (event->type == ei_ev_mouse_buttonup && event->param.mouse.button == ei_mouse_button_left && ei_in_rect(event->param.mouse.where,widget->screen_location) && button->relief == ei_relief_sunken) {
+		ei_draw_button(ei_app_root_surface(), widget->screen_location, button->color, button->corner_radius, ei_relief_raised, NULL, &button->text, &button->text_font, &button->text_color, &button->text_anchor);
 		button->relief = ei_relief_raised;
 		button->callback(widget, event, button->user_param);
 		ei_event_set_active_widget(NULL);
-	}
-	else if (event->type == ei_ev_mouse_buttondown && event->param.mouse.button == ei_mouse_button_left && in_rect(event->param.mouse.where,widget->screen_location) && (button->relief == ei_relief_raised)){
-		ei_draw_button(ei_app_root_surface(),widget->screen_location,button->color,button->corner_radius,ei_relief_sunken,NULL, &button->text, &button->text_font, &button->text_color, &button->text_anchor);
+	} else if (event->type == ei_ev_mouse_buttondown && event->param.mouse.button == ei_mouse_button_left && ei_in_rect(event->param.mouse.where, widget->screen_location) && button->relief == ei_relief_raised) {
+		ei_draw_button(ei_app_root_surface(), widget->screen_location, button->color, button->corner_radius, ei_relief_sunken, NULL, &button->text, &button->text_font, &button->text_color, &button->text_anchor);
 		button->relief = ei_relief_sunken;
 		ei_event_set_active_widget(widget);
 	}
+
 	hw_surface_unlock(ei_app_root_surface());
-	hw_surface_update_rects(ei_app_root_surface(),NULL);
-	return 0;
+	hw_surface_update_rects(ei_app_root_surface(), NULL);
+	
+	return false;
 }
 
 
@@ -123,7 +122,7 @@ void ei_button_register(void)
 	button->allocfunc = &button_allocfunction;
 	button->releasefunc = &button_releasefunc;
 	button->drawfunc = &button_drawfunc;
-	button->handlefunc = &ei_button_handlefunc;
 	button->setdefaultsfunc = &button_setdefaultsfunc;
+	button->handlefunc = &ei_button_handlefunc;
 	ei_widgetclass_register(button);
 }

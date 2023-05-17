@@ -1,5 +1,6 @@
 /**
  *  @file	ei_widgetclass.c
+ * 
  *  @brief	Definition and registration of widget classes.
  *
  */

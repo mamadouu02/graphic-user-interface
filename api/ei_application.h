@@ -16,8 +16,7 @@
 #include "ei_types.h"
 #include "ei_widgetclass.h"
 
-extern ei_widget_t root;
-extern ei_surface_t main_window, offscreen;
+
 
 /**
  * \brief	Creates an application.
