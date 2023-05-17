@@ -50,7 +50,7 @@ void ei_widget_destroy(ei_widget_t widget)
 				ei_widget_destroy(child);
 			}
 
-			frame_releasefunc(child);
+			// frame_releasefunc(child); /* Libération d'adresses non allouées */
 			free(child);
 
 			child = next_child;

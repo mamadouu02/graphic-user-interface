@@ -23,9 +23,9 @@ void frame_releasefunc(ei_widget_t widget)
 	free(widget->content_rect);
 	free(widget->parent);
 	free(widget->children_tail);
-	free(widget->destructor);
+	// free(widget->destructor); /* libération d'une adresse non allouée */
 	free(widget->next_sibling);
-	free(widget->pick_color);
+	// free(widget->pick_color); /* pick_color n'est plus de type 'ei_color_t *' mais 'ei_color_t' */
 	free(widget->placer_params);
 	free(widget->wclass);
 
