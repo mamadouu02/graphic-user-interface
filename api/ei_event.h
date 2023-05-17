@@ -97,6 +97,7 @@ typedef struct ei_event_t {
 	} param;
 } ei_event_t;
 
+
 /**
  * @brief	Tests is a modifier key was pressed at the time of an event.
  *

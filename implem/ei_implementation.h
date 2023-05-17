@@ -115,6 +115,8 @@ typedef struct ei_impl_widget_t {
 
 void ei_widget_set_pick(ei_widget_t widget);
 
+void pick(ei_widget_t widget, uint32_t pick_id_, ei_widget_t *widget_ptr);
+
 /**
  * @brief	Draws the children of a widget.
  * 		The children are draw withing the limits of the clipper and

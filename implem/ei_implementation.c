@@ -192,6 +192,30 @@ void ei_widget_set_pick(ei_widget_t widget)
 	pick_id += 1;
 }
 
+void pick(ei_widget_t widget,uint32_t pick_id_, ei_widget_t *widget_ptr)
+{
+	if (widget != NULL) {
+		if (widget->pick_id == pick_id_){
+			*widget_ptr = widget;
+		}
+
+		ei_widget_t child = widget->children_head;
+		ei_widget_t next_child;
+
+		if (child != NULL) {
+			next_child = child->next_sibling;
+		}
+
+		while (child != NULL) {
+			pick(child, pick_id_, widget_ptr);
+
+			child = next_child;
+			next_child = child == NULL ? NULL : child->next_sibling;
+
+		}
+	}
+}
+
 void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		surface,
 					ei_surface_t		pick_surface,

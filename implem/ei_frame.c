@@ -55,7 +55,7 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
 		widget->content_rect = &widget->screen_location;
 		/* à changer pour tous les enfants aussi ! */
 		ei_widget_t child = widget->children_head;
-		if (child) {
+		while (child) {
 			child->screen_location = ei_rect_intersect(*widget->content_rect,widget->children_head->screen_location);
 			child->content_rect = &widget->children_head->screen_location;
 			child = child->next_sibling;

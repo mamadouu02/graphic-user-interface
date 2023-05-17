@@ -8,6 +8,7 @@
 #include "ei_widget.h"
 #include "ei_implementation.h"
 #include "ei_frame.h"
+#include "ei_application.h"
 
 ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, ei_user_param_t user_data, ei_widget_destructor_t destructor)
 {
@@ -62,12 +63,27 @@ void ei_widget_destroy(ei_widget_t widget)
 
 bool ei_widget_is_displayed(ei_widget_t widget)
 {
-        /* A implémenter */
-        return 0;
+        uint32_t pick_id = widget->pick_id;
+        ei_point_t top_left = widget->screen_location.top_left;
+        ei_widget_t widget_top_left = ei_widget_pick(&top_left);
+        if (widget_top_left->pick_id == pick_id) {
+        	return true;
+        }
+        return false;
 }
 
 ei_widget_t ei_widget_pick(ei_point_t* where)
 {
-        /* A implémenter */
-        return 0;
+	hw_surface_lock(offscreen);
+	uint8_t *pix = (uint8_t*) hw_surface_get_buffer(offscreen);
+	ei_size_t size = hw_surface_get_size(offscreen);
+	int ir, ig, ib, ia;
+	hw_surface_get_channel_indices(offscreen, &ir, &ig, &ib, &ia);
+	uint32_t pick_id = pix[where->y * size.width * 4 + where->x * 4 + ir];
+	hw_surface_unlock(offscreen);
+	ei_widget_t *widget_ptr= malloc(sizeof(ei_widget_t));
+	pick(ei_app_root_widget(), pick_id, widget_ptr);
+	return *widget_ptr;
 }
+
+
