@@ -16,6 +16,7 @@
  */
 typedef struct ei_impl_button_t {
     ei_impl_widget_t	widget;
+
     ei_color_t		color;
     int			border_width;
     int			corner_radius;
@@ -30,5 +31,17 @@ typedef struct ei_impl_button_t {
     ei_callback_t	callback;
     ei_user_param_t	user_param;
 } ei_impl_button_t;
+
+ei_widget_t button_allocfunction(void);
+
+void button_releasefunc(ei_widget_t widget);
+
+void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper);
+
+void button_setdefaultsfunc(ei_widget_t widget);
+
+bool ei_button_handlefunc(ei_widget_t widget, struct ei_event_t* event);
+
+void ei_button_register(void);
 
 #endif

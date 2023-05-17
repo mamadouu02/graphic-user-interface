@@ -16,7 +16,7 @@
 int main(int argc, char** argv)
 {
 	ei_widget_t	frame;
-	// ei_widget_t	frame2; /* Segmentation fault dans 'ei_fill_polylines' */
+	ei_widget_t	frame2; /* Segmentation fault dans 'ei_fill_polylines' */
 	ei_widget_t 	second_frame;
 	ei_surface_t 	surface_image;
 
@@ -40,12 +40,12 @@ int main(int argc, char** argv)
 					 	&(ei_relief_t){ei_relief_raised}, NULL, NULL, NULL , NULL, &surface_image, &image_rect_ptr, &(ei_anchor_t){ei_anc_south});
 	ei_place_xy			(frame, 150, 200);
 
-	// frame2 = ei_widget_create	("frame", ei_app_root_widget(), NULL, NULL);
-	// ei_frame_configure		(frame2, &(ei_size_t){300,200},
-	// 				   &(ei_color_t){0x88, 0x00, 0x88, 0xff},
-	// 				   &(int){6},
-	// 				   &(ei_relief_t){ei_relief_raised}, NULL, NULL,NULL , NULL, NULL, NULL, NULL);
-	// ei_place_xy			(frame2, 500, 500);
+	frame2 = ei_widget_create	("frame", ei_app_root_widget(), NULL, NULL);
+	ei_frame_configure		(frame2, &(ei_size_t){300,200},
+	 				   &(ei_color_t){0x88, 0x00, 0x88, 0xff},
+	 				   &(int){6},
+	 				   &(ei_relief_t){ei_relief_raised}, NULL, NULL,NULL , NULL, NULL, NULL, NULL);
+	ei_place_xy			(frame2, 500, 500);
 
 	second_frame = ei_widget_create	("frame", frame, NULL, NULL);
 	ei_frame_configure		(second_frame, &(ei_size_t){100,100},

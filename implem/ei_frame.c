@@ -11,7 +11,7 @@
 
 ei_widget_t frame_allocfunction(void)
 {
-	return calloc(1, sizeof(ei_impl_frame_t));
+	return calloc(1,sizeof(ei_impl_frame_t));
 }
 
 void frame_releasefunc(ei_widget_t widget)
@@ -19,15 +19,9 @@ void frame_releasefunc(ei_widget_t widget)
 	ei_impl_frame_t* frame = (ei_impl_frame_t*) widget;
 
 	free(widget->user_data);
-	free(widget->children_head);
 	free(widget->content_rect);
-	free(widget->parent);
-	free(widget->children_tail);
-	// free(widget->destructor); /* libération d'une adresse non allouée */
-	free(widget->next_sibling);
-	// free(widget->pick_color); /* pick_color n'est plus de type 'ei_color_t *' mais 'ei_color_t' */
+	free(widget->destructor);
 	free(widget->placer_params);
-	free(widget->wclass);
 
 	free(frame->text_font);
 	free(frame->img);
@@ -67,8 +61,6 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
 			child = child->next_sibling;
 		}
 
-		free(child);
-
 		ei_rect_t clipper_text_image = new_screen_loc;
 		if (clipper) {
 			clipper_text_image = ei_rect_intersect(clipper_text_image, *clipper);
@@ -107,13 +99,19 @@ void frame_setdefaultsfunc(ei_widget_t widget)
 	frame->img_anchor = (ei_anchor_t) { ei_anc_center };
 }
 
+bool frame_handlefunc(ei_widget_t widget ,struct ei_event_t* event)
+{
+	return true;
+}
+
 void ei_frame_register(void)
 {
-	ei_widgetclass_t *frame = calloc(1, sizeof(ei_widgetclass_t));
+	ei_widgetclass_t *frame = calloc(1,sizeof(ei_widgetclass_t));
 	strcpy(frame->name, "frame");
 	frame->allocfunc = &frame_allocfunction;
 	frame->releasefunc = &frame_releasefunc;
 	frame->drawfunc = &frame_drawfunc;
 	frame->setdefaultsfunc = &frame_setdefaultsfunc;
+	frame->handlefunc = &frame_handlefunc;
 	ei_widgetclass_register(frame);
 }

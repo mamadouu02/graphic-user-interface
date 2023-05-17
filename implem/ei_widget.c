@@ -50,13 +50,14 @@ void ei_widget_destroy(ei_widget_t widget)
 				ei_widget_destroy(child);
 			}
 
-			// frame_releasefunc(child); /* Libération d'adresses non allouées */
+			//child->wclass->releasefunc(child); /* * Libération d'adresses non allouées */
 			free(child);
 
 			child = next_child;
 			next_child = child == NULL ? NULL : child->next_sibling;
 		}
 	}
+
 }
 
 bool ei_widget_is_displayed(ei_widget_t widget)

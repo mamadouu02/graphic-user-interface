@@ -71,6 +71,8 @@ bool ei_rect_cmp(ei_rect_t rect1, ei_rect_t rect2);
  */
 ei_rect_t ei_rect_intersect(ei_rect_t rect1, ei_rect_t rect2);
 
+bool in_rect(ei_point_t point, ei_rect_t rect);
+
 /**
  * @brief	Copie le rectangle source dans la surface de destination à la position du rectangle de destination.
  *

@@ -12,8 +12,7 @@
 ei_widget_t root;
 ei_surface_t main_window, offscreen;
 
-void ei_app_create(ei_size_t main_window_size, bool fullscreen)
-{
+void ei_app_create(ei_size_t main_window_size, bool fullscreen) {
 	hw_init();
 
 	ei_frame_register();
@@ -50,6 +49,7 @@ void ei_app_run(void)
 
 	hw_surface_unlock(main_window);
 	hw_surface_unlock(offscreen);
+
 	hw_surface_update_rects(main_window, NULL);
 	hw_surface_update_rects(offscreen, NULL);
 

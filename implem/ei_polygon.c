@@ -320,7 +320,7 @@ void ei_draw_frame(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_r
 	ei_draw_polygon(surface, button, 4, color, clipper);
 }
 
-void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int radius, ei_relief_t relief, ei_rect_t *clipper)
+void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int radius, ei_relief_t relief, ei_rect_t *clipper, ei_string_t *text, ei_font_t *text_font, ei_color_t *text_color, ei_anchor_t *text_anchor)
 {
 	unsigned char red = (color.red * 1.1 > 255) ? 255 : color.red * 1.1;
 	unsigned char green = (color.green * 1.1 > 255) ? 255 : color.green * 1.1;

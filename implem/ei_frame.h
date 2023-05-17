@@ -68,6 +68,8 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
  */
 void frame_setdefaultsfunc(ei_widget_t widget);
 
+bool frame_handlefunc(ei_widget_t widget ,struct ei_event_t* event);
+
 /**
  * @brief	Registers the frame class to the program.
  */

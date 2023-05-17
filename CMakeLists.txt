@@ -82,6 +82,7 @@ set(LIB_EI_SOURCES
 	${SRC_DIR}/ei_application.c
 	${SRC_DIR}/ei_button.c
 	${SRC_DIR}/ei_draw.c
+	${SRC_DIR}/ei_event.c
 	${SRC_DIR}/ei_frame.c
 	${SRC_DIR}/ei_implementation.c
 	${SRC_DIR}/ei_placer.c

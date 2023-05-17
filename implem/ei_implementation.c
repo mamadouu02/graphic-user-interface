@@ -110,6 +110,14 @@ ei_rect_t ei_rect_intersect(ei_rect_t rect1, ei_rect_t rect2)
 	}
 }
 
+bool in_rect(ei_point_t point, ei_rect_t rect)
+{
+	if (rect.top_left.x <= point.x && point.x <= rect.top_left.x + rect.size.width && rect.top_left.y <= point.y && point.y <= rect.top_left.y + rect.size.height) {
+		return true;
+	}
+	return false;
+}
+
 void	ei_rect_cpy	(ei_surface_t		destination,
 			const ei_rect_t*	dst_rect,
 			ei_surface_t		source,
@@ -164,14 +172,24 @@ void	ei_rect_cpy	(ei_surface_t		destination,
 
 void ei_widget_set_pick(ei_widget_t widget)
 {
+//	widget->pick_id = pick_id;
+//
+//	widget->pick_color.red = (pick_id >> 16) & 0xFF;
+//	widget->pick_color.green = (pick_id >> 8) & 0xFF;
+//	widget->pick_color.blue = pick_id & 0xFF;
+//	widget->pick_color.alpha = 0xFF;
+//
+//	pick_id += 100;
+
+	/* Changement provisoire pour faciliter ei_widget_pick */
 	widget->pick_id = pick_id;
 
-	widget->pick_color.red = (pick_id >> 16) & 0xFF;
-	widget->pick_color.green = (pick_id >> 8) & 0xFF;
-	widget->pick_color.blue = pick_id & 0xFF;
+	widget->pick_color.red = pick_id;
+	widget->pick_color.green = pick_id;
+	widget->pick_color.blue = pick_id;
 	widget->pick_color.alpha = 0xFF;
 
-	pick_id += 100;
+	pick_id += 1;
 }
 
 void ei_impl_widget_draw_children      (ei_widget_t		widget,
