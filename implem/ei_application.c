@@ -64,7 +64,6 @@ void ei_app_run(void)
 	hw_surface_update_rects(main_window, NULL);
 
 	ei_event_t event;
-	ei_point_t *previous_where;
 
 	while ((event.type != ei_ev_close) && (event.type != ei_ev_keydown)) {
 		ei_widget_t widget_event;
@@ -87,12 +86,6 @@ void ei_app_run(void)
 			default:
 				break;
 		}
-
-		previous_where = &event.param.mouse.where;
-		if (widget->user_data) {
-			widget_event->user_data = malloc(sizeof(ei_point_t));
-		}
-		widget->user_data = previous_where;
 		hw_event_wait_next(&event);
 	}
 

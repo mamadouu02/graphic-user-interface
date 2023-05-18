@@ -357,8 +357,12 @@ void ei_impl_placer_run(ei_widget_t widget)
 	int width_widget = (rel_width == NULL) ? width : (*rel_width * parent_width);
 
 	ei_point_t *where = malloc(sizeof(ei_point_t));
-	where->x = rel_x * parent_width + x + parent_top_left.x;
-	where->y = rel_y * parent_height + y + parent_top_left.y;
+	where->x = rel_x * parent_width + x;
+	where->y = rel_y * parent_height + y;
+	if (!(strcmp(widget->parent->wclass->name,"toplevel"))) {
+		where->x += parent_top_left.x;
+		where->y += parent_top_left.y;
+	}
 
 	ei_rect_t widget_rectangle = ei_rect(*where, ei_size(width_widget, height_widget));
 

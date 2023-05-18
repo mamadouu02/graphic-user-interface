@@ -112,15 +112,7 @@ void toplevel_setdefaultsfunc(ei_widget_t widget)
 
 bool ei_toplevel_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 {
-	//ei_impl_button_t *toplevel = (ei_impl_button_t *) widget;
-
 	if (event->type == ei_ev_mouse_move && ei_event_get_active_widget() == widget) {
-		int dx = event->param.mouse.where.x - ((ei_point_t*) widget->user_data)->x;
-		int dy = event->param.mouse.where.y - ((ei_point_t*) widget->user_data)->y;
-		widget->screen_location.top_left.x += dx;
-		widget->screen_location.top_left.y += dy;
-		widget->content_rect->top_left.x += dx;
-		widget->content_rect->top_left.y += dy;
 		widget->wclass->drawfunc( widget, ei_app_root_surface(), offscreen, NULL);
 		ei_event_set_active_widget(NULL);
 	} else if (event->type == ei_ev_mouse_buttondown && event->param.mouse.button == ei_mouse_button_left && ei_in_rect(event->param.mouse.where,widget->screen_location)) {
