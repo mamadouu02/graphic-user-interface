@@ -80,6 +80,7 @@ void    ei_toplevel_configure	(ei_widget_t		widget,
 				ei_size_ptr_t*		min_size)
 {
 	ei_impl_toplevel_t *toplevel = (ei_impl_toplevel_t *) widget;
+
 	widget->requested_size = (requested_size) ? *requested_size : widget->requested_size;
 	toplevel->color = (color) ? *color : toplevel->color;
 	toplevel->border_width = (border_width) ? *border_width : toplevel->border_width;

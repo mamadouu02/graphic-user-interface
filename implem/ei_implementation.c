@@ -342,6 +342,7 @@ void ei_impl_placer_run(ei_widget_t widget)
 {
 	int parent_height = widget->parent->content_rect->size.height;
 	int parent_width = widget->parent->content_rect->size.width;
+	ei_point_t parent_top_left = widget->parent->screen_location.top_left;
 
 	int x = widget->placer_params->x;
 	int y = widget->placer_params->y;
@@ -356,8 +357,8 @@ void ei_impl_placer_run(ei_widget_t widget)
 	int width_widget = (rel_width == NULL) ? width : (*rel_width * parent_width);
 
 	ei_point_t *where = malloc(sizeof(ei_point_t));
-	where->x = rel_x * parent_width + x;
-	where->y = rel_y * parent_height + y;
+	where->x = rel_x * parent_width + x + parent_top_left.x;
+	where->y = rel_y * parent_height + y + parent_top_left.y;
 
 	ei_rect_t widget_rectangle = ei_rect(*where, ei_size(width_widget, height_widget));
 

@@ -30,6 +30,12 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, e
 		parent->children_tail = widget;
 	}
 
+	if (!strcmp(widget->wclass->name,"toplevel")) {
+		widget->requested_size = ei_size(320, 240);
+	} else {
+		widget->requested_size = ei_size(widget->parent->content_rect->size.width/20, widget->parent->content_rect->size.height/20);
+	}
+
 	widget->screen_location = *widget->parent->content_rect;
 	widget->content_rect = &(widget->screen_location);
 	class->setdefaultsfunc(widget);
@@ -52,7 +58,7 @@ void ei_widget_destroy(ei_widget_t widget)
 				ei_widget_destroy(child);
 			}
 
-			child->wclass->releasefunc(child);
+			//child->wclass->releasefunc(child);
 			free(child);
 
 			child = next_child;
@@ -73,15 +79,16 @@ bool ei_widget_is_displayed(ei_widget_t widget)
 ei_widget_t ei_widget_pick(ei_point_t* where)
 {
 	hw_surface_lock(offscreen);
+
 	uint8_t *pix = hw_surface_get_buffer(offscreen);
 	ei_size_t size = hw_surface_get_size(offscreen);
 	int ir, ig, ib, ia;
 	hw_surface_get_channel_indices(offscreen, &ir, &ig, &ib, &ia);
 	uint32_t pick_id = pix[4 * (where->y * size.width + where->x) + ir];
-	hw_surface_unlock(offscreen);
-	
 	ei_widget_t *widget_ptr = malloc(sizeof(ei_widget_t));
 	ei_pick(ei_app_root_widget(), pick_id, widget_ptr);
+
+	hw_surface_unlock(offscreen);
 
 	return *widget_ptr;
 }

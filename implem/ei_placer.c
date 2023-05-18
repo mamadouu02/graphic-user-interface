@@ -28,8 +28,7 @@ void	ei_place	(ei_widget_t		widget,
 	widget->placer_params->rel_x = (rel_x == NULL) ? 0.0 : *rel_x;
 	widget->placer_params->rel_y = (rel_y == NULL) ? 0.0 : *rel_y;
 	widget->placer_params->width = (rel_width == NULL) ? ((width == NULL) ?  widget->requested_size.width : *width) : 0;
-	widget->placer_params->width = (rel_height == NULL) ? ((height == NULL) ?  widget->requested_size.width : *height) : 0;
-	widget->placer_params->height = (height == NULL && rel_width == NULL) ? widget->requested_size.height : *height;
+	widget->placer_params->height = (rel_height == NULL) ? ((height == NULL) ?  widget->requested_size.height : *height) : 0;
 	widget->placer_params->rel_width = (rel_width == NULL) ? NULL : rel_width;
 	widget->placer_params->rel_height = (rel_height == NULL) ? NULL : rel_height;
 	widget->placer_params->anchor = (anchor == NULL) ? ei_anc_northwest : *anchor;

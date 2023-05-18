@@ -93,6 +93,8 @@ void button_setdefaultsfunc(ei_widget_t widget)
 bool ei_button_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 {
 	hw_surface_lock(ei_app_root_surface());
+	hw_surface_lock(offscreen);
+
 	ei_impl_button_t *button = (ei_impl_button_t *) widget;
 
 	if (event->type == ei_ev_mouse_move && (ei_widget_pick(&event->param.mouse.where)->pick_id != widget->pick_id) && button->relief == ei_relief_sunken) {
@@ -111,9 +113,11 @@ bool ei_button_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 	}
 
 	hw_surface_unlock(ei_app_root_surface());
+	hw_surface_unlock(offscreen);
+
 	hw_surface_update_rects(ei_app_root_surface(), NULL);
 	
-	return false;
+	return true;
 }
 
 
