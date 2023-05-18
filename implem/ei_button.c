@@ -7,6 +7,8 @@
 
 #include "ei_button.h"
 
+extern ei_surface_t offscreen;
+
 ei_widget_t button_allocfunction(void)
 {
 	return calloc(1, sizeof(ei_impl_button_t));
@@ -93,18 +95,18 @@ bool ei_button_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 	hw_surface_lock(ei_app_root_surface());
 	ei_impl_button_t *button = (ei_impl_button_t *) widget;
 
-	if (event->type == ei_ev_mouse_move && !ei_in_rect(event->param.mouse.where, widget->screen_location) && button->relief == ei_relief_sunken) {
-		ei_draw_button(ei_app_root_surface(), widget->screen_location, button->color, button->corner_radius, ei_relief_raised, NULL, &button->text, &button->text_font, &button->text_color, &button->text_anchor);
+	if (event->type == ei_ev_mouse_move && (ei_widget_pick(&event->param.mouse.where)->pick_id != widget->pick_id) && button->relief == ei_relief_sunken) {
 		button->relief = ei_relief_raised;
+		widget->wclass->drawfunc( widget, ei_app_root_surface(), offscreen, NULL);
 		ei_event_set_active_widget(NULL);
 	} else if (event->type == ei_ev_mouse_buttonup && event->param.mouse.button == ei_mouse_button_left && ei_in_rect(event->param.mouse.where,widget->screen_location) && button->relief == ei_relief_sunken) {
-		ei_draw_button(ei_app_root_surface(), widget->screen_location, button->color, button->corner_radius, ei_relief_raised, NULL, &button->text, &button->text_font, &button->text_color, &button->text_anchor);
 		button->relief = ei_relief_raised;
+		widget->wclass->drawfunc( widget, ei_app_root_surface(), offscreen, NULL);
 		button->callback(widget, event, button->user_param);
 		ei_event_set_active_widget(NULL);
 	} else if (event->type == ei_ev_mouse_buttondown && event->param.mouse.button == ei_mouse_button_left && ei_in_rect(event->param.mouse.where, widget->screen_location) && button->relief == ei_relief_raised) {
-		ei_draw_button(ei_app_root_surface(), widget->screen_location, button->color, button->corner_radius, ei_relief_sunken, NULL, &button->text, &button->text_font, &button->text_color, &button->text_anchor);
 		button->relief = ei_relief_sunken;
+		widget->wclass->drawfunc( widget, ei_app_root_surface(), offscreen, NULL);
 		ei_event_set_active_widget(widget);
 	}
 
