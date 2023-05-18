@@ -178,21 +178,7 @@ void	ei_rect_cpy	(ei_surface_t		destination,
 void ei_widget_set_pick(ei_widget_t widget)
 {
 	widget->pick_id = id;
-
-	/* Changement provisoire pour faciliter ei_widget_pick */
-
-	// widget->pick_color.red = (id >> 16) & 0xFF;
-	// widget->pick_color.green = (id >> 8) & 0xFF;
-	// widget->pick_color.blue = id & 0xFF;
-	// widget->pick_color.alpha = 0xFF;
-
-	// id += 100;
-
-	widget->pick_color.red = id;
-	widget->pick_color.green = id;
-	widget->pick_color.blue = id;
-	widget->pick_color.alpha = 0xFF;
-
+	widget->pick_color = (ei_color_t) { id, id, id, 0xFF };
 	id += 1;
 }
 
@@ -410,6 +396,30 @@ void ei_impl_app_run_children(ei_widget_t widget)
 			}
 
 			widget = widget->children_head;
+		}
+	}
+}
+
+void ei_toplevel_update(ei_widget_t widget, int dx, int dy)
+{
+	if (widget != NULL) {
+		widget->screen_location.top_left.x += dx;
+		widget->screen_location.top_left.y += dy;
+		widget->content_rect->top_left.x += dx;
+		widget->content_rect->top_left.y += dy;
+		widget->placer_params = calloc(1,sizeof(struct ei_impl_placer_params_t));
+
+		ei_widget_t child = widget->children_head;
+		ei_widget_t next_child;
+
+		if (child != NULL) {
+			next_child = child->next_sibling;
+		}
+
+		while (child != NULL) {
+			ei_toplevel_update(child, dx, dy);
+			child = next_child;
+			next_child = (child == NULL) ? NULL : child->next_sibling;
 		}
 	}
 }

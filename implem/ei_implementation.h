@@ -140,7 +140,9 @@ void ei_widget_set_pick(ei_widget_t widget);
 /**
  * @brief	
  *
- * @param	widget		
+ * @param	widget
+ * @param	pick_id
+ * @param	widget_ptr
  */
 void ei_pick(ei_widget_t widget, uint32_t pick_id, ei_widget_t *widget_ptr);
 
@@ -226,5 +228,16 @@ void ei_impl_app_run_siblings(ei_widget_t widget);
  * @param	widget		
  */
 void ei_impl_app_run_children(ei_widget_t widget);
+
+/* Toplevel */
+
+/**
+ * @brief
+ *
+ * @param	widget
+ * @param	dx
+ * @param	dy
+ */
+void ei_toplevel_update(ei_widget_t widget, int dx, int dy);
 
 #endif

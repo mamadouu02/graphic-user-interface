@@ -7,6 +7,9 @@
 
 #include "ei_placer.h"
 #include "ei_implementation.h"
+#include "ei_application.h"
+
+extern ei_surface_t offscreen;
 
 void	ei_place	(ei_widget_t		widget,
 			ei_anchor_t*		anchor,
@@ -36,5 +39,8 @@ void	ei_place	(ei_widget_t		widget,
 
 void ei_placer_forget(ei_widget_t widget)
 {
-	/* A implémenter */
+	widget->placer_params = NULL;
+	ei_surface_t surface = ei_app_root_surface();
+
+	widget->parent->wclass->drawfunc(widget->parent, surface, offscreen, NULL);
 }

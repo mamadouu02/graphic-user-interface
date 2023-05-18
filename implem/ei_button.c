@@ -31,6 +31,7 @@ void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick
 	if (widget->parent == NULL) {
 		ei_fill(surface, &button->color, clipper);
 		ei_fill(pick_surface, &widget->pick_color, clipper);
+		ei_impl_widget_draw_children(widget->children_head, surface, pick_surface, clipper);
 	} else if (widget->placer_params) {
 		ei_rect_t widget_rect;
 		widget_rect = widget->screen_location;
@@ -72,9 +73,11 @@ void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick
 			img_rect.top_left = ei_anchor_text_img(&button->img_anchor, &img_rect, &clipper_text_image);
 			ei_rect_cpy(surface, &img_rect, button->img, button->img_rect, true);
 		}
+		ei_impl_widget_draw_children(widget->children_head, surface, pick_surface, clipper);
 	}
-
-	ei_impl_widget_draw_children(widget->children_head, surface, pick_surface, clipper);
+	else {
+		ei_impl_widget_draw_children(widget->children_head->next_sibling, surface, pick_surface, clipper);
+	}
 }
 
 void button_setdefaultsfunc(ei_widget_t widget)
