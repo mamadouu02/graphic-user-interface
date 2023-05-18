@@ -167,23 +167,25 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 /* Anchor */
 
 /**
- * @brief	
+ * @brief	With the anchor, we calculate the new coordinates of the top left of the rectangle knowing that
+ * 		the original top left is in the anchor wof the new rectangle.
  *
- * @param	anchor_ptr		
+ * @param	anchor_ptr
  * @param	rect		
  *
- * @return 	
+ * @return 	The new coordinates of the top left of rectangle.
  */
 ei_point_t ei_anchor_rect(ei_anchor_t *anchor_ptr, ei_rect_t *rect);
 
 /**
- * @brief	
+ * @brief	With the anchor parameter, we calculate the new coordinates of the top left of the rectangle
+ *		with "limit" as the delimiter.
  *
  * @param	anchor_ptr		
  * @param	rect		
  * @param	limit		
  *
- * @return 	
+ * @return 	The new coordinates of the top left of rectangle.
  */
 ei_point_t ei_anchor_text_img(ei_anchor_t *anchor_ptr, ei_rect_t *rect, ei_rect_t *limit);
 
@@ -232,12 +234,21 @@ void ei_impl_app_run_children(ei_widget_t widget);
 /* Toplevel */
 
 /**
- * @brief
+ * @brief	Update the parameters of the toplevel widget and all his children when we move the toplevel
  *
  * @param	widget
  * @param	dx
  * @param	dy
  */
 void ei_toplevel_update(ei_widget_t widget, int dx, int dy);
+
+/**
+ * @brief	Update the parameters of the toplevel widget and all his children when we resize the toplevel
+ *
+ * @param	widget
+ * @param	dx
+ * @param	dy
+ */
+void ei_frame_update(ei_widget_t widget, int dx, int dy);
 
 #endif

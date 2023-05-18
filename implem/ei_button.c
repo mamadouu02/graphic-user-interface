@@ -55,8 +55,8 @@ void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick
 		ei_widget_t child = widget->children_head;
 		
 		while (child) {
-			child->screen_location = ei_rect_intersect(*widget->content_rect, widget->children_head->screen_location);
-			child->content_rect = &widget->children_head->screen_location;
+			child->screen_location = ei_rect_intersect(*widget->content_rect, child->screen_location);
+			child->content_rect = &child->screen_location;
 			child = child->next_sibling;
 		}
 

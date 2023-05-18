@@ -50,15 +50,6 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 							  0.7 * toplevel->color.blue, toplevel->color.alpha};
 		ei_draw_frame(surface, widget_rect_toplevel, color_toplevel, ei_relief_none, &clipper_frame);
 
-		int size_resize = 0.06 * widget_rect.size.height;
-		ei_point_t bottom_right_resize = ei_point(widget_rect.top_left.x + widget_rect.size.width, widget_rect.top_left.y + widget_rect.size.height);
-		ei_point_t bottom_left_resize = ei_point(bottom_right_resize.x - size_resize, bottom_right_resize.y);
-		ei_point_t top_left_resize = ei_point(bottom_right_resize.x - size_resize, bottom_right_resize.y - size_resize);
-		ei_point_t top_right_resize = ei_point(bottom_right_resize.x, bottom_right_resize.y - size_resize);
-		ei_point_t tab[4] = {bottom_right_resize, bottom_left_resize, top_left_resize, top_right_resize};
-
-		ei_draw_polygon(surface, tab, 4, color_toplevel, &clipper_frame);
-		ei_draw_polygon(pick_surface,  tab, 4, widget->pick_color, &clipper_frame);
 
 		ei_rect_t new_screen_loc = ei_rect_intersect(widget_rect, clipper_frame);
 
@@ -70,9 +61,28 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 		ei_widget_t child = widget->children_head;
 
 		while (child) {
-			child->screen_location = ei_rect_intersect(*widget->content_rect,
-								   widget->children_head->screen_location);
-			child->content_rect = &widget->children_head->screen_location;
+			if (child == widget->children_head) {
+				int size_resize = 0.06 * widget->screen_location.size.height;
+				child->screen_location.size.height = size_resize;
+				child->screen_location.size.width = size_resize;
+				ei_point_t bottom_right_resize = ei_point(
+					widget->screen_location.top_left.x + widget->screen_location.size.width,
+					widget->screen_location.top_left.y + widget->screen_location.size.height);
+				child->screen_location.top_left = ei_point(bottom_right_resize.x - size_resize,
+									   bottom_right_resize.y - size_resize);
+//				bottom_right_resize = ei_point(widget_rect.top_left.x + widget_rect.size.width, widget_rect.top_left.y + widget_rect.size.height);
+//				ei_point_t bottom_left_resize = ei_point(bottom_right_resize.x - size_resize, bottom_right_resize.y);
+//				ei_point_t top_left_resize = ei_point(bottom_right_resize.x - size_resize, bottom_right_resize.y - size_resize);
+//				ei_point_t top_right_resize = ei_point(bottom_right_resize.x, bottom_right_resize.y - size_resize);
+//				ei_point_t tab[4] = {bottom_right_resize, bottom_left_resize, top_left_resize, top_right_resize};
+//
+//				ei_draw_polygon(surface, tab, 4, color_toplevel, &clipper_frame);
+//				ei_draw_polygon(pick_surface,  tab, 4, widget->pick_color, &clipper_frame);
+			} else {
+				child->screen_location = ei_rect_intersect(*widget->content_rect,
+									   child->screen_location);
+			}
+			child->content_rect = &child->screen_location;
 			child = child->next_sibling;
 		}
 

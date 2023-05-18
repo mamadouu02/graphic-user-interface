@@ -7,7 +7,11 @@
 
 #include "ei_frame.h"
 #include "ei_polygon.h"
+#include "ei_application.h"
+#include "ei_event.h"
 
+extern ei_surface_t offscreen;
+int redimension_freq = 0;
 
 ei_widget_t frame_allocfunction(void)
 {
@@ -60,8 +64,8 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
 		ei_widget_t child = widget->children_head;
 		
 		while (child) {
-			child->screen_location = ei_rect_intersect(*widget->content_rect, widget->children_head->screen_location);
-			child->content_rect = &widget->children_head->screen_location;
+			child->screen_location = ei_rect_intersect(*widget->content_rect, child->screen_location);
+			child->content_rect = &child->screen_location;
 			child = child->next_sibling;
 		}
 
@@ -104,6 +108,46 @@ void frame_setdefaultsfunc(ei_widget_t widget)
 
 bool frame_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 {
+	if (widget->parent != NULL && !strcmp(widget->parent->wclass->name, "toplevel")) {
+		hw_surface_lock(ei_app_root_surface());
+		hw_surface_lock(offscreen);
+
+		ei_rect_t rect_toplevel = widget->screen_location;
+
+		if (event->type == ei_ev_mouse_move && ei_event_get_active_widget() == widget) {
+
+			int dx = event->param.mouse.where.x - ((ei_point_t *) widget->user_data)->x;
+			int dy = event->param.mouse.where.y - ((ei_point_t *) widget->user_data)->y;
+
+			if (redimension_freq%2 == 1) {
+				ei_placer_forget(widget->parent);
+				ei_frame_update(widget->parent, dx, dy);
+
+				hw_surface_unlock(ei_app_root_surface());
+				hw_surface_unlock(offscreen);
+
+				hw_surface_update_rects(ei_app_root_surface(), NULL);
+
+				hw_surface_lock(ei_app_root_surface());
+				hw_surface_lock(offscreen);
+
+				widget->parent->wclass->drawfunc(widget->parent, ei_app_root_surface(), offscreen, NULL);
+			}
+
+			redimension_freq += 1;
+
+		} else if (event->type == ei_ev_mouse_buttondown && event->param.mouse.button == ei_mouse_button_left &&
+			   ei_in_rect(event->param.mouse.where, rect_toplevel)) {
+			ei_event_set_active_widget(widget);
+		} else if (event->type == ei_ev_mouse_buttonup) {
+			ei_event_set_active_widget(NULL);
+		}
+
+		hw_surface_unlock(ei_app_root_surface());
+		hw_surface_unlock(offscreen);
+
+		hw_surface_update_rects(ei_app_root_surface(), NULL);
+	}
 	return true;
 }
 

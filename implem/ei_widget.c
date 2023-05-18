@@ -30,14 +30,23 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, e
 		parent->children_tail = widget;
 	}
 
-	if (!strcmp(widget->wclass->name,"toplevel")) {
+	widget->screen_location = *widget->parent->content_rect;
+	widget->content_rect = &(widget->screen_location);
+
+	if (!strcmp(widget->wclass->name, "toplevel")) {
 		widget->requested_size = ei_size(320, 240);
+
+		ei_widget_t redim_frame = ei_widget_create("frame", widget, NULL, NULL);
+		ei_impl_frame_t *frame = (ei_impl_frame_t*) redim_frame;
+
+		frame_setdefaultsfunc(redim_frame);
+
+		frame->color = (ei_color_t) {0.7 * 0xA0, 0.7 * 0xA0,0.7 * 0xA0, 0xA0};
+		redim_frame->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
 	} else {
 		widget->requested_size = ei_size(widget->parent->content_rect->size.width/20, widget->parent->content_rect->size.height/20);
 	}
 
-	widget->screen_location = *widget->parent->content_rect;
-	widget->content_rect = &(widget->screen_location);
 	class->setdefaultsfunc(widget);
 
 	return widget;
