@@ -7,6 +7,7 @@
 #include "ei_types.h"
 #include "ei_event.h"
 #include "ei_implementation.h"
+#include "ei_polygon.h"
 
 
 

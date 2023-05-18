@@ -16,7 +16,7 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 				ei_color_t		color,
 				const ei_rect_t*	clipper)
 {
-	uint32_t *premier = (uint32_t*) hw_surface_get_buffer(surface);
+	uint32_t *premier = (uint32_t *) hw_surface_get_buffer(surface);
 	int largeur = hw_surface_get_size(surface).width;
 	uint32_t couleur = ei_impl_map_rgba(surface, color);
 
@@ -131,7 +131,7 @@ void	ei_draw_polygon		(ei_surface_t		surface,
 				ei_color_t		color,
 				const ei_rect_t*	clipper)
 {
-	// Initialisation de TC
+	/* Initialisation de TC */
 	int yp_min = point_array[0].y;
 	int yp_max = yp_min;
 
@@ -145,16 +145,16 @@ void	ei_draw_polygon		(ei_surface_t		surface,
 	ei_cote_t **tc = calloc(tc_size, sizeof(ei_cote_t *));
 	tc_init(tc, yp_min, point_array, point_array_size);
 
-	// Initialisation de TCA et de la scanline
+	/* Initialisation de TCA et de la scanline */
 	ei_cote_t *tca = NULL;
 	int y_scan = yp_min;
 
 	while (y_scan <= yp_max) {
 		int i_scan = y_scan - yp_min;
 		ei_tca_insert(&tca, tc, i_scan);
-		tca_remove(&tca, tc, y_scan);
+		ei_tca_remove(&tca, tc, y_scan);
 
-		// Modification des pixels
+		/* Modification des pixels */
 		ei_cote_t *tca_cote = tca;
 		while (tca_cote != NULL) {
 			int x_min = (int) tca_cote->x_ymin;
@@ -169,7 +169,7 @@ void	ei_draw_polygon		(ei_surface_t		surface,
 
 		y_scan++;
 
-		// Mise à jour de la TCA
+		/* Mise à jour de la TCA */
 		tca_cote = tca;
 		while (tca_cote != NULL) {
 			tca_cote->x_ymin += tca_cote->inv_pente;
@@ -211,7 +211,7 @@ void	ei_fill		(ei_surface_t		surface,
 			const ei_color_t*	color,
 			const ei_rect_t*	clipper)
 {
-	uint32_t *pix_ptr = (uint32_t*) hw_surface_get_buffer(surface);
+	uint32_t *pix_ptr = (uint32_t *) hw_surface_get_buffer(surface);
 	ei_size_t size = hw_surface_get_size(surface);
 
 	if (clipper) {

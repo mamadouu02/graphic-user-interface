@@ -52,14 +52,13 @@ void ei_widget_destroy(ei_widget_t widget)
 				ei_widget_destroy(child);
 			}
 
-			// child->wclass->releasefunc(child);
+			child->wclass->releasefunc(child);
 			free(child);
 
 			child = next_child;
-			next_child = child == NULL ? NULL : child->next_sibling;
+			next_child = (child == NULL) ? NULL : child->next_sibling;
 		}
 	}
-
 }
 
 bool ei_widget_is_displayed(ei_widget_t widget)

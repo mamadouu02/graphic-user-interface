@@ -47,7 +47,7 @@ void ei_tca_insert(ei_cote_t **tca_ptr, ei_cote_t **tc, int i_scan);
  * @param	tc		Table des côtés (TC).
  * @param	y_scan		Ordonnée de la scanline.
  */
-void tca_remove(ei_cote_t **tca_ptr, ei_cote_t **tc, int y_scan);
+void ei_tca_remove(ei_cote_t **tca_ptr, ei_cote_t **tc, int y_scan);
 
 /**
  * @brief	Calcule la taille du tableau de points définissant un octant.
@@ -127,12 +127,12 @@ void ei_draw_frame(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_r
  * @param	color		Couleur du bouton.
  * @param	radius		Rayon des coins.
  * @param	relief		Relief du bouton.
- * @param	clipper		Clippeur.
  * @param	text		Texte.
  * @param	text_font	Fonte du texte.
  * @param	text_color	Couleur du texte.
  * @param	text_anchor	Ancre du texte.
+ * @param	clipper		Clippeur.
  */
-void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int radius, ei_relief_t relief, ei_rect_t *clipper, ei_string_t *text, ei_font_t *text_font, ei_color_t *text_color, ei_anchor_t *text_anchor);
+void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int radius, ei_relief_t relief, ei_string_t *text, ei_font_t *text_font, ei_color_t *text_color, ei_anchor_t *text_anchor, ei_rect_t *clipper);
 
 #endif

@@ -54,8 +54,9 @@ int main(int argc, char** argv)
 //	ei_rect_t		*clipper	= NULL;
 	hw_init();
 
-	main_window = hw_create_window(win_size, false);
 	second_window = hw_create_window(win_size, false);
+	main_window = hw_create_window(win_size, false);
+	
 	/* Lock the drawing surface, paint it white. */
 	hw_surface_lock	(main_window);
 	hw_surface_lock	(second_window);
@@ -79,7 +80,7 @@ int main(int argc, char** argv)
 	ei_draw_polygon(main_window, bottom, 4 * octant_array_size + 2, dark_red, NULL);
 	free(bottom);
 
-	ei_draw_button(main_window, rect_button, beige, 6, ei_relief_none, NULL);
+	ei_draw_button(main_window, rect_button, beige, 6, ei_relief_none, NULL, NULL, NULL, NULL, NULL);
 
 	/* Test intersection */
 //	ei_rect_t rect_total = ei_rect(ei_point(0, 0), win_size);

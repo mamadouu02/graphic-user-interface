@@ -23,10 +23,10 @@ void frame_releasefunc(ei_widget_t widget)
 	// free(widget->destructor);
 	free(widget->placer_params);
 
+	free(frame->text);
 	free(frame->text_font);
 	free(frame->img);
 	free(frame->img_rect);
-	free(frame->text);
 }
 
 void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)

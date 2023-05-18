@@ -58,7 +58,7 @@ void ei_tca_insert(ei_cote_t **tca_ptr, ei_cote_t **tc, int i_scan)
 	}
 }
 
-void tca_remove(ei_cote_t **tca_ptr, ei_cote_t **tc, int y_scan)
+void ei_tca_remove(ei_cote_t **tca_ptr, ei_cote_t **tc, int y_scan)
 {
 	ei_cote_t *tca_cote_prec = NULL;
 	ei_cote_t *tca_cote = *tca_ptr;
@@ -265,10 +265,10 @@ ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, ei_frame_part_t part)
 
 void ei_draw_frame(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_relief_t relief, ei_rect_t *clipper)
 {
-	unsigned char red = (color.red * 1.1 > 255) ? 255 : color.red * 1.1;
-	unsigned char green = (color.green * 1.1 > 255) ? 255 : color.green * 1.1;
-	unsigned char blue = (color.blue * 1.1 > 255) ? 255 : color.blue * 1.1;
-	ei_color_t light_color = { red, green, blue, color.alpha };
+	unsigned char light_red = (color.red * 1.1 > 255) ? 255 : color.red * 1.1;
+	unsigned char light_green = (color.green * 1.1 > 255) ? 255 : color.green * 1.1;
+	unsigned char light_blue = (color.blue * 1.1 > 255) ? 255 : color.blue * 1.1;
+	ei_color_t light_color = { light_red, light_green, light_blue, color.alpha };
 	ei_color_t dark_color = { color.red / 1.1, color.green / 1.1 , color.blue / 1.1, color.alpha };
 
 	ei_color_t top_color, bottom_color;
@@ -299,7 +299,7 @@ void ei_draw_frame(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_r
 	bottom_left.y += rect.size.height;
 
 	ei_point_t top[3] = { rect.top_left, top_right, bottom_left };
-	ei_draw_polygon(surface, top,  3, top_color, clipper);
+	ei_draw_polygon(surface, top, 3, top_color, clipper);
 
 	ei_point_t bottom[3] = { bottom_right, top_right, bottom_left };
 	ei_draw_polygon(surface, bottom, 3, bottom_color, clipper);
@@ -320,7 +320,7 @@ void ei_draw_frame(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_r
 	ei_draw_polygon(surface, button, 4, color, clipper);
 }
 
-void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int radius, ei_relief_t relief, ei_rect_t *clipper, ei_string_t *text, ei_font_t *text_font, ei_color_t *text_color, ei_anchor_t *text_anchor)
+void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int radius, ei_relief_t relief, ei_string_t *text, ei_font_t *text_font, ei_color_t *text_color, ei_anchor_t *text_anchor, ei_rect_t *clipper)
 {
 	unsigned char red = (color.red * 1.1 > 255) ? 255 : color.red * 1.1;
 	unsigned char green = (color.green * 1.1 > 255) ? 255 : color.green * 1.1;

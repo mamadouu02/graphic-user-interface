@@ -47,7 +47,7 @@ void ei_fill_pixel(ei_surface_t surface, const ei_color_t *color, ei_point_t pix
 
 bool in_clipper(int x, int y, int xc_min, int xc_max, int yc_min, int yc_max, const ei_rect_t* clipper)
 {
-	return clipper == NULL || (x >= xc_min && x <= xc_max && y >= yc_min && y <= yc_max);
+	return clipper == NULL || (xc_min <= x && x < xc_max && yc_min <= y && y < yc_max);
 }
 
 /* Rectangle */
@@ -118,10 +118,7 @@ ei_rect_t ei_rect_intersect(ei_rect_t rect1, ei_rect_t rect2)
 
 bool ei_in_rect(ei_point_t point, ei_rect_t rect)
 {
-	if (rect.top_left.x <= point.x && point.x <= rect.top_left.x + rect.size.width && rect.top_left.y <= point.y && point.y <= rect.top_left.y + rect.size.height) {
-		return true;
-	}
-	return false;
+	return rect.top_left.x <= point.x && point.x <= rect.top_left.x + rect.size.width && rect.top_left.y <= point.y && point.y <= rect.top_left.y + rect.size.height;
 }
 
 void	ei_rect_cpy	(ei_surface_t		destination,
