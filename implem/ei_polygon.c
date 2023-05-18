@@ -265,10 +265,10 @@ ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, ei_frame_part_t part)
 
 void ei_draw_frame(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_relief_t relief, ei_rect_t *clipper)
 {
-	unsigned char light_red = (color.red * 1.3 > 255) ? 255 : color.red * 1.3;
-	unsigned char light_green = (color.green * 1.3 > 255) ? 255 : color.green * 1.3;
-	unsigned char light_blue = (color.blue * 1.3 > 255) ? 255 : color.blue * 1.3;
-	ei_color_t light_color = { light_red, light_green, light_blue, color.alpha };
+	unsigned char red = (color.red * 1.3 > 255) ? 255 : color.red * 1.3;
+	unsigned char green = (color.green * 1.3 > 255) ? 255 : color.green * 1.3;
+	unsigned char blue = (color.blue * 1.3 > 255) ? 255 : color.blue * 1.3;
+	ei_color_t light_color = { red, green, blue, color.alpha };
 	ei_color_t dark_color = { color.red / 1.3, color.green / 1.3 , color.blue / 1.3, color.alpha };
 
 	ei_color_t top_color, bottom_color;
