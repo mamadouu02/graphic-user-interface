@@ -9,6 +9,7 @@
 #include "ei_button.h"
 
 extern ei_surface_t offscreen;
+int move_freq = 0;
 
 ei_widget_t toplevel_allocfunction(void)
 {
@@ -28,6 +29,7 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 	if (widget->parent == NULL) {
 		ei_fill(surface, &toplevel->color, clipper);
 		ei_fill(pick_surface, &widget->pick_color, clipper);
+		ei_impl_widget_draw_children(widget->children_head, surface, pick_surface, clipper);
 	} else if (widget->placer_params) {
 		ei_rect_t widget_rect;
 		widget_rect = widget->screen_location;
@@ -90,9 +92,11 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 				     (ei_color_t){0xDD,0xDD,0xDD,0xFF}, &clipper_text);
 			hw_surface_free(surface_text);
 		}
+		ei_impl_widget_draw_children(widget->children_head, surface, pick_surface, clipper);
 	}
-
-	ei_impl_widget_draw_children(widget->children_head, surface, pick_surface, clipper);
+	else {
+		ei_impl_widget_draw_children(widget->children_head->next_sibling, surface, pick_surface, clipper);
+	}
 }
 
 void toplevel_setdefaultsfunc(ei_widget_t widget)
@@ -116,22 +120,27 @@ bool ei_toplevel_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 	rect_toplevel.size.height = 0.1 * rect_toplevel.size.height;
 
 	if (event->type == ei_ev_mouse_move && ei_event_get_active_widget() == widget) {
+
 		int dx = event->param.mouse.where.x - ((ei_point_t*) widget->user_data)->x;
 		int dy = event->param.mouse.where.y - ((ei_point_t*) widget->user_data)->y;
 
-		ei_placer_forget(widget);
-		ei_toplevel_update(widget, dx, dy);
+		if (move_freq % 2) {
+			ei_placer_forget(widget);
+			ei_toplevel_update(widget, dx, dy);
 
-		hw_surface_unlock(ei_app_root_surface());
-		hw_surface_unlock(offscreen);
+			hw_surface_unlock(ei_app_root_surface());
+			hw_surface_unlock(offscreen);
 
-		hw_surface_update_rects(ei_app_root_surface(), NULL);
+			hw_surface_update_rects(ei_app_root_surface(), NULL);
 
+			hw_surface_lock(ei_app_root_surface());
+			hw_surface_lock(offscreen);
 
-		hw_surface_lock(ei_app_root_surface());
-		hw_surface_lock(offscreen);
+			widget->wclass->drawfunc(widget, ei_app_root_surface(), offscreen, NULL);
+		}
 
-		widget->wclass->drawfunc(widget, ei_app_root_surface(), offscreen, NULL);
+		move_freq += 1;
+
 	} else if (event->type == ei_ev_mouse_buttondown && event->param.mouse.button == ei_mouse_button_left && ei_in_rect(event->param.mouse.where,rect_toplevel)) {
 		ei_event_set_active_widget(widget);
 	} else if (event->type == ei_ev_mouse_buttonup) {

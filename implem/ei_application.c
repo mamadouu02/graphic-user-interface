@@ -66,14 +66,29 @@ void ei_app_run(void)
 	ei_event_t event;
 	ei_point_t previous_where;
 
+	ei_widget_t widget_event = ei_app_root_widget();
+
+	previous_where = event.param.mouse.where;
+	widget_event->user_data = &previous_where;
+
 	while ((event.type != ei_ev_close) && (event.type != ei_ev_keydown)) {
 
-		ei_widget_t widget_event = ei_app_root_widget();
-
 		switch (event.type) {
+			case ei_ev_mouse_move:
+				if (ei_event_get_active_widget() != NULL) {
+					widget_event = ei_event_get_active_widget();
+					widget_event->wclass->handlefunc(widget_event, &event);
+
+					previous_where = event.param.mouse.where;
+					widget_event->user_data = &previous_where;
+				}
+				break;
 			case ei_ev_mouse_buttondown:
 				widget_event = ei_widget_pick(&event.param.mouse.where);
 				widget_event->wclass->handlefunc(widget_event, &event);
+
+				previous_where = event.param.mouse.where;
+				widget_event->user_data = &previous_where;
 				break;
 			case ei_ev_mouse_buttonup:
 				if (ei_event_get_active_widget() != NULL) {
@@ -84,19 +99,10 @@ void ei_app_run(void)
 					widget_event->wclass->handlefunc(widget_event, &event);
 				}
 				break;
-			case ei_ev_mouse_move:
-				if (ei_event_get_active_widget() != NULL) {
-					widget_event = ei_event_get_active_widget();
-					widget_event->wclass->handlefunc(widget_event, &event);
-				}
-				break;
 			default:
 				break;
 		}
 
-		previous_where = event.param.mouse.where;
-
-		widget_event->user_data = &previous_where;
 		hw_event_wait_next(&event);
 	}
 

@@ -76,7 +76,7 @@ void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick
 		ei_impl_widget_draw_children(widget->children_head, surface, pick_surface, clipper);
 	}
 	else {
-		ei_impl_widget_draw_children(widget->children_head->next_sibling, surface, pick_surface, clipper);
+		ei_impl_widget_draw_children(widget->next_sibling, surface, pick_surface, clipper);
 	}
 }
 
