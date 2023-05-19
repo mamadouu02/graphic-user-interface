@@ -107,8 +107,13 @@ bool ei_button_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 			if (event->param.mouse.button == ei_mouse_button_left && ei_in_rect(event->param.mouse.where, widget->screen_location) && button->relief == ei_relief_sunken) {
 				button->relief = ei_relief_raised;
 				widget->wclass->drawfunc(widget, ei_app_root_surface(), offscreen, NULL);
-				button->callback(widget, event, button->user_param);
+				if (button->callback) {
+					button->callback(widget, event, button->user_param);
+				}
 				ei_event_set_active_widget(NULL);
+				if (!strcmp(widget->parent->wclass->name,"toplevel") && widget == widget->parent->children_head->next_sibling){
+					ei_placer_forget(widget->parent);
+				}
 			}
 			break;
 		case ei_ev_mouse_move:

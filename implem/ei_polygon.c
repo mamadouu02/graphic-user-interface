@@ -370,7 +370,7 @@ void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int
 
 	ei_draw_polygon(surface, button, 8 * octant_array_size, color, clipper);
 
-	if (text) {
+	if (text && *text) {
 		ei_rect_t clipper_text_img = rect;
 
 		if (clipper) {

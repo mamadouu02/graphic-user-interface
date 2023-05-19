@@ -65,18 +65,16 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 				child->screen_location.size.height = size_resize;
 				child->screen_location.size.width = size_resize;
 				ei_point_t bottom_right_resize;
-				bottom_right_resize.x = widget->screen_location.top_left.x + widget->screen_location.size.width;
-				bottom_right_resize.y = widget->screen_location.top_left.y + widget->screen_location.size.height;
-				child->screen_location.top_left = ei_point(bottom_right_resize.x - size_resize, bottom_right_resize.y - size_resize);
-
-				// bottom_right_resize = ei_point(widget_rect.top_left.x + widget_rect.size.width, widget_rect.top_left.y + widget_rect.size.height);
-				// ei_point_t bottom_left_resize = ei_point(bottom_right_resize.x - size_resize, bottom_right_resize.y);
-				// ei_point_t top_left_resize = ei_point(bottom_right_resize.x - size_resize, bottom_right_resize.y - size_resize);
-				// ei_point_t top_right_resize = ei_point(bottom_right_resize.x, bottom_right_resize.y - size_resize);
-				// ei_point_t tab[4] = { bottom_right_resize, bottom_left_resize, top_left_resize, top_right_resize} ;
-
-				// ei_draw_polygon(surface, tab, 4, toplevel_color, &toplevel_clipper);
-				// ei_draw_polygon(pick_surface,  tab, 4, widget->pick_color, &toplevel_clipper);
+				bottom_right_resize.x =
+					widget->screen_location.top_left.x + widget->screen_location.size.width;
+				bottom_right_resize.y =
+					widget->screen_location.top_left.y + widget->screen_location.size.height;
+				child->screen_location.top_left = ei_point(bottom_right_resize.x - size_resize,
+									   bottom_right_resize.y - size_resize);
+			} else if (child == widget->children_head->next_sibling) {
+				child->screen_location.size.height = 0.7 * toplevel_widget_rect.size.height;
+				child->screen_location.size.width = child->screen_location.size.height;
+				child->screen_location.top_left = ei_point_add(toplevel_widget_rect.top_left, ei_point(0.95 * widget->screen_location.size.width,  0.2 * toplevel_widget_rect.size.height));
 			} else {
 				child->screen_location = ei_rect_intersect(*widget->content_rect, child->screen_location);
 			}
@@ -159,6 +157,13 @@ bool ei_toplevel_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 		default:
 			break;
 	}
+
+	hw_surface_unlock(ei_app_root_surface());
+	hw_surface_unlock(offscreen);
+
+	hw_surface_update_rects(ei_app_root_surface(), NULL);
+
+	return true;
 }
 
 void ei_toplevel_register(void)
@@ -178,22 +183,14 @@ void ei_toplevel_resizing_update(ei_widget_t widget, int dx, int dy)
 {
 	if (widget) {
 		if (strcmp(widget->wclass->name, "toplevel")) {
-			widget->screen_location.size.width += 0.2 * dx;
-			widget->screen_location.size.height += 0.2 * dy;
-			widget->content_rect->size.width += 0.2 * dx;
-			widget->content_rect->size.height += 0.2 * dy;
-			widget->content_rect->top_left.x += 2 * dx;
-			widget->content_rect->top_left.y += 2 * dy;
-			// widget->screen_location.top_left.x += 2 * dx;
-			// widget->screen_location.top_left.y += 2 * dy;
+			ei_impl_placer_run(widget);
 		} else {
 			widget->screen_location.size.width += dx;
 			widget->screen_location.size.height += dy;
 			widget->content_rect->size.width += dx;
 			widget->content_rect->size.height += dy;
+			widget->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
 		}
-		
-		widget->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
 
 		ei_widget_t child = widget->children_head;
 		ei_widget_t next_child;

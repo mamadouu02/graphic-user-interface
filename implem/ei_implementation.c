@@ -212,7 +212,9 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_rect_t*		clipper)
 {
 	if (widget != NULL) {
-		widget->wclass->drawfunc(widget, surface, pick_surface, clipper);
+		if (widget->placer_params) {
+			widget->wclass->drawfunc(widget, surface, pick_surface, clipper);
+		}
 		widget = widget->next_sibling;
 
 		while (widget != NULL) {
@@ -351,10 +353,6 @@ void ei_impl_placer_run(ei_widget_t widget)
 	}
 
 	ei_rect_t widget_rectangle = ei_rect(*where, ei_size(width_widget, height_widget));
-
-	if (widget->placer_params == NULL) {
-		widget->placer_params = malloc(sizeof(struct ei_impl_placer_params_t));
-	}
 
 	widget->screen_location = widget_rectangle;
 	widget->screen_location.top_left = ei_anchor_rect(&widget->placer_params->anchor, &widget->screen_location);
