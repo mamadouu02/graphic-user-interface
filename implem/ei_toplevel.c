@@ -48,6 +48,7 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 		toplevel_color.blue = 0.7 * toplevel->color.blue;
 		toplevel_color.alpha = toplevel->color.alpha;
 
+		toplevel_widget_rect.top_left.y -= toplevel_widget_rect.size.height;
 		ei_draw_frame(surface, toplevel_widget_rect, toplevel_color, ei_relief_none, &toplevel_clipper);
 
 		ei_rect_t new_screen_loc = ei_rect_intersect(widget_rect, toplevel_clipper);
