@@ -9,13 +9,13 @@
 #define EI_TOPLEVEL_H
 
 #include "ei_implementation.h"
+#include "ei_button.h"
 
 /**
  * \brief	A toplevel widget.
  */
 typedef struct ei_impl_toplevel_t {
     ei_impl_widget_t	widget;
-
     ei_color_t		color;
     int 		border_width;
     ei_string_t		title;

@@ -6,10 +6,7 @@
  */
 
 #include "ei_frame.h"
-#include "ei_application.h"
-#include "ei_event.h"
-#include "ei_polygon.h"
-#include "ei_toplevel.h"
+
 
 extern ei_surface_t offscreen;
 bool resizing = false;

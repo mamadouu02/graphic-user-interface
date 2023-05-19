@@ -9,6 +9,10 @@
 #define EI_FRAME_H
 
 #include "ei_implementation.h"
+#include "ei_application.h"
+#include "ei_event.h"
+#include "ei_polygon.h"
+#include "ei_toplevel.h"
 
 /**
  * \brief	A frame widget.
