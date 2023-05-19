@@ -87,4 +87,22 @@ bool ei_toplevel_handlefunc(ei_widget_t widget, struct ei_event_t* event);
  */
 void ei_toplevel_register(void);
 
+/**
+ * @brief	Update the parameters of the toplevel widget and all his children when we resize the toplevel.
+ *
+ * @param	widget
+ * @param	dx
+ * @param	dy
+ */
+void ei_toplevel_resizing_update(ei_widget_t widget, int dx, int dy);
+
+/**
+ * @brief	Update the parameters of the toplevel widget and all his children when we move the toplevel.
+ *
+ * @param	widget
+ * @param	dx
+ * @param	dy
+ */
+void ei_toplevel_moving_update(ei_widget_t widget, int dx, int dy);
+
 #endif

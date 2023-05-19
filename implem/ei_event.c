@@ -30,8 +30,3 @@ ei_default_handle_func_t ei_event_get_default_handle_func(void)
 {
 	return default_func;
 }
-
-
-
-
-

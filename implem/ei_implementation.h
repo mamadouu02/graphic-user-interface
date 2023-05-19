@@ -231,24 +231,4 @@ void ei_impl_app_run_siblings(ei_widget_t widget);
  */
 void ei_impl_app_run_children(ei_widget_t widget);
 
-/* Toplevel */
-
-/**
- * @brief	Update the parameters of the toplevel widget and all his children when we move the toplevel
- *
- * @param	widget
- * @param	dx
- * @param	dy
- */
-void ei_toplevel_update(ei_widget_t widget, int dx, int dy);
-
-/**
- * @brief	Update the parameters of the toplevel widget and all his children when we resize the toplevel
- *
- * @param	widget
- * @param	dx
- * @param	dy
- */
-void ei_frame_update(ei_widget_t widget, int dx, int dy);
-
 #endif

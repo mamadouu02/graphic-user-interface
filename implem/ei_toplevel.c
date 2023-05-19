@@ -112,13 +112,12 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 void toplevel_setdefaultsfunc(ei_widget_t widget)
 {
 	ei_impl_toplevel_t *toplevel = (ei_impl_toplevel_t*) widget;
-
 	toplevel->color = ei_default_background_color;
 	toplevel->border_width = 4;
 	toplevel->title = "Toplevel";
 	toplevel->closable = true;
 	toplevel->resizable = ei_axis_both;
-	toplevel->min_size = &(ei_size_t){160, 120};
+	toplevel->min_size = &(ei_size_t) { 160, 120 };
 }
 
 bool ei_toplevel_handlefunc(ei_widget_t widget, struct ei_event_t* event)
@@ -136,7 +135,7 @@ bool ei_toplevel_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 
 		if (move_freq % 2) {
 			ei_placer_forget(widget);
-			ei_toplevel_update(widget, dx, dy);
+			ei_toplevel_moving_update(widget, dx, dy);
 
 			hw_surface_unlock(ei_app_root_surface());
 			hw_surface_unlock(offscreen);
@@ -176,4 +175,65 @@ void ei_toplevel_register(void)
 	toplevel->setdefaultsfunc = &toplevel_setdefaultsfunc;
 	toplevel->handlefunc = &ei_toplevel_handlefunc;
 	ei_widgetclass_register(toplevel);
+}
+
+
+void ei_toplevel_resizing_update(ei_widget_t widget, int dx, int dy)
+{
+	if (widget) {
+		if (strcmp(widget->wclass->name, "toplevel")) {
+			widget->screen_location.size.width += 0.2 * dx;
+			widget->screen_location.size.height += 0.2 * dy;
+			widget->content_rect->size.width += 0.2 * dx;
+			widget->content_rect->size.height += 0.2 * dy;
+			widget->content_rect->top_left.x += 2*dx;
+			widget->content_rect->top_left.y += 2*dy;
+			// widget->screen_location.top_left.x += 2*dx;
+			// widget->screen_location.top_left.y += 2*dy;
+		} else {
+			widget->screen_location.size.width += dx;
+			widget->screen_location.size.height += dy;
+			widget->content_rect->size.width += dx;
+			widget->content_rect->size.height += dy;
+		}
+		
+		widget->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
+
+		ei_widget_t child = widget->children_head;
+		ei_widget_t next_child;
+
+		if (child) {
+			next_child = child->next_sibling;
+		}
+
+		while (child) {
+			ei_toplevel_resizing_update(child, dx, dy);
+			child = next_child;
+			next_child = (child == NULL) ? NULL : child->next_sibling;
+		}
+	}
+}
+
+void ei_toplevel_moving_update(ei_widget_t widget, int dx, int dy)
+{
+	if (widget) {
+		widget->screen_location.top_left.x += dx;
+		widget->screen_location.top_left.y += dy;
+		widget->content_rect->top_left.x += dx;
+		widget->content_rect->top_left.y += dy;
+		widget->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
+
+		ei_widget_t child = widget->children_head;
+		ei_widget_t next_child;
+
+		if (child) {
+			next_child = child->next_sibling;
+		}
+
+		while (child) {
+			ei_toplevel_moving_update(child, dx, dy);
+			child = next_child;
+			next_child = (child == NULL) ? NULL : child->next_sibling;
+		}
+	}
 }

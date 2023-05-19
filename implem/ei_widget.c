@@ -31,23 +31,21 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, e
 	}
 
 	widget->screen_location = *widget->parent->content_rect;
-	widget->content_rect = &(widget->screen_location);
+	widget->content_rect = &widget->screen_location;
 
 	if (!strcmp(widget->wclass->name, "toplevel")) {
 		widget->requested_size = ei_size(320, 240);
 
-		ei_widget_t redim_frame = ei_widget_create("frame", widget, NULL, NULL);
-		ei_impl_frame_t *frame = (ei_impl_frame_t*) redim_frame;
-
-		frame_setdefaultsfunc(redim_frame);
-
-		frame->color = (ei_color_t) {0.7 * 0xA0, 0.7 * 0xA0,0.7 * 0xA0, 0xA0};
-		redim_frame->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
+		ei_widget_t resizing_frame = ei_widget_create("frame", widget, NULL, NULL);
+		resizing_frame->wclass->setdefaultsfunc(resizing_frame);
+		resizing_frame->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
+		((ei_impl_frame_t *) resizing_frame)->color = (ei_color_t) { 0.7 * 0xA0, 0.7 * 0xA0, 0.7 * 0xA0, 0xA0 };
 	} else {
-		widget->requested_size = ei_size(widget->parent->content_rect->size.width/20, widget->parent->content_rect->size.height/20);
+		ei_size_t size = widget->parent->content_rect->size;
+		widget->requested_size = ei_size(size.width / 20, size.height / 20);
 	}
 
-	class->setdefaultsfunc(widget);
+	widget->wclass->setdefaultsfunc(widget);
 
 	return widget;
 }
@@ -67,7 +65,7 @@ void ei_widget_destroy(ei_widget_t widget)
 				ei_widget_destroy(child);
 			}
 
-			//child->wclass->releasefunc(child);
+			// child->wclass->releasefunc(child);
 			free(child);
 
 			child = next_child;
