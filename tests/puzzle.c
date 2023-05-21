@@ -199,7 +199,6 @@ void create_puzzle_window(ei_string_t image_filename)
 
 	randomize(puzzle);
 
-	hw_surface_free(image);
 }
 
 

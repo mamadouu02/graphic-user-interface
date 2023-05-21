@@ -332,14 +332,16 @@ void ei_impl_placer_run(ei_widget_t widget)
 	int parent_width = widget->parent->content_rect->size.width;
 	ei_point_t parent_top_left = widget->parent->screen_location.top_left;
 
-	int x = widget->placer_params->x;
-	int y = widget->placer_params->y;
-	int width = widget->placer_params->width;
-	int height = widget->placer_params->height;
+	int x = widget->placer_params->y ? widget->placer_params->x : widget->screen_location.top_left.x;
+	int y = widget->placer_params->y ? widget->placer_params->y : widget->screen_location.top_left.y;
+	int width = widget->placer_params->width ? widget->placer_params->width : widget->screen_location.size.width;
+	int height = widget->placer_params->height ? widget->placer_params->height : widget->screen_location.size.height;
 	float rel_x = widget->placer_params->rel_x;
 	float rel_y = widget->placer_params->rel_y;
 	float *rel_width = widget->placer_params->rel_width;
 	float *rel_height = widget->placer_params->rel_height;
+
+
 
 	int height_widget = (rel_height == NULL) ? height : (*rel_height * parent_height);
 	int width_widget = (rel_width == NULL) ? width : (*rel_width * parent_width);
@@ -347,6 +349,7 @@ void ei_impl_placer_run(ei_widget_t widget)
 	ei_point_t *where = malloc(sizeof(ei_point_t));
 	where->x = rel_x * parent_width + x;
 	where->y = rel_y * parent_height + y;
+
 	if (!(strcmp(widget->parent->wclass->name,"toplevel"))) {
 		where->x += parent_top_left.x;
 		where->y += parent_top_left.y;

@@ -40,7 +40,8 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 		ei_draw_frame(pick_surface, widget_rect, widget->pick_color, ei_relief_none, &toplevel_clipper);
 
 		ei_rect_t toplevel_widget_rect = widget_rect;
-		toplevel_widget_rect.size.height = 0.1 * widget_rect.size.height;
+		int hauteur = 25;
+		toplevel_widget_rect.size.height = hauteur;
 
 		ei_color_t toplevel_color;
 		toplevel_color.red = 0.7 * toplevel->color.red;
@@ -48,7 +49,6 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 		toplevel_color.blue = 0.7 * toplevel->color.blue;
 		toplevel_color.alpha = toplevel->color.alpha;
 
-		toplevel_widget_rect.top_left.y -= toplevel_widget_rect.size.height;
 		ei_draw_frame(surface, toplevel_widget_rect, toplevel_color, ei_relief_none, &toplevel_clipper);
 
 		ei_rect_t new_screen_loc = ei_rect_intersect(widget_rect, toplevel_clipper);
@@ -121,7 +121,7 @@ bool ei_toplevel_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 	hw_surface_lock(offscreen);
 
 	ei_rect_t toplevel_rect = widget->screen_location;
-	toplevel_rect.size.height = 0.1 * toplevel_rect.size.height;
+	toplevel_rect.size.height = 25;
 
 	switch (event->type) {
 		case ei_ev_mouse_buttondown:
@@ -215,7 +215,21 @@ void ei_toplevel_moving_update(ei_widget_t widget, int dx, int dy)
 		widget->screen_location.top_left.y += dy;
 		widget->content_rect->top_left.x += dx;
 		widget->content_rect->top_left.y += dy;
-		widget->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
+		if (!strcmp(widget->wclass->name,"toplevel")){
+			widget->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
+			widget->placer_params->x = widget->screen_location.top_left.x;
+			widget->placer_params->y = widget->screen_location.top_left.y;
+			widget->placer_params->height = widget->screen_location.size.height;
+			widget->placer_params->width = widget->screen_location.size.width;
+		}
+//		widget->placer_params->x = widget->screen_location.top_left.x;
+//		widget->placer_params->y = widget->screen_location.top_left.y;
+//		widget->placer_params->height = widget->screen_location.size.height;
+//		widget->placer_params->width = widget->screen_location.size.width;
+//		widget->placer_params->rel_x = 0;
+//		widget->placer_params->rel_y = 0;
+//		widget->placer_params->rel_width = NULL;
+//		widget->placer_params->rel_height = NULL;
 
 		ei_widget_t child = widget->children_head;
 		ei_widget_t next_child;

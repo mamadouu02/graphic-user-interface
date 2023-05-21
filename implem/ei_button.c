@@ -109,6 +109,9 @@ bool ei_button_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 				widget->wclass->drawfunc(widget, ei_app_root_surface(), offscreen, NULL);
 				if (button->callback) {
 					button->callback(widget, event, button->user_param);
+					ei_impl_app_run_children(ei_app_root_widget());
+					ei_widget_t root = ei_app_root_widget();
+					root->wclass->drawfunc(root,ei_app_root_surface(), offscreen, NULL);
 				}
 				ei_event_set_active_widget(NULL);
 				if (!strcmp(widget->parent->wclass->name,"toplevel") && widget == widget->parent->children_head->next_sibling){

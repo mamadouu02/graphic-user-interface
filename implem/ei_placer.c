@@ -35,6 +35,16 @@ void	ei_place	(ei_widget_t		widget,
 	widget->placer_params->rel_width = (rel_width == NULL) ? NULL : rel_width;
 	widget->placer_params->rel_height = (rel_height == NULL) ? NULL : rel_height;
 	widget->placer_params->anchor = (anchor == NULL) ? ei_anc_northwest : *anchor;
+	if (!(strcmp(widget->wclass->name,"toplevel"))) {
+		int hauteur = 25;
+		widget->placer_params->y += hauteur;
+		widget->placer_params->height += 25;
+	}
+	if (widget->parent && !strcmp(widget->parent->wclass->name,"toplevel")){
+		if (widget->placer_params->rel_y == 0){
+			widget->placer_params->y += 25;
+		}
+	}
 }
 
 void ei_placer_forget(ei_widget_t widget)

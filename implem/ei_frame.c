@@ -38,6 +38,7 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
 		ei_fill(pick_surface, &widget->pick_color, clipper);
 		ei_impl_widget_draw_children(widget->children_head, surface, pick_surface, clipper);
 	} else if (widget->placer_params) {
+
 		ei_rect_t widget_rect = widget->screen_location;
 		ei_rect_t frame_clipper = *widget->parent->content_rect;
 		
