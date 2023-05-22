@@ -103,18 +103,20 @@ void ei_app_run(void)
 		}
 		else if (event.type == ei_ev_keydown &&  (event.param.key.key_code != SDLK_ESCAPE)){
 			ei_default_handle_func_t default_func = ei_event_get_default_handle_func();
-			default_func(&event);
+			if (default_func) {
+				default_func(&event);
 
-			hw_surface_lock(main_window);
-			hw_surface_lock(offscreen);
+				hw_surface_lock(main_window);
+				hw_surface_lock(offscreen);
 
-			ei_impl_app_run_children(root);
-			root->wclass->drawfunc(root, main_window, offscreen, NULL);
+				ei_impl_app_run_children(root);
+				root->wclass->drawfunc(root, main_window, offscreen, NULL);
 
-			hw_surface_unlock(main_window);
-			hw_surface_unlock(offscreen);
+				hw_surface_unlock(main_window);
+				hw_surface_unlock(offscreen);
 
-			hw_surface_update_rects(main_window, NULL);
+				hw_surface_update_rects(main_window, NULL);
+			}
 		}
 		hw_event_wait_next(&event);
 

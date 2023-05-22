@@ -78,23 +78,24 @@ void ei_widget_destroy(ei_widget_t widget)
 			next_child = (child == NULL) ? NULL : child->next_sibling;
 		}
 
-		ei_widget_t enfant = widget->parent->children_head;
-		if (enfant == widget) {
-			widget->parent->children_head = widget->parent->children_head->next_sibling;
-			if (widget->parent->children_tail == widget) {
-				widget->parent->children_tail = NULL;
-			}
-		}
-		else {
-			ei_widget_t enfant_prec = widget->parent->children_head;
-			enfant = enfant_prec->next_sibling;
-			while (enfant != widget) {
-				enfant_prec = enfant;
-				enfant = enfant->next_sibling;
-			}
-			enfant_prec->next_sibling = enfant->next_sibling;
-			if (widget->parent->children_tail == widget) {
-				widget->parent->children_tail = enfant_prec;
+		if (widget->parent) {
+			ei_widget_t enfant = widget->parent->children_head;
+			if (enfant == widget) {
+				widget->parent->children_head = widget->parent->children_head->next_sibling;
+				if (widget->parent->children_tail == widget) {
+					widget->parent->children_tail = NULL;
+				}
+			} else {
+				ei_widget_t enfant_prec = widget->parent->children_head;
+				enfant = enfant_prec->next_sibling;
+				while (enfant != widget) {
+					enfant_prec = enfant;
+					enfant = enfant->next_sibling;
+				}
+				enfant_prec->next_sibling = enfant->next_sibling;
+				if (widget->parent->children_tail == widget) {
+					widget->parent->children_tail = enfant_prec;
+				}
 			}
 		}
 
