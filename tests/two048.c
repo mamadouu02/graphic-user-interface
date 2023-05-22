@@ -219,7 +219,7 @@ void update_board(game_t* g)
 
 				snprintf(label, 20, "%d", 1 << tile_value);
 				ei_frame_configure(tile_w, &tile_size, &g_tile_colors[tile_value], &tile_border, &tile_relief,
-							&label_ptr, &g->tile_font, NULL, NULL, NULL, NULL, NULL);
+						   &label_ptr, &g->tile_font, NULL, NULL, NULL, NULL, NULL);
 			}
 
 			tile_pos.x	+= g->tile_size + 2 * g->tile_bd;
@@ -360,7 +360,6 @@ void destroy_notify	(ei_widget_t		widget)
 }
 
 
-
 // handle_dir_key --
 //
 //	Handles the pressing of a direction key (up, down, left or right).
@@ -484,7 +483,7 @@ bool global_event_handler(ei_event_t* event)
 				return true;
 			}
 		}
-		
+
 		if (event->param.key.modifier_mask & cmd_mask) {
 			if (event->param.key.key_code == SDLK_n) {
 				// Create a new game.
@@ -515,7 +514,7 @@ int main(int argc, char* argv[])
 	ei_frame_configure(ei_app_root_widget(), NULL, &root_bgcol, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 	new_game(4, 4, 80, 4);
-	new_game(4, 4, 100, 4);
+	//new_game(4, 4, 100, 4);
 
 	ei_event_set_default_handle_func(global_event_handler);
 

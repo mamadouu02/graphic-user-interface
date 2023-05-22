@@ -14,6 +14,7 @@
 
 ei_widget_t root;
 ei_surface_t main_window, offscreen;
+bool quit = false;
 
 void ei_app_create(ei_size_t main_window_size, bool fullscreen)
 {
@@ -67,38 +68,56 @@ void ei_app_run(void)
 	ei_widget_t widget_event = root;
 	widget_event->user_data = &prev_where;
 
-	while ((event.type != ei_ev_close) && (event.type != ei_ev_keydown)) {
-		switch (event.type) {
-			case ei_ev_mouse_buttondown:
-				widget_event = ei_widget_pick(&event.param.mouse.where);
-				widget_event->wclass->handlefunc(widget_event, &event);
+	while (event.type != ei_ev_close) {
 
-				prev_where = event.param.mouse.where;
-				widget_event->user_data = &prev_where;
-				break;
-			case ei_ev_mouse_buttonup:
-				if (ei_event_get_active_widget()) {
-					widget_event = ei_event_get_active_widget();
-					widget_event->wclass->handlefunc(widget_event, &event);
-				} else {
+		if(event.type != ei_ev_keydown) {
+			switch (event.type) {
+				case ei_ev_mouse_buttondown:
 					widget_event = ei_widget_pick(&event.param.mouse.where);
-					widget_event->wclass->handlefunc(widget_event, &event);
-				}
-				break;
-			case ei_ev_mouse_move:
-				if (ei_event_get_active_widget()) {
-					widget_event = ei_event_get_active_widget();
 					widget_event->wclass->handlefunc(widget_event, &event);
 
 					prev_where = event.param.mouse.where;
 					widget_event->user_data = &prev_where;
-				}
-				break;
-			default:
-				break;
-		}
+					break;
+				case ei_ev_mouse_buttonup:
+					if (ei_event_get_active_widget()) {
+						widget_event = ei_event_get_active_widget();
+						widget_event->wclass->handlefunc(widget_event, &event);
+					} else {
+						widget_event = ei_widget_pick(&event.param.mouse.where);
+						widget_event->wclass->handlefunc(widget_event, &event);
+					}
+					break;
+				case ei_ev_mouse_move:
+					if (ei_event_get_active_widget()) {
+						widget_event = ei_event_get_active_widget();
+						widget_event->wclass->handlefunc(widget_event, &event);
 
+						prev_where = event.param.mouse.where;
+						widget_event->user_data = &prev_where;
+					}
+					break;
+				default:
+					break;
+			}
+		}
+		else if (event.type == ei_ev_keydown &&  (event.param.key.key_code != SDLK_ESCAPE)){
+			ei_default_handle_func_t default_func = ei_event_get_default_handle_func();
+			default_func(&event);
+
+			hw_surface_lock(main_window);
+			hw_surface_lock(offscreen);
+
+			ei_impl_app_run_children(root);
+			root->wclass->drawfunc(root, main_window, offscreen, NULL);
+
+			hw_surface_unlock(main_window);
+			hw_surface_unlock(offscreen);
+
+			hw_surface_update_rects(main_window, NULL);
+		}
 		hw_event_wait_next(&event);
+
 	}
 }
 
@@ -109,7 +128,7 @@ void ei_app_invalidate_rect(const ei_rect_t* rect)
 
 void ei_app_quit_request(void)
 {
-	hw_quit();
+	quit = true;
 }
 
 ei_widget_t ei_app_root_widget(void)

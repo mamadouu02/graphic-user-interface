@@ -39,12 +39,12 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, e
 		ei_widget_t resize_frame = ei_widget_create("frame", widget, NULL, NULL);
 		resize_frame->wclass->setdefaultsfunc(resize_frame);
 		resize_frame->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
-		((ei_impl_frame_t *) resize_frame)->color = (ei_color_t) { 0.7 * 0xA0, 0.7 * 0xA0, 0.7 * 0xA0, 0xFF };
+		((ei_impl_frame_t *) resize_frame)->color = (ei_color_t) {0.7 * 0xA0, 0.7 * 0xA0, 0.7 * 0xA0, 0xFF};
 
 		ei_widget_t close_button = ei_widget_create("button", widget, NULL, NULL);
 		close_button->wclass->setdefaultsfunc(close_button);
 		close_button->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
-		((ei_impl_button_t *) close_button)->color = (ei_color_t) { 0xFF, 0x00, 0x00, 0xA0 };
+		((ei_impl_button_t *) close_button)->color = (ei_color_t) {0xFF, 0x00, 0x00, 0xA0};
 	} else {
 		ei_size_t size = widget->parent->content_rect->size;
 		widget->requested_size = ei_size(size.width / 20, size.height / 20);
@@ -57,16 +57,50 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, e
 
 void ei_widget_destroy(ei_widget_t widget)
 {
-	if (widget->children_head) {
-		ei_widget_destroy(widget->children_head);
-	}
+	if (widget != NULL) {
+		ei_widget_t child = widget->children_head;
+		ei_widget_t next_child;
 
-	if (widget->next_sibling) {
-		ei_widget_destroy(widget->next_sibling);
-	}
+		if (child != NULL) {
+			next_child = child->next_sibling;
+		}
 
-	// widget->wclass->releasefunc(widget);
+		while (child != NULL) {
+			if (child->children_head != NULL) {
+				ei_widget_destroy(child);
+			}
+
+			if (child->next_sibling) {
+				ei_widget_destroy(child->next_sibling);
+			}
+
+			child = next_child;
+			next_child = (child == NULL) ? NULL : child->next_sibling;
+		}
+
+		ei_widget_t enfant = widget->parent->children_head;
+		if (enfant == widget) {
+			widget->parent->children_head = widget->parent->children_head->next_sibling;
+			if (widget->parent->children_tail == widget) {
+				widget->parent->children_tail = NULL;
+			}
+		}
+		else {
+			ei_widget_t enfant_prec = widget->parent->children_head;
+			enfant = enfant_prec->next_sibling;
+			while (enfant != widget) {
+				enfant_prec = enfant;
+				enfant = enfant->next_sibling;
+			}
+			enfant_prec->next_sibling = enfant->next_sibling;
+			if (widget->parent->children_tail == widget) {
+				widget->parent->children_tail = enfant_prec;
+			}
+		}
+
+	// widget>wclass->releasefunc(child);
 	free(widget);
+	}
 }
 
 bool ei_widget_is_displayed(ei_widget_t widget)

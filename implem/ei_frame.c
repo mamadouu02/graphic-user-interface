@@ -99,7 +99,7 @@ void frame_setdefaultsfunc(ei_widget_t widget)
 
 bool frame_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 {
-	if (widget->parent != NULL && !strcmp(widget->parent->wclass->name, "toplevel")) {
+	if (widget->parent != NULL && !strcmp(widget->parent->wclass->name, "toplevel") && widget == widget->parent->children_head) {
 		hw_surface_lock(ei_app_root_surface());
 		hw_surface_lock(offscreen);
 

@@ -339,6 +339,7 @@ void ei_impl_placer_run(ei_widget_t widget)
 	ei_rect_t widget_rect = ei_rect(*where, ei_size(widget_width, widget_height));
 	widget->screen_location = widget_rect;
 	widget->screen_location.top_left = ei_anchor_rect(&widget->placer_params->anchor, &widget->screen_location);
+	widget->content_rect = &widget->screen_location;
 
 	free(where);
 }

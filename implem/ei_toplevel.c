@@ -98,6 +98,7 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 		}
 
 		ei_impl_widget_draw_children(widget, surface, pick_surface, clipper);
+		widget->children_head->wclass->drawfunc(widget->children_head, surface, pick_surface, clipper);
 	}
 }
 
