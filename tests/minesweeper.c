@@ -315,7 +315,7 @@ void create_mine_map(map_t* map, int width, int height, int nb_mines)
 
 void destroy_mine_map(map_t* map)
 {
-	free(map->cells);
+	//free(map->cells);
 }
 
 /* event handlers */
@@ -547,7 +547,7 @@ int main(int argc, char* argv[])
 	ei_event_set_default_handle_func(&default_handler);
 
 	hw_event_schedule_app(250, &map);
-	ei_app_run();
+ 	ei_app_run();
 
 	destroy_mine_map(&map);
 

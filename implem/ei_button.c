@@ -81,6 +81,7 @@ void button_setdefaultsfunc(ei_widget_t widget)
 	button->corner_radius = k_default_button_corner_radius;
 	button->relief = (ei_relief_t) { ei_relief_raised };
 	button->text_font = ei_default_font;
+//	button->img_rect = NULL;
 	button->text_color = ei_font_default_color;
 	button->text_anchor = (ei_anchor_t) { ei_anc_center };
 	button->img_anchor = (ei_anchor_t) { ei_anc_center };
@@ -95,14 +96,14 @@ bool ei_button_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 
 	switch (event->type) {
 		case ei_ev_mouse_buttondown:
-			if (event->param.mouse.button == ei_mouse_button_left && ei_in_rect(event->param.mouse.where, widget->screen_location) && button->relief == ei_relief_raised) {
+			if (ei_in_rect(event->param.mouse.where, widget->screen_location) && button->relief == ei_relief_raised) {
 				button->relief = ei_relief_sunken;
 				widget->wclass->drawfunc(widget, ei_app_root_surface(), offscreen, NULL);
 				ei_event_set_active_widget(widget);
 			}
 			break;
 		case ei_ev_mouse_buttonup:
-			if (event->param.mouse.button == ei_mouse_button_left && ei_in_rect(event->param.mouse.where, widget->screen_location) && button->relief == ei_relief_sunken) {
+			if (ei_in_rect(event->param.mouse.where, widget->screen_location) && button->relief == ei_relief_sunken) {
 				button->relief = ei_relief_raised;
 				widget->wclass->drawfunc(widget, ei_app_root_surface(), offscreen, NULL);
 

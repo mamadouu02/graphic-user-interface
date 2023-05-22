@@ -49,8 +49,35 @@ void    ei_frame_configure      (ei_widget_t		widget,
 	frame->text_font = (text_font) ? *text_font : frame->text_font;
 	frame->text_color = (text_color) ? *text_color : frame->text_color;
 	frame->text_anchor = (text_anchor) ? *text_anchor : frame->text_anchor;
-	frame->img = (img) ? *img : frame->img;
-	frame->img_rect = (img_rect) ? *img_rect : frame->img_rect;
+
+	ei_surface_t surface_image;
+	if (img) {
+		surface_image = hw_surface_create(*img, hw_surface_get_size(*img), true);
+		ei_copy_surface(surface_image, NULL, *img, NULL, false);
+	}
+	frame->img = (img) ? surface_image : frame->img;
+
+//	if (frame->img_rect == NULL){
+//		frame->img_rect = malloc(sizeof(ei_rect_t));
+//	}
+//	frame->img_rect->top_left.x = (img_rect) ? (*img_rect)->top_left.x : frame->img_rect->top_left.x;
+//	frame->img_rect->top_left.y = (img_rect) ? (*img_rect)->top_left.y : frame->img_rect->top_left.y;
+//	frame->img_rect->size.width = (img_rect) ? (*img_rect)->size.width : frame->img_rect->size.width;
+//	frame->img_rect->size.height = (img_rect) ? (*img_rect)->size.height : frame->img_rect->size.height;
+
+	ei_rect_t *rect_img = frame->img_rect;
+	if (rect_img == NULL) {
+		frame->img_rect = malloc(sizeof(ei_rect_t));
+		rect_img = frame->img_rect;
+		if (img) {
+			*rect_img = hw_surface_get_rect(surface_image);
+		}
+	}
+	frame->img_rect->top_left.x = (img_rect) ? (*img_rect)->top_left.x : rect_img->top_left.x;
+	frame->img_rect->top_left.y = (img_rect) ? (*img_rect)->top_left.y : rect_img->top_left.y;
+	frame->img_rect->size.width = (img_rect) ? (*img_rect)->size.width : rect_img->size.width;
+	frame->img_rect->size.height = (img_rect) ? (*img_rect)->size.height : rect_img->size.height;
+
 	frame->img_anchor = (img_anchor) ? *img_anchor : frame->img_anchor;
 }
 
@@ -93,13 +120,21 @@ void    ei_button_configure	(ei_widget_t		widget,
 	}
 	button->img = (img) ? surface_image : button->img;
 
-	if (button->img_rect == NULL){
+//	if (button->img_rect == NULL){
+//		button->img_rect = malloc(sizeof(ei_rect_t));
+//	}
+	ei_rect_t *rect_img = button->img_rect;
+	if (rect_img == NULL) {
 		button->img_rect = malloc(sizeof(ei_rect_t));
+		rect_img = button->img_rect;
+		if (img) {
+			*rect_img = hw_surface_get_rect(surface_image);
+		}
 	}
-	button->img_rect->top_left.x = (img_rect) ? (*img_rect)->top_left.x : button->img_rect->top_left.x;
-	button->img_rect->top_left.y = (img_rect) ? (*img_rect)->top_left.y : button->img_rect->top_left.y;
-	button->img_rect->size.width = (img_rect) ? (*img_rect)->size.width : button->img_rect->size.width;
-	button->img_rect->size.height = (img_rect) ? (*img_rect)->size.height : button->img_rect->size.height;
+	button->img_rect->top_left.x = (img_rect) ? (*img_rect)->top_left.x : rect_img->top_left.x;
+	button->img_rect->top_left.y = (img_rect) ? (*img_rect)->top_left.y : rect_img->top_left.y;
+	button->img_rect->size.width = (img_rect) ? (*img_rect)->size.width : rect_img->size.width;
+	button->img_rect->size.height = (img_rect) ? (*img_rect)->size.height : rect_img->size.height;
 
 	button->img_anchor = (img_anchor) ? *img_anchor : button->img_anchor;
 	button->callback = (callback) ? *callback : button->callback;
@@ -119,7 +154,10 @@ void    ei_toplevel_configure	(ei_widget_t		widget,
 	widget->requested_size = (requested_size) ? *requested_size : widget->requested_size;
 	toplevel->color = (color) ? *color : toplevel->color;
 	toplevel->border_width = (border_width) ? *border_width : toplevel->border_width;
-	toplevel->title = (title) ? *title : toplevel->title;
+	if (title) {
+		toplevel->title = malloc(sizeof(ei_string_t));
+	}
+	toplevel->title = title ? strcpy(toplevel->title, *title) : toplevel->title;
 	toplevel->closable = (closable) ? *closable : toplevel->closable;
 	toplevel->resizable = (resizable) ? *resizable : toplevel->resizable;
 	toplevel->min_size = (min_size) ? *min_size : toplevel->min_size;

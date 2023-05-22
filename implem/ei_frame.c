@@ -116,8 +116,8 @@ bool frame_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 				break;
 			case ei_ev_mouse_move:
 				if (ei_event_get_active_widget() == widget) {
-					int dx = event->param.mouse.where.x - ((ei_point_t *) widget->user_data)->x;
-					int dy = event->param.mouse.where.y - ((ei_point_t *) widget->user_data)->y;
+					int dx = event->param.mouse.where.x - ((ei_point_t *) widget->my_param)->x;
+					int dy = event->param.mouse.where.y - ((ei_point_t *) widget->my_param)->y;
 
 					if (resize) {
 						ei_placer_forget(widget->parent);

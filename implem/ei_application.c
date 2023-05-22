@@ -51,6 +51,7 @@ void ei_app_free(void)
 
 void ei_app_run(void)
 {
+
 	hw_surface_lock(main_window);
 	hw_surface_lock(offscreen);
 
@@ -64,20 +65,23 @@ void ei_app_run(void)
 	hw_surface_update_rects(main_window, NULL);
 
 	ei_event_t event;
-	ei_point_t prev_where = event.param.mouse.where;
 	ei_widget_t widget_event = root;
-	widget_event->user_data = &prev_where;
+	ei_point_t prev_where = event.param.mouse.where;
+	widget_event->my_param = &prev_where;
 
-	while (event.type != ei_ev_close) {
+	while (!quit) {
 
-		if(event.type != ei_ev_keydown) {
+		hw_event_wait_next(&event);
+
+		if (event.type != ei_ev_keydown) {
 			switch (event.type) {
 				case ei_ev_mouse_buttondown:
 					widget_event = ei_widget_pick(&event.param.mouse.where);
 					widget_event->wclass->handlefunc(widget_event, &event);
 
 					prev_where = event.param.mouse.where;
-					widget_event->user_data = &prev_where;
+					widget_event->my_param = &prev_where;
+
 					break;
 				case ei_ev_mouse_buttonup:
 					if (ei_event_get_active_widget()) {
@@ -94,14 +98,14 @@ void ei_app_run(void)
 						widget_event->wclass->handlefunc(widget_event, &event);
 
 						prev_where = event.param.mouse.where;
-						widget_event->user_data = &prev_where;
+						widget_event->my_param = &prev_where;
 					}
 					break;
 				default:
 					break;
 			}
 		}
-		else if (event.type == ei_ev_keydown &&  (event.param.key.key_code != SDLK_ESCAPE)){
+		else if (event.type == ei_ev_keydown &&  (event.param.key.key_code != SDLK_ESCAPE)) {
 			ei_default_handle_func_t default_func = ei_event_get_default_handle_func();
 			if (default_func) {
 				default_func(&event);
@@ -118,8 +122,9 @@ void ei_app_run(void)
 				hw_surface_update_rects(main_window, NULL);
 			}
 		}
-		hw_event_wait_next(&event);
-
+		else if ((event.type == ei_ev_keydown &&  (event.param.key.key_code == SDLK_ESCAPE)) || event.type == ei_ev_close) {
+			ei_app_quit_request();
+		}
 	}
 }
 
