@@ -28,7 +28,7 @@ void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick
 	if (widget->parent == NULL) {
 		ei_fill(surface, &button->color, clipper);
 		ei_fill(pick_surface, &widget->pick_color, clipper);
-		ei_impl_widget_draw_children(widget->children_head, surface, pick_surface, clipper);
+		ei_impl_widget_draw_children(widget, surface, pick_surface, clipper);
 	} else if (widget->placer_params) {
 		ei_rect_t widget_rect = widget->screen_location;
 		ei_rect_t button_clipper = *widget->parent->content_rect;
@@ -69,9 +69,7 @@ void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick
 			ei_rect_cpy(surface, &img_rect, button->img, button->img_rect, true);
 		}
 
-		ei_impl_widget_draw_children(widget->children_head, surface, pick_surface, clipper);
-	} else {
-		ei_impl_widget_draw_children(widget->next_sibling, surface, pick_surface, clipper);
+		ei_impl_widget_draw_children(widget, surface, pick_surface, clipper);
 	}
 }
 
@@ -107,14 +105,17 @@ bool ei_button_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 			if (event->param.mouse.button == ei_mouse_button_left && ei_in_rect(event->param.mouse.where, widget->screen_location) && button->relief == ei_relief_sunken) {
 				button->relief = ei_relief_raised;
 				widget->wclass->drawfunc(widget, ei_app_root_surface(), offscreen, NULL);
+
 				if (button->callback) {
 					button->callback(widget, event, button->user_param);
-					ei_impl_app_run_children(ei_app_root_widget());
 					ei_widget_t root = ei_app_root_widget();
-					root->wclass->drawfunc(root,ei_app_root_surface(), offscreen, NULL);
+					ei_impl_app_run_children(root);
+					root->wclass->drawfunc(root, ei_app_root_surface(), offscreen, NULL);
 				}
+
 				ei_event_set_active_widget(NULL);
-				if (!strcmp(widget->parent->wclass->name,"toplevel") && widget == widget->parent->children_head->next_sibling){
+
+				if (!strcmp(widget->parent->wclass->name, "toplevel") && widget == widget->parent->children_head->next_sibling) {
 					ei_placer_forget(widget->parent);
 				}
 			}

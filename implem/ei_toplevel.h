@@ -94,7 +94,7 @@ void ei_toplevel_register(void);
  * @param	dx
  * @param	dy
  */
-void ei_toplevel_resizing_update(ei_widget_t widget, int dx, int dy);
+void ei_toplevel_resize_update(ei_widget_t widget, int dx, int dy);
 
 /**
  * @brief	Update the parameters of the toplevel widget and all his children when we move the toplevel.
@@ -103,6 +103,6 @@ void ei_toplevel_resizing_update(ei_widget_t widget, int dx, int dy);
  * @param	dx
  * @param	dy
  */
-void ei_toplevel_moving_update(ei_widget_t widget, int dx, int dy);
+void ei_toplevel_move_update(ei_widget_t widget, int dx, int dy);
 
 #endif

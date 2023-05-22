@@ -13,11 +13,11 @@
 /**
  * @brief	Structure représentant un côté.
  */
-typedef struct ei_cote {
+typedef struct ei_cote_t {
     int y_max;
     float x_ymin;
     float inv_pente;
-    struct ei_cote *suiv;
+    struct ei_cote_t *suiv;
 } ei_cote_t;
 
 /**
@@ -52,41 +52,41 @@ void ei_tca_remove(ei_cote_t **tca_ptr, ei_cote_t **tc, int y_scan);
 /**
  * @brief	Calcule la taille du tableau de points définissant un octant.
  *
- * @param	rayon		Rayon de l'octant.
+ * @param	radius		Rayon de l'octant.
  *
  * @return 	La taille du tableau de points.
  */
-int ei_octant_array_size(int rayon);
+int ei_octant_array_size(int radius);
 
 /**
  * @brief	Crée un tableau de points définissant un octant.
  *
- * @param	centre		Centre de l'octant.
- * @param	rayon		Rayon de l'octant.
+ * @param	center		Centre de l'octant.
+ * @param	radius		Rayon de l'octant.
  * @param	octant		Numéro d'octant.
  *
  * @return 	Le tableau de points définissant l'octant.
  */
-ei_point_t *ei_octant_array(ei_point_t centre, int rayon, int octant, int octant_array_size);
+ei_point_t *ei_octant_array(ei_point_t center, int radius, int octant, int octant_array_size);
 
 /**
  * @brief	
  *
- * @param	rayon		
+ * @param	radius		
  *
  * @return 	
  */
-int ei_octant_lines_array_size(int rayon);
+int ei_octant_lines_array_size(int radius);
 
 /**
  * @brief	
  *
- * @param	centre		Centre de l'octant.
- * @param	rayon		Rayon de l'octant.
+ * @param	center		Centre de l'octant.
+ * @param	radius		Rayon de l'octant.
  *
  * @return 	
  */
-ei_point_t *ei_octant_lines_array(ei_point_t centre, int rayon);
+ei_point_t *ei_octant_lines_array(ei_point_t center, int radius);
 
 /**
  * @brief	Identifies one part of a frame.
@@ -101,12 +101,12 @@ typedef enum {
  * @brief	Crée un tableau de points définissant la partie haute ou basse d'un cadre aux bords arrondis.
  *
  * @param	rect		Rectangle définissant la zone de dessin.
- * @param	rayon		Rayon des arrondis.
+ * @param	radius		Rayon des arrondis.
  * @param	part		Partie du cadre (top, bottom ou total).
  *
  * @return 	Le tableau de points définissant la partie haute ou basse du cadre aux bords arrondis.
  */
-ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, ei_frame_part_t part);
+ei_point_t *ei_rounded_frame(ei_rect_t rect, int radius, ei_frame_part_t part);
 
 /**
  * @brief	Dessine une frame.

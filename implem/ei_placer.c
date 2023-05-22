@@ -26,22 +26,24 @@ void	ei_place	(ei_widget_t		widget,
 		widget->placer_params = malloc(sizeof(struct ei_impl_placer_params_t));
 	}
 
-	widget->placer_params->x = (x == NULL) ? 0 : *x;
-	widget->placer_params->y = (y == NULL) ? 0 : *y;
-	widget->placer_params->rel_x = (rel_x == NULL) ? 0.0 : *rel_x;
-	widget->placer_params->rel_y = (rel_y == NULL) ? 0.0 : *rel_y;
-	widget->placer_params->width = (rel_width == NULL) ? ((width == NULL) ?  widget->requested_size.width : *width) : 0;
-	widget->placer_params->height = (rel_height == NULL) ? ((height == NULL) ?  widget->requested_size.height : *height) : 0;
-	widget->placer_params->rel_width = (rel_width == NULL) ? NULL : rel_width;
-	widget->placer_params->rel_height = (rel_height == NULL) ? NULL : rel_height;
-	widget->placer_params->anchor = (anchor == NULL) ? ei_anc_northwest : *anchor;
-	if (!(strcmp(widget->wclass->name,"toplevel"))) {
+	widget->placer_params->anchor = (anchor) ? *anchor : ei_anc_northwest;
+	widget->placer_params->x = (x) ? *x : 0;
+	widget->placer_params->y = (y) ? *y : 0;
+	widget->placer_params->width = (rel_width) ? 0 : ((width) ? *width : widget->requested_size.width);
+	widget->placer_params->height = (rel_height) ? 0 : ((height) ? *height : widget->requested_size.height);
+	widget->placer_params->rel_x = (rel_x) ? *rel_x : 0.0;
+	widget->placer_params->rel_y = (rel_y) ? *rel_y : 0.0;
+	widget->placer_params->rel_width = (rel_width) ? rel_width : NULL;
+	widget->placer_params->rel_height = (rel_height) ? rel_height : NULL;
+
+	if (!strcmp(widget->wclass->name, "toplevel")) {
 		int hauteur = 25;
 		widget->placer_params->y += hauteur;
 		widget->placer_params->height += 25;
 	}
-	if (widget->parent && !strcmp(widget->parent->wclass->name,"toplevel")){
-		if (widget->placer_params->rel_y == 0){
+
+	if (widget->parent && !strcmp(widget->parent->wclass->name, "toplevel")) {
+		if (widget->placer_params->rel_y == 0) {
 			widget->placer_params->y += 25;
 		}
 	}
@@ -50,7 +52,5 @@ void	ei_place	(ei_widget_t		widget,
 void ei_placer_forget(ei_widget_t widget)
 {
 	widget->placer_params = NULL;
-	ei_surface_t surface = ei_app_root_surface();
-
-	widget->parent->wclass->drawfunc(widget->parent, surface, offscreen, NULL);
+	widget->parent->wclass->drawfunc(widget->parent, ei_app_root_surface(), offscreen, NULL);
 }

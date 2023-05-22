@@ -8,7 +8,7 @@
 #include "ei_toplevel.h"
 
 extern ei_surface_t offscreen;
-bool moving = false;
+bool move = false;
 
 ei_widget_t toplevel_allocfunction(void)
 {
@@ -17,7 +17,7 @@ ei_widget_t toplevel_allocfunction(void)
 
 void toplevel_releasefunc(ei_widget_t widget)
 {
-	/* à implémenter */
+	/* A implémenter */
 }
 
 void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
@@ -27,7 +27,7 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 	if (widget->parent == NULL) {
 		ei_fill(surface, &toplevel->color, clipper);
 		ei_fill(pick_surface, &widget->pick_color, clipper);
-		ei_impl_widget_draw_children(widget->children_head, surface, pick_surface, clipper);
+		ei_impl_widget_draw_children(widget, surface, pick_surface, clipper);
 	} else if (widget->placer_params) {
 		ei_rect_t widget_rect = widget->screen_location;
 		ei_rect_t toplevel_clipper = *widget->parent->content_rect;
@@ -40,8 +40,8 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 		ei_draw_frame(pick_surface, widget_rect, widget->pick_color, ei_relief_none, &toplevel_clipper);
 
 		ei_rect_t toplevel_widget_rect = widget_rect;
-		int hauteur = 25;
-		toplevel_widget_rect.size.height = hauteur;
+		int height = 25;
+		toplevel_widget_rect.size.height = height;
 
 		ei_color_t toplevel_color;
 		toplevel_color.red = 0.7 * toplevel->color.red;
@@ -63,19 +63,18 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 		while (child) {
 			if (child == widget->children_head) {
 				int size_resize = 0.06 * widget->screen_location.size.height;
-				child->screen_location.size.height = size_resize;
-				child->screen_location.size.width = size_resize;
+
 				ei_point_t bottom_right_resize;
-				bottom_right_resize.x =
-					widget->screen_location.top_left.x + widget->screen_location.size.width;
-				bottom_right_resize.y =
-					widget->screen_location.top_left.y + widget->screen_location.size.height;
-				child->screen_location.top_left = ei_point(bottom_right_resize.x - size_resize,
-									   bottom_right_resize.y - size_resize);
+				bottom_right_resize.x = widget->screen_location.top_left.x + widget->screen_location.size.width;
+				bottom_right_resize.y = widget->screen_location.top_left.y + widget->screen_location.size.height;
+				
+				child->screen_location.top_left.x = bottom_right_resize.x - size_resize;
+				child->screen_location.top_left.y = bottom_right_resize.y - size_resize;
+				child->screen_location.size = ei_size(size_resize, size_resize);
 			} else if (child == widget->children_head->next_sibling) {
-				child->screen_location.size.height = 0.7 * toplevel_widget_rect.size.height;
 				child->screen_location.size.width = child->screen_location.size.height;
-				child->screen_location.top_left = ei_point_add(toplevel_widget_rect.top_left, ei_point(0.95 * widget->screen_location.size.width,  0.2 * toplevel_widget_rect.size.height));
+				child->screen_location.size.height = 0.7 * toplevel_widget_rect.size.height;
+				child->screen_location.top_left = ei_point_add(toplevel_widget_rect.top_left, ei_point(0.95 * widget->screen_location.size.width, 0.2 * toplevel_widget_rect.size.height));
 			} else {
 				child->screen_location = ei_rect_intersect(*widget->content_rect, child->screen_location);
 			}
@@ -84,23 +83,21 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 			child = child->next_sibling;
 		}
 
-		ei_rect_t txt_clipper = ei_rect_intersect(toplevel_widget_rect, toplevel_clipper);
+		ei_rect_t text_clipper = ei_rect_intersect(toplevel_widget_rect, toplevel_clipper);
 
 		if (clipper) {
-			txt_clipper = ei_rect_intersect(txt_clipper, *clipper);
+			text_clipper = ei_rect_intersect(text_clipper, *clipper);
 		}
 
 		if (toplevel->title) {
-			ei_surface_t txt_surface = hw_text_create_surface(toplevel->title, ei_default_font, ei_font_default_color);
-			ei_rect_t txt_rect = hw_surface_get_rect(txt_surface);
-			txt_rect.top_left = ei_anchor_text_img(&(ei_anchor_t) {ei_anc_west}, &txt_rect, &txt_clipper);
-			ei_draw_text(surface, &txt_rect.top_left, (ei_const_string_t) toplevel->title, ei_default_font, (ei_color_t) { 0xDD, 0xDD, 0xDD, 0xFF }, &txt_clipper);
-			hw_surface_free(txt_surface);
+			ei_surface_t text_surface = hw_text_create_surface(toplevel->title, ei_default_font, ei_font_default_color);
+			ei_rect_t text_rect = hw_surface_get_rect(text_surface);
+			text_rect.top_left = ei_anchor_text_img(&(ei_anchor_t) { ei_anc_west }, &text_rect, &text_clipper);
+			ei_draw_text(surface, &text_rect.top_left, (ei_const_string_t) toplevel->title, ei_default_font, (ei_color_t) { 0xDD, 0xDD, 0xDD, 0xFF }, &text_clipper);
+			hw_surface_free(text_surface);
 		}
 
-		ei_impl_widget_draw_children(widget->children_head, surface, pick_surface, clipper);
-	} else {
-		ei_impl_widget_draw_children(widget->children_head->next_sibling, surface, pick_surface, clipper);
+		ei_impl_widget_draw_children(widget, surface, pick_surface, clipper);
 	}
 }
 
@@ -137,9 +134,9 @@ bool ei_toplevel_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 				int dx = event->param.mouse.where.x - ((ei_point_t *) widget->user_data)->x;
 				int dy = event->param.mouse.where.y - ((ei_point_t *) widget->user_data)->y;
 
-				if (moving) {
+				if (move) {
 					ei_placer_forget(widget);
-					ei_toplevel_moving_update(widget, dx, dy);
+					ei_toplevel_move_update(widget, dx, dy);
 
 					hw_surface_unlock(ei_app_root_surface());
 					hw_surface_unlock(offscreen);
@@ -152,7 +149,7 @@ bool ei_toplevel_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 					widget->wclass->drawfunc(widget, ei_app_root_surface(), offscreen, NULL);
 				}
 
-				moving = !moving;
+				move = !move;
 			}
 			break;
 		default:
@@ -180,7 +177,7 @@ void ei_toplevel_register(void)
 }
 
 
-void ei_toplevel_resizing_update(ei_widget_t widget, int dx, int dy)
+void ei_toplevel_resize_update(ei_widget_t widget, int dx, int dy)
 {
 	if (widget) {
 		if (strcmp(widget->wclass->name, "toplevel")) {
@@ -194,54 +191,44 @@ void ei_toplevel_resizing_update(ei_widget_t widget, int dx, int dy)
 		}
 
 		ei_widget_t child = widget->children_head;
-		ei_widget_t next_child;
-
-		if (child) {
-			next_child = child->next_sibling;
-		}
 
 		while (child) {
-			ei_toplevel_resizing_update(child, dx, dy);
-			child = next_child;
-			next_child = (child == NULL) ? NULL : child->next_sibling;
+			ei_toplevel_resize_update(child, dx, dy);
+			child = child->next_sibling;
 		}
 	}
 }
 
-void ei_toplevel_moving_update(ei_widget_t widget, int dx, int dy)
+void ei_toplevel_move_update(ei_widget_t widget, int dx, int dy)
 {
 	if (widget) {
 		widget->screen_location.top_left.x += dx;
 		widget->screen_location.top_left.y += dy;
 		widget->content_rect->top_left.x += dx;
 		widget->content_rect->top_left.y += dy;
-		if (!strcmp(widget->wclass->name,"toplevel")){
+
+		if (!strcmp(widget->wclass->name, "toplevel")) {
 			widget->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
 			widget->placer_params->x = widget->screen_location.top_left.x;
 			widget->placer_params->y = widget->screen_location.top_left.y;
-			widget->placer_params->height = widget->screen_location.size.height;
 			widget->placer_params->width = widget->screen_location.size.width;
+			widget->placer_params->height = widget->screen_location.size.height;
 		}
-//		widget->placer_params->x = widget->screen_location.top_left.x;
-//		widget->placer_params->y = widget->screen_location.top_left.y;
-//		widget->placer_params->height = widget->screen_location.size.height;
-//		widget->placer_params->width = widget->screen_location.size.width;
-//		widget->placer_params->rel_x = 0;
-//		widget->placer_params->rel_y = 0;
-//		widget->placer_params->rel_width = NULL;
-//		widget->placer_params->rel_height = NULL;
+
+		// widget->placer_params->x = widget->screen_location.top_left.x;
+		// widget->placer_params->y = widget->screen_location.top_left.y;
+		// widget->placer_params->width = widget->screen_location.size.width;
+		// widget->placer_params->height = widget->screen_location.size.height;
+		// widget->placer_params->rel_x = 0;
+		// widget->placer_params->rel_y = 0;
+		// widget->placer_params->rel_width = NULL;
+		// widget->placer_params->rel_height = NULL;
 
 		ei_widget_t child = widget->children_head;
-		ei_widget_t next_child;
-
-		if (child) {
-			next_child = child->next_sibling;
-		}
 
 		while (child) {
-			ei_toplevel_moving_update(child, dx, dy);
-			child = next_child;
-			next_child = (child == NULL) ? NULL : child->next_sibling;
+			ei_toplevel_move_update(child, dx, dy);
+			child = child->next_sibling;
 		}
 	}
 }

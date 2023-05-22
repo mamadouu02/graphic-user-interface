@@ -48,10 +48,10 @@ int main(int argc, char** argv)
 	ei_color_t 		beige		= { 236, 207, 202, 0 };
 	ei_event_t		event;
 	ei_rect_t 		rect 		= ei_rect(ei_point(100, 100), ei_size(300, 200));
-//	ei_rect_t 		rect_petit 	= ei_rect(ei_point(100, 299), ei_size(300, 200));
+	// ei_rect_t 		rect_petit 	= ei_rect(ei_point(100, 299), ei_size(300, 200));
 	ei_rect_t 		rect_button 	= ei_rect(ei_point(450, 100), ei_size(300, 200));
 	ei_rect_t		clipper		= ei_rect(ei_point(555, 180), ei_size(50, 30));
-//	ei_rect_t		*clipper	= NULL;
+	// ei_rect_t		*clipper	= NULL;
 	hw_init();
 
 	second_window = hw_create_window(win_size, false);
@@ -83,14 +83,14 @@ int main(int argc, char** argv)
 	ei_draw_button(main_window, rect_button, beige, 6, ei_relief_none, NULL, NULL, NULL, NULL, NULL);
 
 	/* Test intersection */
-//	ei_rect_t rect_total = ei_rect(ei_point(0, 0), win_size);
-//	ei_rect_t inter = ei_rect_intersect(rect_total, rect);
-//	ei_point_t top_left = inter.top_left;
-//	ei_point_t top_right = { top_left.x + inter.size.width, top_left.y };
-//	ei_point_t bottom_left = { top_left.x, top_left.y + inter.size.height };
-//	ei_point_t bottom_right = { top_left.x + inter.size.width, top_left.y + inter.size.height };
-//	ei_point_t point_array[4] = { top_left, top_right, bottom_right, bottom_left };
-//	ei_draw_polygon(second_window, point_array, 4, red, NULL);
+	// ei_rect_t rect_total = ei_rect(ei_point(0, 0), win_size);
+	// ei_rect_t inter = ei_rect_intersect(rect_total, rect);
+	// ei_point_t top_left = inter.top_left;
+	// ei_point_t top_right = { top_left.x + inter.size.width, top_left.y };
+	// ei_point_t bottom_left = { top_left.x, top_left.y + inter.size.height };
+	// ei_point_t bottom_right = { top_left.x + inter.size.width, top_left.y + inter.size.height };
+	// ei_point_t point_array[4] = { top_left, top_right, bottom_right, bottom_left };
+	// ei_draw_polygon(second_window, point_array, 4, red, NULL);
 
 	/* Copy surface */
 	ei_copy_surface(second_window, &rect, main_window,&rect , false);
@@ -100,7 +100,7 @@ int main(int argc, char** argv)
 	ei_const_string_t text = "Button";
 
 	int font_size = rect.size.height/6;
-	ei_const_string_t font_filename = "misc/font.ttf";
+	ei_const_string_t font_filename = ei_default_font_filename;
 	ei_font_t font = hw_text_font_create(font_filename, ei_style_normal, font_size);
 
 	ei_draw_text(main_window, &where, text, font, belle, NULL);

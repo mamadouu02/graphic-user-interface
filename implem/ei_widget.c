@@ -36,18 +36,15 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, e
 	if (!strcmp(widget->wclass->name, "toplevel")) {
 		widget->requested_size = ei_size(320, 240);
 
-		ei_widget_t resizing_frame = ei_widget_create("frame", widget, NULL, NULL);
-		resizing_frame->wclass->setdefaultsfunc(resizing_frame);
-		resizing_frame->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
-		((ei_impl_frame_t *) resizing_frame)->color = (ei_color_t) { 0.7 * 0xA0, 0.7 * 0xA0, 0.7 * 0xA0, 0xFF };
+		ei_widget_t resize_frame = ei_widget_create("frame", widget, NULL, NULL);
+		resize_frame->wclass->setdefaultsfunc(resize_frame);
+		resize_frame->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
+		((ei_impl_frame_t *) resize_frame)->color = (ei_color_t) { 0.7 * 0xA0, 0.7 * 0xA0, 0.7 * 0xA0, 0xFF };
 
 		ei_widget_t close_button = ei_widget_create("button", widget, NULL, NULL);
 		close_button->wclass->setdefaultsfunc(close_button);
 		close_button->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
-
-		ei_impl_button_t  *button = (ei_impl_button_t *) close_button;
-		button->color = (ei_color_t) { 0xff, 0x00, 0x00, 0xA0 };
-
+		((ei_impl_button_t *) close_button)->color = (ei_color_t) { 0xFF, 0x00, 0x00, 0xA0 };
 	} else {
 		ei_size_t size = widget->parent->content_rect->size;
 		widget->requested_size = ei_size(size.width / 20, size.height / 20);
@@ -60,26 +57,16 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, e
 
 void ei_widget_destroy(ei_widget_t widget)
 {
-	if (widget != NULL) {
-		ei_widget_t child = widget->children_head;
-		ei_widget_t next_child;
-
-		if (child != NULL) {
-			next_child = child->next_sibling;
-		}
-
-		while (child != NULL) {
-			if (child->children_head != NULL) {
-				ei_widget_destroy(child);
-			}
-
-			// child->wclass->releasefunc(child);
-			free(child);
-
-			child = next_child;
-			next_child = (child == NULL) ? NULL : child->next_sibling;
-		}
+	if (widget->children_head) {
+		ei_widget_destroy(widget->children_head);
 	}
+
+	if (widget->next_sibling) {
+		ei_widget_destroy(widget->next_sibling);
+	}
+
+	// widget->wclass->releasefunc(widget);
+	free(widget);
 }
 
 bool ei_widget_is_displayed(ei_widget_t widget)
@@ -95,11 +82,11 @@ ei_widget_t ei_widget_pick(ei_point_t* where)
 {
 	hw_surface_lock(offscreen);
 
-	uint8_t *pix = hw_surface_get_buffer(offscreen);
+	uint8_t *pix_ptr = hw_surface_get_buffer(offscreen);
 	ei_size_t size = hw_surface_get_size(offscreen);
 	int ir, ig, ib, ia;
 	hw_surface_get_channel_indices(offscreen, &ir, &ig, &ib, &ia);
-	uint32_t pick_id = pix[4 * (where->y * size.width + where->x) + ir];
+	uint32_t pick_id = pix_ptr[4 * (where->y * size.width + where->x) + ir];
 	ei_widget_t *widget_ptr = malloc(sizeof(ei_widget_t));
 	ei_pick(ei_app_root_widget(), pick_id, widget_ptr);
 

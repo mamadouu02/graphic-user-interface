@@ -26,7 +26,7 @@ void    ei_frame_configure      (ei_widget_t		widget,
 	ei_impl_frame_t *frame = (ei_impl_frame_t *) widget;
 	widget->requested_size = (requested_size) ? *requested_size : widget->requested_size;
 	frame->color = (color) ? *color : frame->color;
-	frame->border_width = (border_width) ? *border_width : frame->border_width ;
+	frame->border_width = (border_width) ? *border_width : frame->border_width;
 	frame->relief = (relief) ? *relief : frame->relief;
 	frame->text = (text) ? *text : frame->text;
 	frame->text_font = (text_font) ? *text_font : frame->text_font;
@@ -64,13 +64,15 @@ void    ei_button_configure	(ei_widget_t		widget,
 	button->text_color = (text_color) ? *text_color : button->text_color;
 	button->text_anchor = (text_anchor) ? *text_anchor : button->text_anchor;
 	button->img = (img) ? *img : button->img;
+
 	if (button->img_rect == NULL){
 		button->img_rect = malloc(sizeof(ei_rect_t));
 	}
-	button->img_rect->top_left.y = (img_rect) ? (*img_rect)->top_left.y : button->img_rect->top_left.y;
+
 	button->img_rect->top_left.x = (img_rect) ? (*img_rect)->top_left.x : button->img_rect->top_left.x;
-	button->img_rect->size.height = (img_rect) ? (*img_rect)->size.height : button->img_rect->size.height;
+	button->img_rect->top_left.y = (img_rect) ? (*img_rect)->top_left.y : button->img_rect->top_left.y;
 	button->img_rect->size.width = (img_rect) ? (*img_rect)->size.width : button->img_rect->size.width;
+	button->img_rect->size.height = (img_rect) ? (*img_rect)->size.height : button->img_rect->size.height;
 	button->img_anchor = (img_anchor) ? *img_anchor : button->img_anchor;
 	button->callback = (callback) ? *callback : button->callback;
 	button->user_param = (user_param) ? *user_param : button->user_param;

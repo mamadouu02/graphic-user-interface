@@ -25,7 +25,7 @@ ei_widgetclass_t* ei_widgetclass_from_name(ei_const_string_t name)
 {
 	ei_widgetclass_t *class = classes;
 
-	while (class && strcmp(class->name, name) != 0) {
+	while (class != NULL && strcmp(class->name, name) != 0) {
 		class = class->next;
 	}
 

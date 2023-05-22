@@ -26,9 +26,11 @@ void tc_init(ei_cote_t **tc, int yp_min, ei_point_t *point_array, size_t point_a
 				tc[i_scan] = nv_cote;
 			} else {
 				ei_cote_t *cote = tc[i_scan];
+
 				while (cote->suiv != NULL) {
 					cote = cote->suiv;
 				}
+
 				cote->suiv = nv_cote;
 			}
 		}
@@ -80,35 +82,37 @@ void ei_tca_remove(ei_cote_t **tca_ptr, ei_cote_t **tc, int y_scan)
 	}
 }
 
-int ei_octant_array_size(int rayon)
+int ei_octant_array_size(int radius)
 {
 	int x = 0;
-	int y = rayon;
-	int m = 5 - 4*rayon;
+	int y = radius;
+	int m = 5 - 4 * radius;
 	int tab_size = 0;
 
 	while (x <= y) {
 		tab_size++;
+
 		if (m > 0) {
 			y--;
-			m -= 8*y;
+			m -= 8 * y;
 		}
+		
 		x++;
-		m += 8*x + 4;
+		m += 8 * x + 4;
 	}
 
 	return tab_size;
 }
 
-ei_point_t* ei_octant_array(ei_point_t centre, int rayon, int octant, int octant_array_size)
+ei_point_t* ei_octant_array(ei_point_t centre, int radius, int octant, int octant_array_size)
 {
-	int x_centre = centre.x;
-	int y_centre = centre.y;
 	int x = 0;
-	int y = rayon;
-	int m = 5 - 4*rayon;
-	ei_point_t *tab = malloc(sizeof(ei_point_t[octant_array_size]));
+	int y = radius;
+	int m = 5 - 4 * radius;
+	int x_c = centre.x;
+	int y_c = centre.y;
 	int sign_x, sign_y, inverse;
+	ei_point_t *tab = malloc(sizeof(ei_point_t[octant_array_size]));
 
 	switch (octant) {
 		case 0:
@@ -141,23 +145,27 @@ ei_point_t* ei_octant_array(ei_point_t centre, int rayon, int octant, int octant
 
 	if (octant % 2 == 0) {
 		for (int i = 0; i < octant_array_size; i++) {
-			tab[i].x = sign_x * ((y - x) * inverse + x) + x_centre;
-			tab[i].y = sign_y * ((y - x) * (1 - inverse) + x) + y_centre;
+			tab[i].x = sign_x * ((y - x) * inverse + x) + x_c;
+			tab[i].y = sign_y * ((y - x) * (1 - inverse) + x) + y_c;
+
 			if (m > 0) {
 				y--;
 				m -= 8 * y;
 			}
+
 			x++;
 			m += 8 * x + 4;
 		}
 	} else {
 		for (int i = octant_array_size - 1; i > -1; i--) {
-			tab[i].x = sign_x * ((y - x) * inverse + x) + x_centre;
-			tab[i].y = sign_y * ((y - x) * (1 - inverse) + x) + y_centre;
+			tab[i].x = sign_x * ((y - x) * inverse + x) + x_c;
+			tab[i].y = sign_y * ((y - x) * (1 - inverse) + x) + y_c;
+
 			if (m > 0) {
 				y--;
 				m -= 8 * y;
 			}
+
 			x++;
 			m += 8 * x + 4;
 		}
@@ -166,34 +174,35 @@ ei_point_t* ei_octant_array(ei_point_t centre, int rayon, int octant, int octant
 	return tab;
 }
 
-int ei_octant_lines_array_size(int rayon)
+int ei_octant_lines_array_size(int radius)
 {
 	int x = 0;
-	int y = rayon;
-	int m = 5 - 4*rayon;
+	int y = radius;
+	int m = 5 - 4 * radius;
 	int tab_size = 0;
 
 	while (x <= y) {
 		if (m > 0) {
 			y--;
-			m -= 8*y;
+			m -= 8 * y;
 			tab_size++;
 		}
+		
 		x++;
-		m += 8*x + 4;
+		m += 8 * x + 4;
 	}
 
 	return tab_size;
 }
 
-ei_point_t* ei_octant_lines_array(ei_point_t centre, int rayon)
+ei_point_t* ei_octant_lines_array(ei_point_t centre, int radius)
 {
-	int x_centre = centre.x;
-	int y_centre = centre.y;
 	int x = 0;
-	int y = rayon;
-	int m = 5 - 4*rayon;
-	int tab_size = ei_octant_lines_array_size(rayon);
+	int y = radius;
+	int m = 5 - 4 * radius;
+	int x_c = centre.x;
+	int y_c = centre.y;
+	int tab_size = ei_octant_lines_array_size(radius);
 	ei_point_t *tab = malloc(sizeof(ei_point_t[tab_size]));
 	int i = 0;
 
@@ -201,17 +210,18 @@ ei_point_t* ei_octant_lines_array(ei_point_t centre, int rayon)
 		if (m > 0) {
 			y--;
 			m -= 8 * y;
-			tab[i] = ei_point(x + x_centre, y+1 + y_centre);
+			tab[i] = ei_point(x + x_c, y + 1 + y_c);
 			i++;
 		}
+
 		x++;
-		m += 8*x + 4;
+		m += 8 * x + 4;
 	}
 
 	return tab;
 }
 
-ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, ei_frame_part_t part)
+ei_point_t *ei_rounded_frame(ei_rect_t rect, int radius, ei_frame_part_t part)
 {
 	int x0 = rect.top_left.x;
 	int y0 = rect.top_left.y;
@@ -219,43 +229,52 @@ ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, ei_frame_part_t part)
 	int height = rect.size.height;
 	int h = height / 2;
 
-	ei_point_t pt0 = { x0 + width - rayon, y0 + rayon };
-	ei_point_t pt1 = { x0 + width - rayon, y0 + height - rayon };
-	ei_point_t pt2 = { x0 + rayon, y0 + height - rayon };
-	ei_point_t pt3 = { x0 + rayon, y0 + rayon };
+	ei_point_t pt0 = { x0 + width - radius, y0 + radius };
+	ei_point_t pt1 = { x0 + width - radius, y0 + height - radius };
+	ei_point_t pt2 = { x0 + radius, y0 + height - radius };
+	ei_point_t pt3 = { x0 + radius, y0 + radius };
 	ei_point_t points[4] = { pt0, pt1, pt2, pt3 };
 
-	int octant_array_size = ei_octant_array_size(rayon);
+	int octant_array_size = ei_octant_array_size(radius);
 	ei_point_t *tab;
 
 	if (part == ei_frame_total) {
 		tab = malloc(sizeof(ei_point_t[8 * octant_array_size]));
+
 		for (int octant = 0; octant < 8; octant++) {
-			ei_point_t *octant_array = ei_octant_array(points[octant / 2], rayon, octant, octant_array_size);
+			ei_point_t *octant_array = ei_octant_array(points[octant / 2], radius, octant, octant_array_size);
+
 			for (int i = 0; i < octant_array_size; i++) {
 				tab[octant * octant_array_size + i] = octant_array[i];
 			}
+
 			free(octant_array);
 		}
 	} else {
 		tab = malloc(sizeof(ei_point_t[4 * octant_array_size + 2]));
+
 		if (part == ei_frame_top) {
 			for (int octant = 5; octant <= 8; octant++) {
-				ei_point_t *octant_array = ei_octant_array(points[octant % 8 / 2], rayon, octant % 8, octant_array_size);
+				ei_point_t *octant_array = ei_octant_array(points[octant % 8 / 2], radius, octant % 8, octant_array_size);
+				
 				for (int i = 0; i < octant_array_size; i++) {
 					tab[(octant - 5) * octant_array_size + i] = octant_array[i];
 				}
+				
 				free(octant_array);
 			}
 		} else {
 			for (int octant = 1; octant <= 4; octant++) {
-				ei_point_t *octant_array = ei_octant_array(points[octant / 2], rayon, octant, octant_array_size);
+				ei_point_t *octant_array = ei_octant_array(points[octant / 2], radius, octant, octant_array_size);
+				
 				for (int i = 0; i < octant_array_size; i++) {
 					tab[(octant - 1) * octant_array_size + i] = octant_array[i];
 				}
+				
 				free(octant_array);
 			}
 		}
+
 		tab[4 * octant_array_size] = ei_point(x0 + (width - 2 * h) * part + h, y0 + h);
 		tab[4 * octant_array_size + 1] = ei_point(x0 - (width - 2 * h) * (part - 1) + h, y0 + h);
 	}
@@ -265,10 +284,10 @@ ei_point_t *ei_rounded_frame(ei_rect_t rect, int rayon, ei_frame_part_t part)
 
 void ei_draw_frame(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_relief_t relief, ei_rect_t *clipper)
 {
-	unsigned char red = (color.red * 1.3 > 255) ? 255 : color.red * 1.3;
-	unsigned char green = (color.green * 1.3 > 255) ? 255 : color.green * 1.3;
-	unsigned char blue = (color.blue * 1.3 > 255) ? 255 : color.blue * 1.3;
-	ei_color_t light_color = { red, green, blue, color.alpha };
+	unsigned char light_red = (color.red * 1.3 > 255) ? 255 : color.red * 1.3;
+	unsigned char light_green = (color.green * 1.3 > 255) ? 255 : color.green * 1.3;
+	unsigned char light_blue = (color.blue * 1.3 > 255) ? 255 : color.blue * 1.3;
+	ei_color_t light_color = { light_red, light_green, light_blue, color.alpha };
 	ei_color_t dark_color = { color.red / 1.3, color.green / 1.3 , color.blue / 1.3, color.alpha };
 
 	ei_color_t top_color, bottom_color;
@@ -322,10 +341,10 @@ void ei_draw_frame(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_r
 
 void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int radius, ei_relief_t relief, ei_string_t *text, ei_font_t *text_font, ei_color_t *text_color, ei_anchor_t *text_anchor, ei_rect_t *clipper)
 {
-	unsigned char red = (color.red * 1.3 > 255) ? 255 : color.red * 1.3;
-	unsigned char green = (color.green * 1.3 > 255) ? 255 : color.green * 1.3;
-	unsigned char blue = (color.blue * 1.3 > 255) ? 255 : color.blue * 1.3;
-	ei_color_t light_color = { red, green, blue, color.alpha };
+	unsigned char light_red = (color.red * 1.3 > 255) ? 255 : color.red * 1.3;
+	unsigned char light_green = (color.green * 1.3 > 255) ? 255 : color.green * 1.3;
+	unsigned char light_blue = (color.blue * 1.3 > 255) ? 255 : color.blue * 1.3;
+	ei_color_t light_color = { light_red, light_green, light_blue, color.alpha };
 	ei_color_t dark_color = { color.red / 1.3, color.green / 1.3 , color.blue / 1.3, color.alpha };
 
 	ei_color_t top_color, bottom_color;
@@ -367,21 +386,20 @@ void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int
 
 	octant_array_size = ei_octant_array_size(radius);
 	ei_point_t *button = ei_rounded_frame(rect, radius, ei_frame_total);
-
 	ei_draw_polygon(surface, button, 8 * octant_array_size, color, clipper);
 
 	if (text && *text) {
-		ei_rect_t clipper_text_img = rect;
+		ei_rect_t text_clipper = rect;
 
 		if (clipper) {
-			clipper_text_img = ei_rect_intersect(ei_rect_intersect(rect, *clipper), *clipper);
+			text_clipper = ei_rect_intersect(ei_rect_intersect(rect, *clipper), *clipper);
 		}
 
 		ei_surface_t text_surface = hw_text_create_surface(*text, *text_font, *text_color);
 		ei_rect_t text_rect = hw_surface_get_rect(text_surface);
-		text_rect.top_left = ei_anchor_text_img(text_anchor, &text_rect, &clipper_text_img);
+		text_rect.top_left = ei_anchor_text_img(text_anchor, &text_rect, &text_clipper);
 
-		ei_draw_text(surface, &text_rect.top_left, (ei_const_string_t) *text, *text_font, *text_color, &clipper_text_img);
+		ei_draw_text(surface, &text_rect.top_left, (ei_const_string_t) *text, *text_font, *text_color, &text_clipper);
 		
 		hw_surface_free(text_surface);
 	}

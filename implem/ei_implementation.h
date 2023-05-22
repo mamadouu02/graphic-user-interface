@@ -168,7 +168,7 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 
 /**
  * @brief	With the anchor, we calculate the new coordinates of the top left of the rectangle knowing that
- * 		the original top left is in the anchor wof the new rectangle.
+ * 		the original top left is in the anchor of the new rectangle.
  *
  * @param	anchor_ptr
  * @param	rect		
@@ -179,7 +179,7 @@ ei_point_t ei_anchor_rect(ei_anchor_t *anchor_ptr, ei_rect_t *rect);
 
 /**
  * @brief	With the anchor parameter, we calculate the new coordinates of the top left of the rectangle
- *		with "limit" as the delimiter.
+ *		with 'limit' as the delimiter.
  *
  * @param	anchor_ptr		
  * @param	rect		
