@@ -151,6 +151,11 @@ target_link_libraries(test_polygon	ei ${PLATFORM_LIB_FLAGS})
 add_executable(test_button		${TEST_DIR}/test_button.c)
 target_link_libraries(test_button	ei ${PLATFORM_LIB_FLAGS})
 
+# target top_in_top
+
+add_executable(top_in_top		${TEST_DIR}/top_in_top.c)
+target_link_libraries(top_in_top	ei ${PLATFORM_LIB_FLAGS})
+
 # external_class
 
 add_executable(external_class		${TEST_DIR}/external_class.c)
