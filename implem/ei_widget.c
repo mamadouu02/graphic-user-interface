@@ -19,10 +19,6 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, e
 	ei_widget_set_pick(widget);
 
 	if (user_data) {
-		if (widget->user_data == NULL) {
-			widget->user_data = malloc(sizeof(ei_user_param_t));
-		}
-		
 		widget->user_data = user_data;
 	}
 
@@ -114,5 +110,8 @@ ei_widget_t ei_widget_pick(ei_point_t* where)
 
 	hw_surface_unlock(offscreen);
 
-	return *widget_ptr;
+	ei_widget_t widget = *widget_ptr;
+	free(widget_ptr);
+
+	return widget;
 }

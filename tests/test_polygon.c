@@ -88,10 +88,14 @@ void test_circle(ei_surface_t surface, ei_point_t centre, int rayon, ei_color_t 
 		for (int i = tour*octant_array_size ; i < (tour+1)*octant_array_size; i++) {
 			circle[i] = pts[i - tour*octant_array_size];
 		}
+
 		tour++;
 		free(pts);
 	}
+
 	ei_draw_polygon(surface, circle, 8*octant_array_size, color, clipper);
+
+	free(circle);
 }
 
 /*

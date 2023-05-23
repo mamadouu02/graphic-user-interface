@@ -16,7 +16,14 @@ ei_widget_t button_allocfunction(void)
 
 void button_releasefunc(ei_widget_t widget)
 {
-	/* A implémenter */
+	ei_impl_button_t *button = (ei_impl_button_t *) widget;
+
+	if (button->text)
+		free(button->text);
+	if (button->img)
+		hw_surface_free(button->img);
+	if (button->img_rect)
+		free(button->img_rect);
 }
 
 void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
