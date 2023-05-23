@@ -355,7 +355,7 @@ void ei_impl_placer_run(ei_widget_t widget)
 	where->x = x + rel_x * parent_width;
 	where->y = y + rel_y * parent_height;
 	
-	if (!strcmp(widget->parent->wclass->name, "toplevel")) {
+	if (!strcmp(widget->parent->wclass->name, "toplevel") && strcmp(widget->wclass->name, "toplevel")) {
 		where->x += parent_top_left.x;
 		where->y += parent_top_left.y;
 	}

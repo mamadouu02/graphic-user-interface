@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 					      &(ei_color_t){0xF0,0xA0,0xA0, 0xff},
 					      &(int){2},
 					      &(ei_string_t){"Hello World"}, &b, &(ei_axis_set_t){ei_axis_x}, NULL);
-	ei_place_xy			(s_window, 30, 10);
+	ei_place_xy			(s_window, 100, 40);
 
 
 	button = ei_widget_create	("button", s_window, NULL, NULL);
