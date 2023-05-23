@@ -218,8 +218,6 @@ void ei_widget_destroy_children(ei_widget_t widget)
 
 	if (widget->next_sibling) {
 		ei_widget_destroy_children(widget->next_sibling);
-		widget->next_sibling = NULL;
-		widget->parent->children_tail = widget;
 	}
 
 	widget->wclass->releasefunc(widget);

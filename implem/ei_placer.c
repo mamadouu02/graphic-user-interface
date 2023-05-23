@@ -46,6 +46,8 @@ void	ei_place	(ei_widget_t		widget,
 			widget->placer_params->y += 25;
 		}
 	}
+
+	ei_impl_placer_run(widget);
 }
 
 void ei_placer_forget(ei_widget_t widget)
