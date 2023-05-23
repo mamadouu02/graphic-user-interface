@@ -376,6 +376,7 @@ void ei_impl_app_run_siblings(ei_widget_t widget)
 		}
 
 		widget = widget->next_sibling;
+		ei_impl_app_run_children(widget);
 	}
 }
 
