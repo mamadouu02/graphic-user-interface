@@ -42,8 +42,8 @@ void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick
 			button_clipper = ei_rect_intersect(button_clipper, *clipper);
 		}
 
-		ei_draw_button(surface, widget_rect, button->color, button->corner_radius, button->relief, &button->text, &button->text_font, &button->text_color, &button->text_anchor, &button_clipper);
-		ei_draw_button(pick_surface, widget_rect, widget->pick_color, button->corner_radius, ei_relief_none, NULL, NULL, NULL, NULL, &button_clipper);
+		ei_draw_button(surface, widget_rect, button->color, button->border_width, button->corner_radius, button->relief, &button->text, &button->text_font, &button->text_color, &button->text_anchor, &button_clipper);
+		ei_draw_button(pick_surface, widget_rect, widget->pick_color, button->border_width, button->corner_radius, ei_relief_none, NULL, NULL, NULL, NULL, &button_clipper);
 
 		ei_rect_t new_screen_loc = ei_rect_intersect(widget_rect, button_clipper);
 		

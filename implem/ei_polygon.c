@@ -339,7 +339,7 @@ void ei_draw_frame(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_r
 	ei_draw_polygon(surface, button, 4, color, clipper);
 }
 
-void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int radius, ei_relief_t relief, ei_string_t *text, ei_font_t *text_font, ei_color_t *text_color, ei_anchor_t *text_anchor, ei_rect_t *clipper)
+void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int border_width, int radius, ei_relief_t relief, ei_string_t *text, ei_font_t *text_font, ei_color_t *text_color, ei_anchor_t *text_anchor, ei_rect_t *clipper)
 {
 	unsigned char light_red = (color.red * 1.3 > 255) ? 255 : color.red * 1.3;
 	unsigned char light_green = (color.green * 1.3 > 255) ? 255 : color.green * 1.3;
@@ -376,13 +376,10 @@ void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int
 	ei_draw_polygon(surface, bottom, 4 * octant_array_size + 2, bottom_color, clipper);
 	free(bottom);
 
-	float scale = 0.04;
-	rect.top_left.x += scale * rect.size.height;
-	rect.top_left.y += scale * rect.size.height;
-	int width = rect.size.width - 2 * rect.size.height * scale;
-	int height = rect.size.height * (1 - 2 * scale);
-	rect = ei_rect(rect.top_left, ei_size(width, height));
-	radius = rect.size.height / 6;
+	rect.top_left.x += border_width;
+	rect.top_left.y += border_width;
+	rect.size.width -= 2 * border_width;
+	rect.size.height -= 2 * border_width;
 
 	octant_array_size = ei_octant_array_size(radius);
 	ei_point_t *button = ei_rounded_frame(rect, radius, ei_frame_total);
