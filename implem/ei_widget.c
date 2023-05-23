@@ -72,6 +72,10 @@ void ei_widget_destroy(ei_widget_t widget)
 
 		if (prev_child == NULL) {
 			parent->children_head = widget->next_sibling;
+
+			if (child->next_sibling == NULL) {
+				parent->children_tail = NULL;
+			}
 		} else {
 			prev_child->next_sibling = widget->next_sibling;
 
@@ -82,9 +86,9 @@ void ei_widget_destroy(ei_widget_t widget)
 
 		widget->next_sibling = NULL;
 		widget->parent = NULL;
-
-		ei_widget_destroy_children(widget);
 	}
+
+	ei_widget_destroy_children(widget);
 }
 
 bool ei_widget_is_displayed(ei_widget_t widget)

@@ -45,8 +45,10 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen)
 void ei_app_free(void)
 {
 	ei_widget_destroy(root);
+
 	hw_surface_free(main_window);
 	hw_surface_free(offscreen);
+
 	hw_quit();
 }
 
@@ -70,6 +72,7 @@ void ei_app_run(void)
 	widget_event->my_param = &prev_where;
 
 	while (!quit) {
+
 		hw_event_wait_next(&event);
 
 		if (event.type != ei_ev_keydown) {

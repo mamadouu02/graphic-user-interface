@@ -17,7 +17,14 @@ ei_widget_t frame_allocfunction(void)
 
 void frame_releasefunc(ei_widget_t widget)
 {
-	/* A implémenter */
+	ei_impl_frame_t *frame = (ei_impl_frame_t *) widget;
+
+	if (frame->text)
+		free(frame->text);
+	if (frame->img)
+		hw_surface_free(frame->img);
+	if (frame->img_rect)
+		free(frame->img_rect);
 }
 
 void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
@@ -99,6 +106,8 @@ bool frame_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 
 		ei_rect_t toplevel_rect = widget->screen_location;
 
+		ei_impl_toplevel_t *toplevel = (ei_impl_toplevel_t*) widget->parent;
+
 		switch (event->type) {
 			case ei_ev_mouse_buttondown:
 				if (event->param.mouse.button == ei_mouse_button_left && ei_in_rect(event->param.mouse.where, toplevel_rect)) {
@@ -125,14 +134,6 @@ bool frame_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 					if (resize) {
 						ei_placer_forget(widget->parent);
 						ei_toplevel_resize_update(widget->parent, dx, dy);
-
-						hw_surface_unlock(ei_app_root_surface());
-						hw_surface_unlock(offscreen);
-
-						hw_surface_update_rects(ei_app_root_surface(), NULL);
-
-						hw_surface_lock(ei_app_root_surface());
-						hw_surface_lock(offscreen);
 
 						widget->parent->wclass->drawfunc(widget->parent, ei_app_root_surface(), offscreen, NULL);
 					}

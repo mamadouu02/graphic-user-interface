@@ -6,6 +6,7 @@
  */
 
 #include "ei_implementation.h"
+#include "ei_frame.h"
 
 uint32_t id = 0;
 
@@ -224,7 +225,16 @@ void ei_widget_destroy_children(ei_widget_t widget)
 	}
 
 	widget->wclass->releasefunc(widget);
-	free(widget);
+
+	if (widget->placer_params)
+		free(widget->placer_params);
+
+	if (!strcmp(widget->wclass->name, "frame"))
+		free((ei_impl_frame_t *) widget);
+	else if (!strcmp(widget->wclass->name, "button"))
+		free((ei_impl_button_t *) widget);
+	else if (!strcmp(widget->wclass->name, "toplevel"))
+		free((ei_impl_toplevel_t *) widget);
 }
 
 /* Anchor */
