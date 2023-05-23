@@ -118,7 +118,7 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 
 void toplevel_setdefaultsfunc(ei_widget_t widget)
 {
-	ei_impl_toplevel_t *toplevel = (ei_impl_toplevel_t*) widget;
+	ei_impl_toplevel_t *toplevel = (ei_impl_toplevel_t *) widget;
 	toplevel->color = ei_default_background_color;
 	toplevel->border_width = 4;
 	toplevel->title = "Toplevel";
