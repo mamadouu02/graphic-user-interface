@@ -17,7 +17,10 @@ ei_widget_t toplevel_allocfunction(void)
 
 void toplevel_releasefunc(ei_widget_t widget)
 {
-	/* A implémenter */
+	ei_impl_toplevel_t *toplevel = (ei_impl_toplevel_t *) widget;
+
+	if (toplevel->title)
+		free(toplevel->title);
 }
 
 void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
@@ -62,7 +65,8 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 
 		while (child) {
 			if (child == widget->children_head) {
-				int size_resize = 0.06 * widget->screen_location.size.height;
+				if (toplevel->resizable != ei_axis_none) {
+					int size_resize = 0.06 * widget->screen_location.size.height;
 
 					ei_point_t bottom_right_resize;
 					bottom_right_resize.x =
@@ -148,10 +152,9 @@ bool ei_toplevel_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 					ei_placer_forget(widget);
 					ei_toplevel_move_update(widget, dx, dy);
 
-
-					widget->wclass->drawfunc(widget, ei_app_root_surface(), offscreen, NULL);
+					widget->wclass->drawfunc(widget, ei_app_root_surface(), offscreen,
+								 NULL);
 				}
-
 				move = !move;
 			}
 			break;
