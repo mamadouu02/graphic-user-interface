@@ -214,8 +214,6 @@ void ei_widget_destroy_children(ei_widget_t widget)
 {
 	if (widget->children_head) {
 		ei_widget_destroy_children(widget->children_head);
-		widget->children_head = NULL;
-		widget->children_tail = NULL;
 	}
 
 	if (widget->next_sibling) {

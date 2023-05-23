@@ -79,14 +79,13 @@ void ei_widget_destroy(ei_widget_t widget)
 		} else {
 			prev_child->next_sibling = widget->next_sibling;
 
-			if (prev_child->next_sibling == NULL) {
+			if (widget->next_sibling == NULL) {
 				parent->children_tail = prev_child;
 			}
 		}
-
-		widget->next_sibling = NULL;
-		widget->parent = NULL;
 	}
+
+	widget->next_sibling = NULL;
 
 	ei_widget_destroy_children(widget);
 }
