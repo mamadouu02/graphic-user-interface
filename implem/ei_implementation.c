@@ -368,25 +368,19 @@ void ei_impl_placer_run(ei_widget_t widget)
 	free(where);
 }
 
-void ei_impl_app_run_siblings(ei_widget_t widget)
+void ei_impl_app_run(ei_widget_t widget)
 {
-	while (widget != NULL) {
-		if (widget->placer_params) {
-			ei_impl_placer_run(widget);
-		}
-
-		widget = widget->next_sibling;
-		ei_impl_app_run_children(widget);
+	if (widget->placer_params) {
+		ei_impl_placer_run(widget);
 	}
-}
 
-void ei_impl_app_run_children(ei_widget_t widget)
-{
-	while (widget != NULL) {
-		if (widget->placer_params) {
-			ei_impl_app_run_siblings(widget);
+	if (widget->next_sibling) {
+		ei_impl_app_run(widget->next_sibling);
+	}
+
+	if (widget->placer_params) {
+		if (widget->children_head) {
+			ei_impl_app_run(widget->children_head);
 		}
-
-		widget = widget->children_head;
 	}
 }

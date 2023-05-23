@@ -57,7 +57,7 @@ void ei_app_run(void)
 	hw_surface_lock(main_window);
 	hw_surface_lock(offscreen);
 
-	ei_impl_app_run_children(root);
+	ei_impl_app_run(root->children_head);
 
 	root->wclass->drawfunc(root, main_window, offscreen, NULL);
 
@@ -114,7 +114,8 @@ void ei_app_run(void)
 				hw_surface_lock(main_window);
 				hw_surface_lock(offscreen);
 
-				ei_impl_app_run_children(root);
+				ei_impl_app_run(root->children_head);
+
 				root->wclass->drawfunc(root, main_window, offscreen, NULL);
 
 				hw_surface_unlock(main_window);

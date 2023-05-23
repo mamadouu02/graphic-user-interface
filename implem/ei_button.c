@@ -117,7 +117,7 @@ bool ei_button_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 				if (button->callback) {
 					button->callback(widget, event, button->user_param);
 					ei_widget_t root = ei_app_root_widget();
-					ei_impl_app_run_children(root);
+					ei_impl_app_run(root->children_head);
 					root->wclass->drawfunc(root, ei_app_root_surface(), offscreen, NULL);
 				}
 

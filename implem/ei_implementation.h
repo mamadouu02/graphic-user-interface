@@ -230,13 +230,6 @@ void ei_impl_placer_run(ei_widget_t widget);
  *
  * @param	widget		
  */
-void ei_impl_app_run_siblings(ei_widget_t widget);
-
-/**
- * @brief	
- *
- * @param	widget		
- */
-void ei_impl_app_run_children(ei_widget_t widget);
+void ei_impl_app_run(ei_widget_t widget);
 
 #endif
