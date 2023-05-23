@@ -77,8 +77,7 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 					child->screen_location.top_left.x = bottom_right_resize.x - size_resize;
 					child->screen_location.top_left.y = bottom_right_resize.y - size_resize;
 					child->screen_location.size = ei_size(size_resize, size_resize);
-				}
-				else {
+				} else {
 					child->screen_location = ei_rect_zero();
 				}
 			} else if (child == widget->children_head->next_sibling) {
