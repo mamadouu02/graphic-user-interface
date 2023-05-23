@@ -133,6 +133,6 @@ void ei_draw_frame(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_r
  * @param	text_anchor	Ancre du texte.
  * @param	clipper		Clippeur.
  */
-void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int radius, ei_relief_t relief, ei_string_t *text, ei_font_t *text_font, ei_color_t *text_color, ei_anchor_t *text_anchor, ei_rect_t *clipper);
+void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int border_width, int radius, ei_relief_t relief, ei_string_t *text, ei_font_t *text_font, ei_color_t *text_color, ei_anchor_t *text_anchor, ei_rect_t *clipper);
 
 #endif
