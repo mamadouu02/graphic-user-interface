@@ -75,7 +75,9 @@ void ei_app_run(void)
 
 		hw_event_wait_next(&event);
 
-		if (event.type != ei_ev_keydown) {
+		if ((event.type == ei_ev_keydown && (event.param.key.key_code == SDLK_ESCAPE)) || event.type == ei_ev_close){
+			ei_app_quit_request();
+		} else if (event.type != ei_ev_keydown) {
 			switch (event.type) {
 				case ei_ev_mouse_buttondown:
 					widget_event = ei_widget_pick(&event.param.mouse.where);
@@ -123,8 +125,6 @@ void ei_app_run(void)
 
 				hw_surface_update_rects(main_window, NULL);
 			}
-		} else if ((event.type == ei_ev_keydown && (event.param.key.key_code == SDLK_ESCAPE)) || event.type == ei_ev_close) {
-			ei_app_quit_request();
 		}
 	}
 }
