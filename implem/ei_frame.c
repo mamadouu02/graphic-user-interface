@@ -17,15 +17,7 @@ ei_widget_t frame_allocfunction(void)
 
 void frame_releasefunc(ei_widget_t widget)
 {
-	free(widget->user_data);
-	free(widget->content_rect);
-	free(widget->placer_params);
-
-	ei_impl_frame_t *frame = (ei_impl_frame_t *) widget;
-	free(frame->text);
-	free(frame->text_font);
-	free(frame->img);
-	free(frame->img_rect);
+	/* A implémenter */
 }
 
 void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
@@ -79,7 +71,9 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
 			img_rect.top_left = text_img_clipper.top_left;
 			img_rect = ei_rect_intersect(img_rect, text_img_clipper);
 			img_rect.top_left = ei_anchor_text_img(&frame->img_anchor, &img_rect, &text_img_clipper);
+			hw_surface_lock(frame->img);
 			ei_rect_cpy(surface, &img_rect, frame->img, frame->img_rect, true);
+			hw_surface_unlock(frame->img);
 		}
 
 		ei_impl_widget_draw_children(widget, surface, pick_surface, clipper);

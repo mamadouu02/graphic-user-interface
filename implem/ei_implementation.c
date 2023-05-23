@@ -194,7 +194,7 @@ void ei_pick(ei_widget_t widget, uint32_t pick_id, ei_widget_t *widget_ptr)
 	}
 }
 
-/* Widget drawing */
+/* Widget descendance */
 
 void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		surface,
@@ -207,6 +207,24 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 		child->wclass->drawfunc(child, surface, pick_surface, clipper);
 		child = child->next_sibling;
 	}
+}
+
+void ei_widget_destroy_children(ei_widget_t widget)
+{
+	if (widget->children_head) {
+		ei_widget_destroy_children(widget->children_head);
+		widget->children_head = NULL;
+		widget->children_tail = NULL;
+	}
+
+	if (widget->next_sibling) {
+		ei_widget_destroy_children(widget->next_sibling);
+		widget->next_sibling = NULL;
+		widget->parent->children_tail = widget;
+	}
+
+	widget->wclass->releasefunc(widget);
+	free(widget);
 }
 
 /* Anchor */

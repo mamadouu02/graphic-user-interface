@@ -6,8 +6,6 @@
  */
 
 #include "ei_placer.h"
-#include "ei_implementation.h"
-#include "ei_application.h"
 #include "ei_frame.h"
 
 extern ei_surface_t offscreen;

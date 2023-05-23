@@ -147,7 +147,7 @@ void ei_widget_set_pick(ei_widget_t widget);
  */
 void ei_pick(ei_widget_t widget, uint32_t pick_id, ei_widget_t *widget_ptr);
 
-/* Widget drawing */
+/* Widget descendance */
 
 /**
  * @brief	Draws the children of a widget.
@@ -164,6 +164,13 @@ void ei_impl_widget_draw_children      (ei_widget_t		widget,
 					ei_surface_t		surface,
 					ei_surface_t		pick_surface,
 					ei_rect_t*		clipper);
+
+/**
+ * @brief	Destroys a widget and all its descendants.
+ *
+ * @param	widget		The widget that is to be destroyed.
+ */
+void ei_widget_destroy_children(ei_widget_t widget);
 
 /* Anchor */
 

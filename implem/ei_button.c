@@ -16,9 +16,7 @@ ei_widget_t button_allocfunction(void)
 
 void button_releasefunc(ei_widget_t widget)
 {
-	free(widget->user_data);
-	free(widget->content_rect);
-	free(widget->placer_params);
+	/* A implémenter */
 }
 
 void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
@@ -66,7 +64,9 @@ void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick
 			img_rect.top_left = img_clipper.top_left;
 			img_rect = ei_rect_intersect(img_rect, img_clipper);
 			img_rect.top_left = ei_anchor_text_img(&button->img_anchor, &img_rect, &img_clipper);
+			hw_surface_lock(button->img);
 			ei_rect_cpy(surface, &img_rect, button->img, button->img_rect, true);
+			hw_surface_unlock(button->img);
 		}
 
 		ei_impl_widget_draw_children(widget, surface, pick_surface, clipper);
