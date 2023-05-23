@@ -112,7 +112,16 @@ bool frame_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 				if (ei_event_get_active_widget() == widget) {
 					int dx = event->param.mouse.where.x - ((ei_point_t *) widget->my_param)->x;
 					int dy = event->param.mouse.where.y - ((ei_point_t *) widget->my_param)->y;
-
+					if (toplevel->resizable == ei_axis_x) {
+						dy = 0;
+					}
+					else if (toplevel->resizable == ei_axis_y) {
+						dx = 0;
+					}
+					else if (toplevel->resizable == ei_axis_none) {
+						dx = 0;
+						dy = 0;
+					}
 					if (resize) {
 						ei_placer_forget(widget->parent);
 						ei_toplevel_resize_update(widget->parent, dx, dy);

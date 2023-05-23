@@ -64,17 +64,27 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 			if (child == widget->children_head) {
 				int size_resize = 0.06 * widget->screen_location.size.height;
 
-				ei_point_t bottom_right_resize;
-				bottom_right_resize.x = widget->screen_location.top_left.x + widget->screen_location.size.width;
-				bottom_right_resize.y = widget->screen_location.top_left.y + widget->screen_location.size.height;
-				
-				child->screen_location.top_left.x = bottom_right_resize.x - size_resize;
-				child->screen_location.top_left.y = bottom_right_resize.y - size_resize;
-				child->screen_location.size = ei_size(size_resize, size_resize);
+					ei_point_t bottom_right_resize;
+					bottom_right_resize.x =
+						widget->screen_location.top_left.x + widget->screen_location.size.width;
+					bottom_right_resize.y = widget->screen_location.top_left.y +
+								widget->screen_location.size.height;
+
+					child->screen_location.top_left.x = bottom_right_resize.x - size_resize;
+					child->screen_location.top_left.y = bottom_right_resize.y - size_resize;
+					child->screen_location.size = ei_size(size_resize, size_resize);
+				}
+				else {
+					child->screen_location = ei_rect_zero();
+				}
 			} else if (child == widget->children_head->next_sibling) {
-				child->screen_location.size.width = child->screen_location.size.height;
-				child->screen_location.size.height = 0.7 * toplevel_widget_rect.size.height;
-				child->screen_location.top_left = ei_point_add(toplevel_widget_rect.top_left, ei_point(0.95 * widget->screen_location.size.width, 0.2 * toplevel_widget_rect.size.height));
+				if (toplevel->closable) {
+					child->screen_location.size.width = child->screen_location.size.height;
+					child->screen_location.size.height = 0.7 * toplevel_widget_rect.size.height;
+					child->screen_location.top_left = ei_point_add(toplevel_widget_rect.top_left,ei_point(0.95 *widget->screen_location.size.width,0.2 * toplevel_widget_rect.size.height));
+				} else {
+					child->screen_location = ei_rect_zero();
+				}
 			} else {
 				child->screen_location = ei_rect_intersect(*widget->content_rect, child->screen_location);
 			}
@@ -134,7 +144,6 @@ bool ei_toplevel_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 			if (ei_event_get_active_widget() == widget) {
 				int dx = event->param.mouse.where.x - ((ei_point_t *) widget->my_param)->x;
 				int dy = event->param.mouse.where.y - ((ei_point_t *) widget->my_param)->y;
-
 				if (move) {
 					ei_placer_forget(widget);
 					ei_toplevel_move_update(widget, dx, dy);
