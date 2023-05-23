@@ -139,13 +139,6 @@ bool ei_toplevel_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 					ei_placer_forget(widget);
 					ei_toplevel_move_update(widget, dx, dy);
 
-					hw_surface_unlock(ei_app_root_surface());
-					hw_surface_unlock(offscreen);
-
-					hw_surface_update_rects(ei_app_root_surface(), NULL);
-
-					hw_surface_lock(ei_app_root_surface());
-					hw_surface_lock(offscreen);
 
 					widget->wclass->drawfunc(widget, ei_app_root_surface(), offscreen, NULL);
 				}
