@@ -82,9 +82,9 @@ void ei_app_run(void)
 				case ei_ev_mouse_buttondown:
 					widget_event = ei_widget_pick(&event.param.mouse.where);
 					widget_event->wclass->handlefunc(widget_event, &event);
-
 					prev_where = event.param.mouse.where;
 					widget_event->my_param = &prev_where;
+
 					break;
 				case ei_ev_mouse_buttonup:
 					if (ei_event_get_active_widget()) {
@@ -94,6 +94,19 @@ void ei_app_run(void)
 						widget_event = ei_widget_pick(&event.param.mouse.where);
 						widget_event->wclass->handlefunc(widget_event, &event);
 					}
+
+//					hw_surface_lock(main_window);
+//					hw_surface_lock(offscreen);
+//
+//					ei_impl_app_run(root->children_head);
+//
+//					root->wclass->drawfunc(root, main_window, offscreen, NULL);
+//
+//					hw_surface_unlock(main_window);
+//					hw_surface_unlock(offscreen);
+//
+//					hw_surface_update_rects(main_window, NULL);
+
 					break;
 				case ei_ev_mouse_move:
 					if (ei_event_get_active_widget()) {
@@ -126,6 +139,22 @@ void ei_app_run(void)
 				hw_surface_update_rects(main_window, NULL);
 			}
 		}
+		if (event.type == ei_ev_app){
+			ei_default_handle_func_t default_func = ei_event_get_default_handle_func();
+			default_func(&event);
+
+			hw_surface_lock(main_window);
+			hw_surface_lock(offscreen);
+
+			ei_impl_app_run(root->children_head);
+
+			root->wclass->drawfunc(root, main_window, offscreen, NULL);
+
+			hw_surface_unlock(main_window);
+			hw_surface_unlock(offscreen);
+
+			hw_surface_update_rects(main_window, NULL);
+		}
 	}
 }
 
@@ -141,7 +170,7 @@ void ei_app_quit_request(void)
 
 ei_widget_t ei_app_root_widget(void)
 {
-    	return root;
+	return root;
 }
 
 ei_surface_t ei_app_root_surface(void)

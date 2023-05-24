@@ -11,10 +11,10 @@
 #include "ei_polygon.h"
 
 void	ei_draw_polyline	(ei_surface_t		surface,
-				ei_point_t*		point_array,
-				size_t			point_array_size,
-				ei_color_t		color,
-				const ei_rect_t*	clipper)
+				     ei_point_t*		point_array,
+				     size_t			point_array_size,
+				     ei_color_t		color,
+				     const ei_rect_t*	clipper)
 {
 	uint32_t *premier = (uint32_t *) hw_surface_get_buffer(surface);
 	int largeur = hw_surface_get_size(surface).width;
@@ -60,7 +60,7 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 		int x = x1;
 		int y = y1;
 		int E = 0;
-		
+
 		if (in_clipper(x, y, xc_min, xc_max, yc_min, yc_max, clipper)) {
 			*(premier + y * largeur + x) = couleur;
 		}
@@ -126,10 +126,10 @@ void	ei_draw_polyline	(ei_surface_t		surface,
 }
 
 void	ei_draw_polygon		(ei_surface_t		surface,
-				ei_point_t*		point_array,
-				size_t			point_array_size,
-				ei_color_t		color,
-				const ei_rect_t*	clipper)
+					    ei_point_t*		point_array,
+					    size_t			point_array_size,
+					    ei_color_t		color,
+					    const ei_rect_t*	clipper)
 {
 	/* Initialisation de TC */
 	int yp_min = point_array[0].y;
@@ -181,18 +181,24 @@ void	ei_draw_polygon		(ei_surface_t		surface,
 }
 
 void	ei_draw_text	(ei_surface_t		surface,
-			const ei_point_t*	where,
-			ei_const_string_t	text,
-			ei_font_t		font,
-			ei_color_t		color,
-			const ei_rect_t*	clipper)
+				 const ei_point_t*	where,
+				 ei_const_string_t	text,
+				 ei_font_t		font,
+				 ei_color_t		color,
+				 const ei_rect_t*	clipper)
 {
 	ei_surface_t surface_copy = hw_text_create_surface(text, font, color);
 	ei_rect_t rect_copy = hw_surface_get_rect(surface_copy);
 	ei_rect_t text_rect = ei_rect(*where, rect_copy.size);
+	int previous_x = text_rect.top_left.x;
+	int previous_y = text_rect.top_left.y;
 
 	if (clipper) {
 		text_rect = ei_rect_intersect(text_rect, *clipper);
+		int diff_x = previous_x - text_rect.top_left.x;
+		int diff_y = previous_y - text_rect.top_left.y;
+		rect_copy.top_left.x= (diff_x > 0) ? diff_x : -diff_x;
+		rect_copy.top_left.y= (diff_y > 0) ? diff_y : -diff_y;
 	}
 
 	hw_surface_lock(surface_copy);
@@ -204,8 +210,8 @@ void	ei_draw_text	(ei_surface_t		surface,
 }
 
 void	ei_fill		(ei_surface_t		surface,
-			const ei_color_t*	color,
-			const ei_rect_t*	clipper)
+				    const ei_color_t*	color,
+				    const ei_rect_t*	clipper)
 {
 	uint32_t *pix_ptr = (uint32_t *) hw_surface_get_buffer(surface);
 	ei_size_t size = hw_surface_get_size(surface);
@@ -231,10 +237,10 @@ void	ei_fill		(ei_surface_t		surface,
 }
 
 int	ei_copy_surface		(ei_surface_t		destination,
-				const ei_rect_t*	dst_rect,
-				ei_surface_t		source,
-				const ei_rect_t*	src_rect,
-				bool			alpha)
+					   const ei_rect_t*	dst_rect,
+					   ei_surface_t		source,
+					   const ei_rect_t*	src_rect,
+					   bool			alpha)
 {
 	if (dst_rect != NULL && src_rect != NULL) {
 		if (dst_rect->size.width != src_rect->size.width || dst_rect->size.height != src_rect->size.height) {

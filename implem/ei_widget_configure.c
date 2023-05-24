@@ -11,17 +11,17 @@
 #include "ei_draw.h"
 
 void    ei_frame_configure      (ei_widget_t		widget,
-			        ei_size_t*		requested_size,
-			        const ei_color_t*	color,
-			        int*			border_width,
-			        ei_relief_t*		relief,
-			        ei_string_t*		text,
-			        ei_font_t*		text_font,
-			        ei_color_t*		text_color,
-			        ei_anchor_t*		text_anchor,
-			        ei_surface_t*		img,
-			        ei_rect_ptr_t*		img_rect,
-			        ei_anchor_t*		img_anchor)
+				 ei_size_t*		requested_size,
+				 const ei_color_t*	color,
+				 int*			border_width,
+				 ei_relief_t*		relief,
+				 ei_string_t*		text,
+				 ei_font_t*		text_font,
+				 ei_color_t*		text_color,
+				 ei_anchor_t*		text_anchor,
+				 ei_surface_t*		img,
+				 ei_rect_ptr_t*		img_rect,
+				 ei_anchor_t*		img_anchor)
 {
 	ei_impl_frame_t *frame = (ei_impl_frame_t *) widget;
 
@@ -44,7 +44,8 @@ void    ei_frame_configure      (ei_widget_t		widget,
 	frame->border_width = (border_width) ? *border_width : frame->border_width;
 	frame->relief = (relief) ? *relief : frame->relief;
 
-	if (text) {
+	frame->text = NULL;
+	if (text && *text) {
 		if (frame->text == NULL)
 			frame->text = malloc(20 * sizeof(ei_string_t));
 		strcpy(frame->text, *text);
@@ -60,7 +61,7 @@ void    ei_frame_configure      (ei_widget_t		widget,
 		rect_img = frame->img_rect;
 	}
 
-	if (img) {
+	if (img && *img) {
 		ei_surface_t surface_image;
 		surface_image = hw_surface_create(*img, hw_surface_get_size(*img), true);
 
@@ -86,20 +87,20 @@ void    ei_frame_configure      (ei_widget_t		widget,
 }
 
 void    ei_button_configure	(ei_widget_t		widget,
-				ei_size_t*		requested_size,
-				const ei_color_t*	color,
-				int*			border_width,
-				int*			corner_radius,
-				ei_relief_t*		relief,
-				ei_string_t*		text,
-				ei_font_t*		text_font,
-				ei_color_t*		text_color,
-				ei_anchor_t*		text_anchor,
-				ei_surface_t*		img,
-				ei_rect_ptr_t*		img_rect,
-				ei_anchor_t*		img_anchor,
-				ei_callback_t*		callback,
-				ei_user_param_t*	user_param)
+				    ei_size_t*		requested_size,
+				    const ei_color_t*	color,
+				    int*			border_width,
+				    int*			corner_radius,
+				    ei_relief_t*		relief,
+				    ei_string_t*		text,
+				    ei_font_t*		text_font,
+				    ei_color_t*		text_color,
+				    ei_anchor_t*		text_anchor,
+				    ei_surface_t*		img,
+				    ei_rect_ptr_t*		img_rect,
+				    ei_anchor_t*		img_anchor,
+				    ei_callback_t*		callback,
+				    ei_user_param_t*	user_param)
 {
 	ei_impl_button_t *button = (ei_impl_button_t *) widget;
 	widget->requested_size = (requested_size) ? *requested_size : widget->requested_size;
@@ -108,7 +109,8 @@ void    ei_button_configure	(ei_widget_t		widget,
 	button->corner_radius = (corner_radius) ? *corner_radius : button->corner_radius;
 	button->relief = (relief) ? *relief : button->relief;
 
-	if (text) {
+	button->text = NULL;
+	if (text && *text) {
 		if (button->text == NULL)
 			button->text = malloc(20 * sizeof(ei_string_t));
 		strcpy(button->text, *text);
@@ -125,7 +127,7 @@ void    ei_button_configure	(ei_widget_t		widget,
 		rect_img = button->img_rect;
 	}
 
-	if (img) {
+	if (img && *img) {
 		ei_surface_t surface_image;
 		surface_image = hw_surface_create(*img, hw_surface_get_size(*img), true);
 
@@ -153,13 +155,13 @@ void    ei_button_configure	(ei_widget_t		widget,
 }
 
 void    ei_toplevel_configure	(ei_widget_t		widget,
-				ei_size_t*		requested_size,
-				ei_color_t*		color,
-				int*			border_width,
-				ei_string_t*		title,
-				bool*			closable,
-				ei_axis_set_t*		resizable,
-				ei_size_ptr_t*		min_size)
+				      ei_size_t*		requested_size,
+				      ei_color_t*		color,
+				      int*			border_width,
+				      ei_string_t*		title,
+				      bool*			closable,
+				      ei_axis_set_t*		resizable,
+				      ei_size_ptr_t*		min_size)
 {
 	ei_impl_toplevel_t *toplevel = (ei_impl_toplevel_t *) widget;
 

@@ -29,7 +29,7 @@ uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color)
 			color_32 += color.alpha << 8 * i;
 		}
 	}
-	
+
 	return color_32;
 }
 
@@ -123,10 +123,10 @@ bool ei_in_rect(ei_point_t point, ei_rect_t rect)
 }
 
 void	ei_rect_cpy	(ei_surface_t		destination,
-			const ei_rect_t*	dst_rect,
-			ei_surface_t		source,
-			const ei_rect_t*	src_rect,
-			bool			alpha)
+				const ei_rect_t*	dst_rect,
+				ei_surface_t		source,
+				const ei_rect_t*	src_rect,
+				bool			alpha)
 {
 	int x_src = src_rect->top_left.x;
 	int y_src = src_rect->top_left.y;
@@ -175,8 +175,8 @@ void	ei_rect_cpy	(ei_surface_t		destination,
 
 void ei_widget_set_pick(ei_widget_t widget)
 {
-	widget->pick_id = id;
-	widget->pick_color = (ei_color_t) { id, id, id, 0xFF };
+	widget->pick_id = id%255;
+	widget->pick_color = (ei_color_t) { id%255, id%255, id%255, 0xFF };
 	id += 1;
 }
 
@@ -220,6 +220,9 @@ void ei_widget_destroy_children(ei_widget_t widget)
 		ei_widget_destroy_children(widget->next_sibling);
 	}
 
+//	if (widget->placer_params) {
+//		ei_placer_forget(widget);
+//	}
 	widget->wclass->releasefunc(widget);
 
 	if (widget->placer_params)
@@ -354,7 +357,7 @@ void ei_impl_placer_run(ei_widget_t widget)
 	ei_point_t *where = malloc(sizeof(ei_point_t));
 	where->x = x + rel_x * parent_width;
 	where->y = y + rel_y * parent_height;
-	
+
 	if (!strcmp(widget->parent->wclass->name, "toplevel") && strcmp(widget->wclass->name, "toplevel")) {
 		where->x += parent_top_left.x;
 		where->y += parent_top_left.y;
@@ -370,17 +373,19 @@ void ei_impl_placer_run(ei_widget_t widget)
 
 void ei_impl_app_run(ei_widget_t widget)
 {
-	if (widget->placer_params) {
-		ei_impl_placer_run(widget);
-	}
+	if (widget != NULL) {
+		if (widget->placer_params) {
+			ei_impl_placer_run(widget);
+		}
 
-	if (widget->next_sibling) {
-		ei_impl_app_run(widget->next_sibling);
-	}
+		if (widget->next_sibling) {
+			ei_impl_app_run(widget->next_sibling);
+		}
 
-	if (widget->placer_params) {
-		if (widget->children_head) {
-			ei_impl_app_run(widget->children_head);
+		if (widget->placer_params) {
+			if (widget->children_head) {
+				ei_impl_app_run(widget->children_head);
+			}
 		}
 	}
 }

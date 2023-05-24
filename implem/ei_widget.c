@@ -46,7 +46,7 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, e
 		ei_widget_t close_button = ei_widget_create("button", widget, NULL, NULL);
 		close_button->wclass->setdefaultsfunc(close_button);
 		close_button->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
-		((ei_impl_button_t *) close_button)->color = (ei_color_t) { 0xDD, 0x00, 0x00, 0xA0 };
+		((ei_impl_button_t *) close_button)->color = (ei_color_t) { 0xDD, 0x00, 0x00, 0xFF };
 		((ei_impl_button_t *) close_button)->corner_radius = 8;
 		((ei_impl_button_t *) close_button)->border_width = 2;
 	} else {
@@ -93,9 +93,9 @@ void ei_widget_destroy(ei_widget_t widget)
 
 bool ei_widget_is_displayed(ei_widget_t widget)
 {
-        uint32_t pick_id = widget->pick_id;
-        ei_point_t top_left = widget->screen_location.top_left;
-        ei_widget_t widget_top_left = ei_widget_pick(&top_left);
+	uint32_t pick_id = widget->pick_id;
+	ei_point_t top_left = widget->screen_location.top_left;
+	ei_widget_t widget_top_left = ei_widget_pick(&top_left);
 
 	return widget_top_left->pick_id == pick_id;
 }
@@ -114,8 +114,8 @@ ei_widget_t ei_widget_pick(ei_point_t* where)
 
 	hw_surface_unlock(offscreen);
 
-	ei_widget_t widget = *widget_ptr;
-	free(widget_ptr);
+//	ei_widget_t widget = *widget_ptr;
+//	free(widget_ptr);
 
-	return widget;
+	return *widget_ptr;
 }

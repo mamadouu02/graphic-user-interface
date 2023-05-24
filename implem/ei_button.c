@@ -36,47 +36,66 @@ void button_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick
 		ei_impl_widget_draw_children(widget, surface, pick_surface, clipper);
 	} else if (widget->placer_params) {
 		ei_rect_t widget_rect = widget->screen_location;
+		ei_rect_t widget_rectt = widget->screen_location;
 		ei_rect_t button_clipper = *widget->parent->content_rect;
-		
+
 		if (clipper) {
 			button_clipper = ei_rect_intersect(button_clipper, *clipper);
 		}
 
-		ei_draw_button(surface, widget_rect, button->color, button->border_width, button->corner_radius, button->relief, &button->text, &button->text_font, &button->text_color, &button->text_anchor, &button_clipper);
-		ei_draw_button(pick_surface, widget_rect, widget->pick_color, button->border_width, button->corner_radius, ei_relief_none, NULL, NULL, NULL, NULL, &button_clipper);
+		widget_rectt = ei_rect_intersect(widget_rectt, button_clipper);
 
-		ei_rect_t new_screen_loc = ei_rect_intersect(widget_rect, button_clipper);
-		
+		ei_draw_button(surface, widget_rect, button->color, button->border_width, button->corner_radius, button->relief, &button->text, &button->text_font, &button->text_color, &button->text_anchor, &widget_rectt);
+		ei_draw_button(pick_surface, widget_rect, widget->pick_color, button->border_width, button->corner_radius, ei_relief_none, NULL, NULL, NULL, NULL, &widget_rectt);
+
+		//ei_rect_t new_screen_loc = ei_rect_intersect(widget_rect, button_clipper);
+
 		/* where to place children */
-		widget->screen_location = new_screen_loc;
-		widget->content_rect = &widget->screen_location;
-		
+		//widget->screen_location = new_screen_loc;
+		//widget->content_rect = &new_screen_loc;
+
 		/* à changer pour tous les enfants aussi ! */
 		ei_widget_t child = widget->children_head;
-		
+
 		while (child) {
-			child->screen_location = ei_rect_intersect(child->screen_location, *widget->content_rect);
+			//child->screen_location = ei_rect_intersect(child->screen_location, *widget->content_rect);
 			child->content_rect = &child->screen_location;
 			child = child->next_sibling;
 		}
 
-		ei_rect_t img_clipper = new_screen_loc;
-		
+		ei_rect_t img_clipper = widget_rect;
+
 		if (clipper) {
 			img_clipper = ei_rect_intersect(img_clipper, *clipper);
 		}
 
 		if (!button->text && button->img) {
-			ei_rect_t img_rect = (clipper) ? ei_rect_intersect(*(button->img_rect), *clipper) : *(button->img_rect);
-			img_rect.top_left = img_clipper.top_left;
-			img_rect = ei_rect_intersect(img_rect, img_clipper);
+//			ei_rect_t img_rect = (clipper) ? ei_rect_intersect(*(button->img_rect), *clipper) : *(button->img_rect);
+//			img_rect.top_left = img_clipper.top_left;
+//			img_rect = ei_rect_intersect(img_rect, img_clipper);
+			ei_rect_t img_rect = widget->screen_location;
+			int previous_x = img_rect.top_left.x;
+			img_rect = ei_rect_intersect(img_rect, button_clipper);
+			int diff_x = img_rect.top_left.x-previous_x;
+
+			ei_rect_t src = *button->img_rect;
+			src.top_left.x += diff_x;
+			//img_rect.top_left = img_clipper.top_left;
+			ei_rect_t get_rect = hw_surface_get_rect(button->img);
+			get_rect.top_left = img_rect.top_left;
+			img_rect = ei_rect_intersect(img_rect, get_rect);
 			img_rect.top_left = ei_anchor_text_img(&button->img_anchor, &img_rect, &img_clipper);
+
+//			ei_rect_t inter = ei_rect_intersect(img_clipper, button_clipper);
+//			ei_rect_t src = *button->img_rect;
+
 			hw_surface_lock(button->img);
-			ei_rect_cpy(surface, &img_rect, button->img, button->img_rect, true);
+			ei_rect_cpy(surface, &img_rect, button->img, &src, true);
 			hw_surface_unlock(button->img);
 		}
 
-		ei_impl_widget_draw_children(widget, surface, pick_surface, clipper);
+		ei_rect_t  new_clipper = ei_rect_intersect(button_clipper, *widget->content_rect);
+		ei_impl_widget_draw_children(widget, surface, pick_surface, &new_clipper);
 	}
 }
 
@@ -108,11 +127,22 @@ bool ei_button_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 				widget->wclass->drawfunc(widget, ei_app_root_surface(), offscreen, NULL);
 				ei_event_set_active_widget(widget);
 			}
+			if (button->callback && button->text && !strcmp(button->text,"Restart")) {
+				button->callback(widget, event, button->user_param);
+				ei_widget_t root = ei_app_root_widget();
+				ei_impl_app_run(root->children_head);
+				root->wclass->drawfunc(root, ei_app_root_surface(), offscreen, NULL);
+			}
 			break;
 		case ei_ev_mouse_buttonup:
 			if (ei_in_rect(event->param.mouse.where, widget->screen_location) && button->relief == ei_relief_sunken) {
 				button->relief = ei_relief_raised;
 				widget->wclass->drawfunc(widget, ei_app_root_surface(), offscreen, NULL);
+
+				if (!strcmp(widget->parent->wclass->name, "toplevel") && widget == widget->parent->children_head->next_sibling) {
+					ei_placer_forget(widget->parent);
+					ei_widget_destroy(widget->parent);
+				}
 
 				if (button->callback) {
 					button->callback(widget, event, button->user_param);
@@ -122,10 +152,6 @@ bool ei_button_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 				}
 
 				ei_event_set_active_widget(NULL);
-
-				if (!strcmp(widget->parent->wclass->name, "toplevel") && widget == widget->parent->children_head->next_sibling) {
-					ei_placer_forget(widget->parent);
-				}
 			}
 			break;
 		case ei_ev_mouse_move:
@@ -143,7 +169,7 @@ bool ei_button_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 	hw_surface_unlock(offscreen);
 
 	hw_surface_update_rects(ei_app_root_surface(), NULL);
-	
+
 	return true;
 }
 

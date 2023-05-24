@@ -315,7 +315,7 @@ void create_mine_map(map_t* map, int width, int height, int nb_mines)
 
 void destroy_mine_map(map_t* map)
 {
-	//free(map->cells);
+	free(map->cells);
 }
 
 /* event handlers */

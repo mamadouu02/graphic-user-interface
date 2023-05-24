@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 					 &(float){1.0f}, &(float){1.0f},
 					 &(float){0.5f}, NULL);
 
-	bool b  = false;
+	bool b  = true;
 	s_window = ei_widget_create	("toplevel", window, NULL, NULL);
 	ei_toplevel_configure		(s_window, &(ei_size_t){150,150},
 					      &(ei_color_t){0xF0,0xA0,0xA0, 0xff},

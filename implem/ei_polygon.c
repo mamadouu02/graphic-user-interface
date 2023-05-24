@@ -17,7 +17,7 @@ void tc_init(ei_cote_t **tc, int yp_min, ei_point_t *point_array, size_t point_a
 			ei_point_t pt_ymin = (pt1.y < pt2.y) ? pt1 : pt2;
 			int y_min = pt_ymin.y;
 			int y_max = (pt1.y > pt2.y) ? pt1.y : pt2.y;
-		 	float pente = (float) (pt2.y - pt1.y) / (pt2.x - pt1.x);
+			float pente = (float) (pt2.y - pt1.y) / (pt2.x - pt1.x);
 			ei_cote_t *nv_cote = malloc(sizeof(ei_cote_t));
 			*nv_cote = (ei_cote_t) { y_max, pt_ymin.x, 1/pente, NULL };
 			int i_scan = y_min - yp_min;
@@ -44,7 +44,7 @@ void ei_tca_insert(ei_cote_t **tca_ptr, ei_cote_t **tc, int i_scan)
 		tc[i_scan] = tc_cote->suiv;
 		ei_cote_t *tca_cote_prec = NULL;
 		ei_cote_t *tca_cote = *tca_ptr;
-		
+
 		while (tca_cote != NULL && tc_cote->x_ymin >= tca_cote->x_ymin) {
 			tca_cote_prec = tca_cote;
 			tca_cote = tca_cote->suiv;
@@ -96,7 +96,7 @@ int ei_octant_array_size(int radius)
 			y--;
 			m -= 8 * y;
 		}
-		
+
 		x++;
 		m += 8 * x + 4;
 	}
@@ -116,7 +116,7 @@ ei_point_t* ei_octant_array(ei_point_t centre, int radius, int octant, int octan
 
 	switch (octant) {
 		case 0:
-			sign_x = 1, sign_y = -1, inverse = 0; 
+			sign_x = 1, sign_y = -1, inverse = 0;
 			break;
 		case 1:
 			sign_x = 1, sign_y = -1, inverse = 1;
@@ -187,7 +187,7 @@ int ei_octant_lines_array_size(int radius)
 			m -= 8 * y;
 			tab_size++;
 		}
-		
+
 		x++;
 		m += 8 * x + 4;
 	}
@@ -256,21 +256,21 @@ ei_point_t *ei_rounded_frame(ei_rect_t rect, int radius, ei_frame_part_t part)
 		if (part == ei_frame_top) {
 			for (int octant = 5; octant <= 8; octant++) {
 				ei_point_t *octant_array = ei_octant_array(points[octant % 8 / 2], radius, octant % 8, octant_array_size);
-				
+
 				for (int i = 0; i < octant_array_size; i++) {
 					tab[(octant - 5) * octant_array_size + i] = octant_array[i];
 				}
-				
+
 				free(octant_array);
 			}
 		} else {
 			for (int octant = 1; octant <= 4; octant++) {
 				ei_point_t *octant_array = ei_octant_array(points[octant / 2], radius, octant, octant_array_size);
-				
+
 				for (int i = 0; i < octant_array_size; i++) {
 					tab[(octant - 1) * octant_array_size + i] = octant_array[i];
 				}
-				
+
 				free(octant_array);
 			}
 		}
@@ -388,16 +388,21 @@ void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int
 	if (text && *text) {
 		ei_rect_t text_clipper = rect;
 
+//		if (clipper) {
+//			text_clipper = ei_rect_intersect(ei_rect_intersect(rect, *clipper), *clipper);
+//		}
+
+		ei_surface_t text_surface = hw_text_create_surface(*text, *text_font, *text_color);
+		ei_rect_t text_rect = hw_surface_get_rect(text_surface);
+
+		text_rect.top_left = ei_anchor_text_img(text_anchor, &text_rect, &text_clipper);
+
 		if (clipper) {
 			text_clipper = ei_rect_intersect(ei_rect_intersect(rect, *clipper), *clipper);
 		}
 
-		ei_surface_t text_surface = hw_text_create_surface(*text, *text_font, *text_color);
-		ei_rect_t text_rect = hw_surface_get_rect(text_surface);
-		text_rect.top_left = ei_anchor_text_img(text_anchor, &text_rect, &text_clipper);
-
 		ei_draw_text(surface, &text_rect.top_left, (ei_const_string_t) *text, *text_font, *text_color, &text_clipper);
-		
+
 		hw_surface_free(text_surface);
 	}
 

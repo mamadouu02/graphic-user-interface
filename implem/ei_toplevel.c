@@ -48,7 +48,11 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 		ei_draw_frame(surface, header_rect, header_color, ei_relief_none, &toplevel_clipper);
 		ei_draw_frame(pick_surface, header_rect, widget->pick_color, ei_relief_none, &toplevel_clipper);
 
+		ei_rect_t toplevel_widget_rect = header_rect;
 		int header_height = 25;
+		toplevel_widget_rect.size.height = header_height;
+
+		//int header_height = 25;
 		int border_width = 3;
 		ei_rect_t widget_rect = header_rect;
 		widget_rect.top_left.x += border_width;
@@ -58,10 +62,10 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 
 		ei_draw_frame(surface, widget_rect, toplevel->color, ei_relief_none, &toplevel_clipper);
 
-		ei_rect_t new_screen_loc = ei_rect_intersect(header_rect, toplevel_clipper);
+		//ei_rect_t new_screen_loc = ei_rect_intersect(header_rect, toplevel_clipper);
 
 		/* where to place children */
-		widget->screen_location = new_screen_loc;
+		//widget->screen_location = new_screen_loc;
 		widget->content_rect = &widget->screen_location;
 
 		/* à changer pour tous les enfants aussi ! */
@@ -72,7 +76,6 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 				if (toplevel->resizable != ei_axis_none) {
 					((ei_impl_frame_t *) child)->color = header_color;
 					int size = 0.05 * widget->screen_location.size.height;
-
 					ei_point_t bottom_right = widget->screen_location.top_left;
 					bottom_right.x += widget->screen_location.size.width;
 					bottom_right.y += widget->screen_location.size.height;
@@ -96,17 +99,14 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 				} else {
 					child->screen_location = ei_rect_zero();
 				}
-			} else {
-				child->screen_location = ei_rect_intersect(*widget->content_rect, child->screen_location);
 			}
 
 			child->content_rect = &child->screen_location;
 			child = child->next_sibling;
 		}
 
-		header_rect.top_left.x += border_width;
-		header_rect.size.height = header_height;
-		ei_rect_t text_clipper = ei_rect_intersect(header_rect, toplevel_clipper);
+		//ei_rect_t text_clipper = ei_rect_intersect(toplevel_widget_rect, toplevel_clipper);
+		ei_rect_t text_clipper = ei_rect_intersect(toplevel_widget_rect, toplevel_clipper);
 
 		if (clipper) {
 			text_clipper = ei_rect_intersect(text_clipper, *clipper);
@@ -116,12 +116,19 @@ void toplevel_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pi
 			ei_surface_t text_surface = hw_text_create_surface(toplevel->title, ei_default_font, ei_font_default_color);
 			ei_rect_t text_rect = hw_surface_get_rect(text_surface);
 			text_rect.top_left = ei_anchor_text_img(&(ei_anchor_t) { ei_anc_west }, &text_rect, &text_clipper);
-			ei_draw_text(surface, &text_rect.top_left, (ei_const_string_t) toplevel->title, ei_default_font, (ei_color_t) { 0xDD, 0xDD, 0xDD, 0xFF }, &text_clipper);
+			ei_rect_t inter = ei_rect_intersect(text_rect,toplevel_widget_rect);
+			inter = ei_rect_intersect(inter, *widget->parent->content_rect);
+			inter.size.height = text_clipper.size.height;
+			inter.size.width = text_clipper.size.width;
+
+			ei_draw_text(surface, &widget->screen_location.top_left, (ei_const_string_t) toplevel->title, ei_default_font, (ei_color_t) { 0xDD, 0xDD, 0xDD, 0xFF }, &inter);
 			hw_surface_free(text_surface);
 		}
 
-		ei_impl_widget_draw_children(widget, surface, pick_surface, clipper);
-		widget->children_head->wclass->drawfunc(widget->children_head, surface, pick_surface, clipper);
+		ei_rect_t  new_clipper = ei_rect_intersect(toplevel_clipper, *widget->content_rect);
+
+		ei_impl_widget_draw_children(widget, surface, pick_surface, &new_clipper);
+		widget->children_head->wclass->drawfunc(widget->children_head, surface, pick_surface, &new_clipper);
 	}
 }
 
@@ -160,7 +167,9 @@ bool ei_toplevel_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 				if (move) {
 					ei_placer_forget(widget);
 					ei_toplevel_move_update(widget, dx, dy);
-					widget->wclass->drawfunc(widget, ei_app_root_surface(), offscreen, NULL);
+
+					widget->wclass->drawfunc(widget, ei_app_root_surface(), offscreen,
+								 NULL);
 				}
 				move = !move;
 			}
