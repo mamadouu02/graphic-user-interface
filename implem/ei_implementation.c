@@ -175,8 +175,8 @@ void	ei_rect_cpy	(ei_surface_t		destination,
 
 void ei_widget_set_pick(ei_widget_t widget)
 {
-	widget->pick_id = id%255;
-	widget->pick_color = (ei_color_t) { id%255, id%255, id%255, 0xFF };
+	widget->pick_id = id % 255;
+	widget->pick_color = (ei_color_t) { id % 255, id % 255, id % 255, 0xFF };
 	id += 1;
 }
 
@@ -220,9 +220,6 @@ void ei_widget_destroy_children(ei_widget_t widget)
 		ei_widget_destroy_children(widget->next_sibling);
 	}
 
-//	if (widget->placer_params) {
-//		ei_placer_forget(widget);
-//	}
 	widget->wclass->releasefunc(widget);
 
 	if (widget->placer_params)

@@ -46,17 +46,13 @@ void frame_drawfunc(ei_widget_t widget, ei_surface_t surface, ei_surface_t pick_
 		ei_draw_frame(surface, widget_rect, frame->color, frame->relief, &frame_clipper);
 		ei_draw_frame(pick_surface, widget_rect, widget->pick_color, ei_relief_none, &frame_clipper);
 
-		//ei_rect_t new_screen_loc = widget_rect;
-
 		/* where to place children */
-		//widget->screen_location = new_screen_loc;
 		widget->content_rect = &widget->screen_location;
 
 		/* à changer pour tous les enfants aussi ! */
 		ei_widget_t child = widget->children_head;
 
 		while (child) {
-			//child->screen_location = ei_rect_intersect(*widget->content_rect, child->screen_location);
 			child->content_rect = &child->screen_location;
 			child = child->next_sibling;
 		}
@@ -105,7 +101,6 @@ bool frame_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 		hw_surface_lock(offscreen);
 
 		ei_rect_t toplevel_rect = widget->screen_location;
-
 		ei_impl_toplevel_t *toplevel = (ei_impl_toplevel_t*) widget->parent;
 
 		switch (event->type) {
@@ -122,19 +117,24 @@ bool frame_handlefunc(ei_widget_t widget, struct ei_event_t* event)
 					int dx = event->param.mouse.where.x - ((ei_point_t *) widget->my_param)->x;
 					int dy = event->param.mouse.where.y - ((ei_point_t *) widget->my_param)->y;
 
-					if (toplevel->resizable == ei_axis_x) {
-						dy = 0;
-					} else if (toplevel->resizable == ei_axis_y) {
-						dx = 0;
-					} else if (toplevel->resizable == ei_axis_none) {
-						dx = 0;
-						dy = 0;
+					switch (toplevel->resizable) {
+						case ei_axis_x:
+							dy = 0;
+							break;
+						case ei_axis_y:
+							dx = 0;
+							break;
+						case ei_axis_none:
+							dx = 0;
+							dy = 0;
+							break;
+						default:
+							break;
 					}
 
 					if (resize) {
 						ei_placer_forget(widget->parent);
 						ei_toplevel_resize_update(widget->parent, dx, dy);
-
 						widget->parent->wclass->drawfunc(widget->parent, ei_app_root_surface(), offscreen, NULL);
 					}
 

@@ -281,9 +281,9 @@ int	ei_copy_surface		(ei_surface_t		destination,
 					uint8_t sr = pix_ptr_dst[4 * (y * dst_width + (x_rect + y_rect * dst_width) + x) + ir];
 					uint8_t sg = pix_ptr_dst[4 * (y * dst_width + (x_rect + y_rect * dst_width) + x) + ig];
 					uint8_t sb = pix_ptr_dst[4 * (y * dst_width + (x_rect + y_rect * dst_width) + x) + ib];
-					pix_ptr_dst[4 * (y * dst_width + (x_rect + y_rect * dst_width) + x) + ir] = (pa * pr + (255 - pa) * sr)/255;
-					pix_ptr_dst[4 * (y * dst_width + (x_rect + y_rect * dst_width) + x) + ig] = (pa * pg + (255 - pa) * sg)/255;
-					pix_ptr_dst[4 * (y * dst_width + (x_rect + y_rect * dst_width) + x) + ib] = (pa * pb + (255 - pa) * sb)/255;
+					pix_ptr_dst[4 * (y * dst_width + (x_rect + y_rect * dst_width) + x) + ir] = (pa * pr + (255 - pa) * sr) / 255;
+					pix_ptr_dst[4 * (y * dst_width + (x_rect + y_rect * dst_width) + x) + ig] = (pa * pg + (255 - pa) * sg) / 255;
+					pix_ptr_dst[4 * (y * dst_width + (x_rect + y_rect * dst_width) + x) + ib] = (pa * pb + (255 - pa) * sb) / 255;
 				} else {
 					for (int i = 0; i < 4; i++) {
 						pix_ptr_dst[4 * (y * dst_width + (x_rect + y_rect * dst_width) + x) + i] = pix_ptr_src[4 * (y * src_width + (x_rect + y_rect * src_width) + x) + i];

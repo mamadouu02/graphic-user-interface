@@ -139,11 +139,11 @@ typedef struct ei_impl_widget_t {
 void ei_widget_set_pick(ei_widget_t widget);
 
 /**
- * @brief	
+ * @brief	Recherche le widget dont l'identifiant est 'pick_id'.
  *
- * @param	widget
- * @param	pick_id
- * @param	widget_ptr
+ * @param	widget		Widget à tester
+ * @param	pick_id		Identifiant du picking
+ * @param	widget_ptr	Pointeur sur le widget d'identifiant 'pick_id'
  */
 void ei_pick(ei_widget_t widget, uint32_t pick_id, ei_widget_t *widget_ptr);
 
@@ -226,9 +226,9 @@ struct ei_impl_placer_params_t {
 void ei_impl_placer_run(ei_widget_t widget);
 
 /**
- * @brief	
+ * @brief	Tells the placer to recompute the geometry of a widget and his children.
  *
- * @param	widget		
+ * @param	widget		The widget which geometry must be re-computed.
  */
 void ei_impl_app_run(ei_widget_t widget);
 

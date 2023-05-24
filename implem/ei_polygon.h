@@ -70,16 +70,16 @@ int ei_octant_array_size(int radius);
 ei_point_t *ei_octant_array(ei_point_t center, int radius, int octant, int octant_array_size);
 
 /**
- * @brief	
+ * @brief	Calcule la taille du tableau de points définissant un octant.
  *
- * @param	radius		
+ * @param	radius		Rayon de l'octant
  *
  * @return 	
  */
 int ei_octant_lines_array_size(int radius);
 
 /**
- * @brief	
+ * @brief	Crée un tableau de points définissant un octant.
  *
  * @param	center		Centre de l'octant.
  * @param	radius		Rayon de l'octant.
@@ -125,7 +125,7 @@ void ei_draw_frame(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_r
  * @param	surface		    Surface de dessin.
  * @param  	rect		    Rectangle définissant la zone de dessin.
  * @param	color		    Couleur du bouton.
- * @param	border_width	Couleur du bouton.
+ * @param	border_width	Largeur des bords.
  * @param	radius		    Rayon des coins.
  * @param	relief		    Relief du bouton.
  * @param	text		    Texte.

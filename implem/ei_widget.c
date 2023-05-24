@@ -114,8 +114,8 @@ ei_widget_t ei_widget_pick(ei_point_t* where)
 
 	hw_surface_unlock(offscreen);
 
-//	ei_widget_t widget = *widget_ptr;
-//	free(widget_ptr);
+	ei_widget_t widget = *widget_ptr;
+	free(widget_ptr);
 
-	return *widget_ptr;
+	return widget;
 }

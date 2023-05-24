@@ -44,10 +44,15 @@ void    ei_frame_configure      (ei_widget_t		widget,
 	frame->border_width = (border_width) ? *border_width : frame->border_width;
 	frame->relief = (relief) ? *relief : frame->relief;
 
+	if (frame->text)
+		free(frame->text);
+
 	frame->text = NULL;
+
 	if (text && *text) {
 		if (frame->text == NULL)
 			frame->text = malloc(20 * sizeof(ei_string_t));
+
 		strcpy(frame->text, *text);
 	}
 
@@ -56,6 +61,7 @@ void    ei_frame_configure      (ei_widget_t		widget,
 	frame->text_anchor = (text_anchor) ? *text_anchor : frame->text_anchor;
 
 	ei_rect_t *rect_img = frame->img_rect;
+
 	if (rect_img == NULL) {
 		frame->img_rect = malloc(sizeof(ei_rect_t));
 		rect_img = frame->img_rect;
@@ -109,7 +115,11 @@ void    ei_button_configure	(ei_widget_t		widget,
 	button->corner_radius = (corner_radius) ? *corner_radius : button->corner_radius;
 	button->relief = (relief) ? *relief : button->relief;
 
+	if (button->text)
+		free(button->text);
+
 	button->text = NULL;
+
 	if (text && *text) {
 		if (button->text == NULL)
 			button->text = malloc(20 * sizeof(ei_string_t));

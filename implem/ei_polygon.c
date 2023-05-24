@@ -388,10 +388,6 @@ void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int
 	if (text && *text) {
 		ei_rect_t text_clipper = rect;
 
-//		if (clipper) {
-//			text_clipper = ei_rect_intersect(ei_rect_intersect(rect, *clipper), *clipper);
-//		}
-
 		ei_surface_t text_surface = hw_text_create_surface(*text, *text_font, *text_color);
 		ei_rect_t text_rect = hw_surface_get_rect(text_surface);
 
