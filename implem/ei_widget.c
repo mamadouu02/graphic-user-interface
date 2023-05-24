@@ -46,7 +46,7 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, e
 		ei_widget_t close_button = ei_widget_create("button", widget, NULL, NULL);
 		close_button->wclass->setdefaultsfunc(close_button);
 		close_button->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
-		((ei_impl_button_t *) close_button)->color = (ei_color_t) { 0xFF, 0x00, 0x00, 0xA0 };
+		((ei_impl_button_t *) close_button)->color = (ei_color_t) { 0xDD, 0x00, 0x00, 0xA0 };
 		((ei_impl_button_t *) close_button)->corner_radius = 8;
 		((ei_impl_button_t *) close_button)->border_width = 2;
 	} else {
