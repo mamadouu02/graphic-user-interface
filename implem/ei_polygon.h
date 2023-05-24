@@ -122,16 +122,17 @@ void ei_draw_frame(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, ei_r
 /**
  * @brief	Dessine un bouton.
  *
- * @param	surface		Surface de dessin.
- * @param  	rect		Rectangle définissant la zone de dessin.
- * @param	color		Couleur du bouton.
- * @param	radius		Rayon des coins.
- * @param	relief		Relief du bouton.
- * @param	text		Texte.
- * @param	text_font	Fonte du texte.
- * @param	text_color	Couleur du texte.
- * @param	text_anchor	Ancre du texte.
- * @param	clipper		Clippeur.
+ * @param	surface		    Surface de dessin.
+ * @param  	rect		    Rectangle définissant la zone de dessin.
+ * @param	color		    Couleur du bouton.
+ * @param	border_width	Couleur du bouton.
+ * @param	radius		    Rayon des coins.
+ * @param	relief		    Relief du bouton.
+ * @param	text		    Texte.
+ * @param	text_font	    Fonte du texte.
+ * @param	text_color	    Couleur du texte.
+ * @param	text_anchor	    Ancre du texte.
+ * @param	clipper		    Clippeur.
  */
 void ei_draw_button(ei_surface_t *surface, ei_rect_t rect, ei_color_t color, int border_width, int radius, ei_relief_t relief, ei_string_t *text, ei_font_t *text_font, ei_color_t *text_color, ei_anchor_t *text_anchor, ei_rect_t *clipper);
 

@@ -51,7 +51,7 @@ int main(int argc, char** argv)
 	button = ei_widget_create	("button", ei_app_root_widget(), NULL, NULL);
 	ei_button_configure		(button, &((ei_size_t){300, 200}),
 						&(ei_color_t){0x88, 0x88, 0x88, 0xff},
-					 	&(int){6},
+					 	&(int){15},
 					 	&(int){40},
 					 	&(ei_relief_t){ei_relief_raised},
 					 	&(ei_string_t){"Mon premier Bouton !"}, NULL,

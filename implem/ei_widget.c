@@ -42,12 +42,13 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name, ei_widget_t parent, e
 		ei_widget_t resize_frame = ei_widget_create("frame", widget, NULL, NULL);
 		resize_frame->wclass->setdefaultsfunc(resize_frame);
 		resize_frame->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
-		((ei_impl_frame_t *) resize_frame)->color = (ei_color_t) { 0.7 * 0xA0, 0.7 * 0xA0, 0.7 * 0xA0, 0xFF };
 
 		ei_widget_t close_button = ei_widget_create("button", widget, NULL, NULL);
 		close_button->wclass->setdefaultsfunc(close_button);
 		close_button->placer_params = calloc(1, sizeof(struct ei_impl_placer_params_t));
 		((ei_impl_button_t *) close_button)->color = (ei_color_t) { 0xFF, 0x00, 0x00, 0xA0 };
+		((ei_impl_button_t *) close_button)->corner_radius = 8;
+		((ei_impl_button_t *) close_button)->border_width = 2;
 	} else {
 		ei_size_t size = widget->parent->content_rect->size;
 		widget->requested_size = ei_size(size.width / 20, size.height / 20);
