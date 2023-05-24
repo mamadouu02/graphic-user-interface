@@ -91,6 +91,7 @@ void button_setdefaultsfunc(ei_widget_t widget)
 	button->color = ei_default_background_color;
 	button->border_width = k_default_button_border_width;
 	button->corner_radius = k_default_button_corner_radius;
+	button->relief = (ei_relief_t) { ei_relief_raised };
 	button->text_font = ei_default_font;
 	button->text_color = ei_font_default_color;
 	button->text_anchor = (ei_anchor_t) { ei_anc_center };
